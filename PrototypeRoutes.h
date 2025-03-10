@@ -70,3 +70,4 @@ void move_up(player *joueur, map *carte); //Bouge le joueur vers le haut
 void move_down(player *joueur, map *carte); //Bouge le joueur vers la gauche
 void move_right(player *joueur, map *carte); //Bouge le joueur vers la droite
 void move_left(player *joueur, map *carte); //Bouge le joueur vers la gauche
+

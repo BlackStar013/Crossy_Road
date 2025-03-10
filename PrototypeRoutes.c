@@ -1,12 +1,12 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "PrototypeRoutes.h"
 
 
 line *line_map(int y, map *carte){ 
     int nb_obst = 0;
     int nb_line = 0;
-    for(int i = 0; i <= y; i++){
+    for(int i = 0; i < y; i++){
         nb_line += 1;
         if (nb_line >= NB_LINES(OBSTACLES(nb_obst,carte))) {
             nb_line = 0;
@@ -24,10 +24,12 @@ map *initialize_map(void) {
     map* carte;
     carte = malloc(sizeof(map));
     (carte->obstacles) = malloc(sizeof(obstacle) * HEIGTH);
+    (carte->len) = HEIGTH;
     for(int i = 0 ; i < HEIGTH ; i++) {
-        OBSTACLES(i, carte)->lines = malloc(sizeof(tile)*LENGTH); 
         //Pour l'instant on considère que touts les obtacles n'ont qu'une lignes
         NB_LINES(OBSTACLES(i, carte)) = 1;
+        OBSTACLES(i, carte)->lines = malloc(sizeof(line) * NB_LINES(OBSTACLES(i, carte)));
+        (LINES(0, OBSTACLES(i, carte))->tiles) = malloc(sizeof(tile)*LENGTH);
         for(int j=0;j<LENGTH;j++) {
             TYPE(tile_map(j, i, carte)) = '0';
             if ((j==0) || (j==LENGTH-1) || (i==0) || (i==HEIGTH-1)) {
@@ -69,8 +71,4 @@ void move_right(player *joueur, map *carte) {
 }
 void move_left(player *joueur, map *carte) {
     move(joueur,carte,-1,0);
-}
-int main(void) {
-    printf("coucou");
-    return 0;
 }
