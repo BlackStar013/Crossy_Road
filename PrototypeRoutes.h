@@ -3,14 +3,12 @@
 #include <stdbool.h>
 
 typedef struct _tile {
-    bool is_player;
     bool is_block;
     bool is_danger;
     char type; //si on voudra en graphique des cases différentes
                    //Pas que en graphique 
 } tile;
 
-#define IS_PLAYER(tile) (tile->is_player)
 #define IS_BLOCK(tile) (tile->is_block)
 #define IS_DANGER(tile) (tile->is_danger)
 #define TYPE(tile) (tile->type)
@@ -35,11 +33,13 @@ typedef struct _obstacle {
 typedef struct _map {
     //La somme de "nb_lines" de content fait HEIGTH
     int len;
+    int nb_generated;
     obstacle* obstacles;
 } map;
 
 #define OBSTACLES(i,carte) ((carte->obstacles)+i) //Donne le ième obstacle de la carte ( i < LEN )
 #define LEN(carte) ((carte->len))
+#define GEN_LINES(carte) ((carte->nb_generated))
 
 //On considère x horizontale, y verticale pour le reste du programme
 
@@ -61,6 +61,8 @@ typedef struct _player{
 #define X_INI 10
 #define Y_INI 10
 
+#define FUTURE_HEIGTH 1
+
 //Déclaration des fonctions
 line *line_map(int y, map *carte); //Renvoie la ligne n°y de la carte
 tile *tile_map(int x, int y, map *carte);//Renvoie la case (x,y) de la carte
@@ -70,3 +72,9 @@ void move_up(player *joueur, map *carte); //Bouge le joueur vers le haut
 void move_down(player *joueur, map *carte); //Bouge le joueur vers la gauche
 void move_right(player *joueur, map *carte); //Bouge le joueur vers la droite
 void move_left(player *joueur, map *carte); //Bouge le joueur vers la gauche
+void freeline(line* ligne); //libère la ligne
+void freeobstacle(obstacle* obs); //libère l'obstacle
+void freemap(map* carte); //libère la carte
+void map_shift(map* carte,player* joueur);//fait défiler la carte vers l'avant 
+bool test_death(player *joueur,map* carte); //true->le joueur est mort.
+
