@@ -3,38 +3,30 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-#include <ncurses.h>
 
 void init_display(void){
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            printw("#");
+            printf("#");
         }
-        printw("\n");
+        printf("\n");
     }
 }
 
 void update_display(map* place){
     srand(time(NULL));
-    printw("\033[%dA\r", HEIGTH);
+    printf("\033[%dA\r", HEIGTH);
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            printw("\033[32m%c",((tile_map(j, i, place))->type));
+            printf("\033[32m%c",((tile_map(j, i, place))->type));
         }
-        printw("\n");
+        printf("\n");
     }
-    //fflush(stdout);
-    refresh();
+    fflush(stdout);
 }
 
 int main(int argc, char *argv[])
 {
-    initscr();
-    //raw();
-    //keypad(stdscr, TRUE);
-    //noecho();
-    //timeout(0);
-
     map* place = initialize_map();
     init_display();
     srand(time(NULL));
