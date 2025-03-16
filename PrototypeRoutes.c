@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "PrototypeRoutes.h"
 
 
@@ -50,7 +50,7 @@ map *initialize_map(void) {
 }
 
 //Les structures sont sur des zones mutables (malloc) et donc on en profite pour les muter.
-void move(player *joueur,map *carte, int x, int y) {
+void movep(player *joueur,map *carte, int x, int y) {
     if(IS_BLOCK(tile_map(X_PLAYER(joueur)+x, Y_PLAYER(joueur)+y, carte)) == false) {
         X_PLAYER(joueur) += x;
         Y_PLAYER(joueur) += y;
@@ -60,13 +60,13 @@ void move(player *joueur,map *carte, int x, int y) {
 
 //Les fonctions move locales pour une utilisation plus simples
 void move_up(player *joueur, map *carte) {
-    move(joueur,carte,0,1);
+    movep(joueur,carte,0,1);
 }
 void move_down(player *joueur, map *carte) {
-    move(joueur,carte,0,-1);
+    movep(joueur,carte,0,-1);
 }
 void move_right(player *joueur, map *carte) {
-    move(joueur,carte,1,0);
+    movep(joueur,carte,1,0);
 }
 void move_left(player *joueur, map *carte) {
     move(joueur,carte,-1,0);

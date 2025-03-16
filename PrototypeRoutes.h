@@ -64,10 +64,10 @@ typedef struct _player{
 #define FUTURE_HEIGTH 1
 
 //Déclaration des fonctions
-line *line_map(int y, map *carte); //Renvoie la ligne n°y de la carte
-tile *tile_map(int x, int y, map *carte);//Renvoie la case (x,y) de la carte
+line* line_map(int y, map *carte); //Renvoie la ligne n°y de la carte
+tile* tile_map(int x, int y, map *carte);//Renvoie la case (x,y) de la carte
 map* initialize_map(void); //Initialise la carte à partir des informations définies pour le jeu
-void move(player *joueur,map *carte, int x, int y); //Bouge le joueur de x case horizontalement et y cases verticalement ( si possible)
+void movep(player *joueur,map *carte, int x, int y); //Bouge le joueur de x case horizontalement et y cases verticalement ( si possible)
 void move_up(player *joueur, map *carte); //Bouge le joueur vers le haut
 void move_down(player *joueur, map *carte); //Bouge le joueur vers la gauche
 void move_right(player *joueur, map *carte); //Bouge le joueur vers la droite
