@@ -6,7 +6,7 @@
 line *line_map(int y, map *carte){ 
     int nb_obst = 0;
     int nb_line = 0;
-    for(int i = 0; i <= y; i++){
+    for(int i = 0; i < y; i++){
         nb_line += 1;
         if (nb_line >= NB_LINES(OBSTACLES(nb_obst,carte))) {
             nb_line = 0;
