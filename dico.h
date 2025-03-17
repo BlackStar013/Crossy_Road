@@ -20,9 +20,9 @@ typedef struct _map_dico
 
 //fonctions souhaités (Louan)
 map_dico *create_empty_map(void);
-void ajout_tile(map_dico carte);//on modifie le dico, on en renvoie pas un nouveau
-void suppression_tile(map_dico carte);
-bool coord_remplie(map_dico carte);
+void ajout_tile(map_dico carte,int x,int y,tile *tuile);//on modifie le dico, on en renvoie pas un nouveau
+void suppression_tile(map_dico carte,int x,int y);
+bool coord_remplie(map_dico carte,int x,int y);
 bool carte_vide(map_dico carte);
 int nb_tiles_remplies(map_dico carte);
 tile *tile_carte(map_dico carte,int x,int y);
