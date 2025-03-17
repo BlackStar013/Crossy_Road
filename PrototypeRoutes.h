@@ -1,18 +1,4 @@
-#pragma once
-
-#include <stdbool.h>
-
-typedef struct _tile {
-    bool is_block;
-    bool is_danger;
-    char type; //si on voudra en graphique des cases différentes
-                   //Pas que en graphique 
-} tile;
-
-#define IS_BLOCK(tile) (tile->is_block)
-#define IS_DANGER(tile) (tile->is_danger)
-#define TYPE(tile) (tile->type)
-
+#include "dico.h"
 
 typedef struct _line {
     //La tailles de tiles est LENGTH 
