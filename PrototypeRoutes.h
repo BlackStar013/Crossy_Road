@@ -64,3 +64,11 @@ void freemap(map* carte); //libère la carte
 void map_shift(map* carte,player* joueur);//fait défiler la carte vers l'avant 
 bool test_death(player *joueur,map* carte); //true->le joueur est mort.
 
+map_dico* initialize_map_dico(void); 
+void moveplayer(player *joueur,map *carte, int x, int y); 
+void move_up_d(player *joueur, map *carte); 
+void move_down_d(player *joueur, map *carte); 
+void move_right_d(player *joueur, map *carte);
+void move_left_d(player *joueur, map *carte);
+int map_shift_d(map* carte,player* joueur,int score);
+bool test_death(player *joueur,map* carte);
