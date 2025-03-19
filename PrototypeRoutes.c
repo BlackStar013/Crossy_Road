@@ -141,3 +141,59 @@ int main(void) {
     return 0;
 }
 
+map_dico* initialize_map_dico(void) { //version sans obstacles définis
+    map_dico *map=create_empty_map();
+    tile tuile_plaine;
+    tuile_plaine.is_block=false;
+    tuile_plaine.is_danger=false;
+    tuile_plaine.type="_";
+    for (int i=0;i<HEIGTH+FUTURE_HEIGTH;i++){
+        for (int j=0;j<LENGTH;j++) {
+            ajout_tile(map,j,i,tuile_plaine);
+        }
+    }
+}
+
+void moveplayer(player *joueur,map_dico *carte, int x, int y) {
+    if (coord_remplie(carte,x,y)) {    
+        if(IS_BLOCK(tile_carte(X_PLAYER(joueur)+x, Y_PLAYER(joueur)+y, carte)) == false) {
+        X_PLAYER(joueur) += x;
+        Y_PLAYER(joueur) += y;}
+    }
+}
+
+void move_up_d(player *joueur, map_dico *carte){
+    moveplayer(joueur,carte,0,1);
+}
+void move_down_d(player *joueur, map_dico *carte){
+    moveplayer(joueur,carte,0,-1);
+}
+void move_right_d(player *joueur, map_dico *carte){
+    moveplayer(joueur,carte,1,0);
+}
+void move_left_d(player *joueur, map_dico *carte){
+    moveplayer(joueur,carte,-1,0);
+}
+
+int map_shift_d(map_dico* carte,int score) {
+    tile tuile_plaine;
+    tuile_plaine.is_block=false;
+    tuile_plaine.is_danger=false;
+    tuile_plaine.type="_";
+    for(int i=0;i<LENGTH;i++) {
+        suppression_tile(carte,i,score);
+    }
+    for(int i=0;i<LENGTH;i++) {                                           // remplace future fonction de generation d'obstacles
+        ajout_tile(carte,i,HEIGTH+FUTURE_HEIGTH+score,tuile_plaine);      //
+    }                                                                     //
+    score++;
+    return score;
+}
+
+bool test_death_d(player *joueur,map_dico* carte){
+        if (coord_remplie(carte,X_PLAYER(joueur),Y_PLAYER(joueur))) {    
+            if(IS_DANGER(tile_carte(X_PLAYER(joueur), Y_PLAYER(joueur), carte))) {
+                return true;
+            }}
+return false;
+}
