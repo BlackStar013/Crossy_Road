@@ -181,7 +181,8 @@ int map_shift_d(map_dico* carte,int score) {
     tuile_plaine.is_danger=false;
     tuile_plaine.type="_";
     for(int i=0;i<LENGTH;i++) {
-        suppression_tile(carte,i,score);
+    if (coord_remplie(carte,i,score)){
+        suppression_tile(carte,i,score);}
     }
     for(int i=0;i<LENGTH;i++) {                                           // remplace future fonction de generation d'obstacles
         ajout_tile(carte,i,HEIGTH+FUTURE_HEIGTH+score,tuile_plaine);      //
