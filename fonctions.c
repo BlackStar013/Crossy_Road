@@ -136,11 +136,6 @@ bool test_death(player *joueur,map* carte) {
     return IS_DANGER(tile_map(X_PLAYER(joueur),Y_PLAYER(joueur),carte));
 }
 
-int main(void) {
-    printf("coucou");
-    return 0;
-}
-
 map_dico* initialize_map_dico(void) { //version sans obstacles définis
     map_dico *map=create_empty_map();
     tile tuile_plaine;

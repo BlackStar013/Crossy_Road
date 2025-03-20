@@ -1,3 +1,4 @@
+#pragma once
 #include "dico.h"
 
 typedef struct _line {
