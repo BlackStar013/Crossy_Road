@@ -176,17 +176,20 @@ void move_left_d(player *joueur, map_dico *carte){
 }
 
 int map_shift_d(map_dico* carte,int score) {
+    //remplacer par appel à la constante
     tile tuile_plaine;
     tuile_plaine.is_block=false;
     tuile_plaine.is_danger=false;
     tuile_plaine.type="_";
     for(int i=0;i<LENGTH;i++) {
-    if (coord_remplie(carte,i,score)){
+    if (coord_remplie(carte,i,score)){//remplacable suppression ligne
         suppression_tile(carte,i,score);}
     }
+    ////////////////////////////////////////////////////////////////////////
     for(int i=0;i<LENGTH;i++) {                                           // remplace future fonction de generation d'obstacles
         ajout_tile(carte,i,HEIGTH+FUTURE_HEIGTH+score,tuile_plaine);      //
     }                                                                     //
+    ////////////////////////////////////////////////////////////////////////
     score++;
     return score;
 }
