@@ -5,6 +5,7 @@
 typedef struct _tile {
     bool is_block;
     bool is_danger;
+    char color;
     char type; //si on voudra en graphique des cases différentes
                    //Pas que en graphique 
 } tile;
