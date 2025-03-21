@@ -11,3 +11,5 @@ display.o: display.c
 PrototypeRoutes.o: PrototypeRoutes.c
 	$(CC) -c $(CFLAGS) PrototypeRoutes.c
 
+termitest: terminallib.c
+	$(CC) $(CFLAGS) -o tlt terminallib.c

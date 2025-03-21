@@ -3,21 +3,21 @@
 #include <termios.h>
 #include <unistd.h>
 
-int main() {
+struct termios init_terminal(void){
     struct termios old_tio, new_tio;
-
-    // Get the current terminal attributes
     tcgetattr(STDIN_FILENO, &old_tio);
-
-    // Make a copy of the current attributes for modification
     new_tio = old_tio;
-
-    // Disable canonical mode and echoing
     new_tio.c_lflag &= ~(ICANON | ECHO);
-
-    // Apply the modified terminal attributes
     tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
+    return old_tio;
+}
 
+void restore_terminal(struct termios* settings){
+    tcsetattr(STDIN_FILENO, TCSANOW, settings);
+}
+
+int main() {
+    struct termios old_tio = init_terminal();
     printf("Press any key (press 'q' to quit):\n");
     char ch;
     while (1) {
@@ -34,7 +34,7 @@ int main() {
     }
 
     // Restore the original terminal attributes
-    tcsetattr(STDIN_FILENO, TCSANOW, &old_tio);
+    restore_terminal(&old_tio);
 
     return 0;
 }
