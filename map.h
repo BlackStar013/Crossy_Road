@@ -23,16 +23,22 @@ typedef struct _Tile {
 
 typedef struct _Map
 {
+    Line* buffer;
     Line* head;
     Line* tail;
     /* data */
 }Map;
 
+
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done
-void ajout_tile(Map *carte,int x,int y,Tile tuile); //on modifie le dico, on en renvoie pas un nouveau et la tuile provenant de la pile, on la copie.
-void suppression_tile(Map *carte,int x,int y); //? 
-bool coord_remplie(Map *carte,int x,int y); //
+void ajout_tile(Map *carte,int x,int y,Tile tuile); //Done
+void suppression_tile(Map *carte,int x,int y); //? A quoi sert cette fonction vu qu'on a pas malloc les tiles individuellement
+bool coord_remplie(Map *carte,int x,int y); //Done
 bool carte_vide(Map *map); //Done
-int nb_tiles_remplies(Map *carte); //?
-Tile* tile_carte(Map *carte,int x,int y); //?
+int nb_tiles_remplies(Map *carte); //return LENGHT*HEIGHT?
+Tile* tile_carte(Map *carte,int x,int y); //Que fait cette fonction?
+
+//fonctions bonus
+void add_buffer_line(Map* map);
+void remove_buffer_line(Map* map);

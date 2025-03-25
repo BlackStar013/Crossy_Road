@@ -21,9 +21,25 @@ Line* create_empty_line(Line* prev, Line* next){
     return nl;
 }
 
+void add_buffer_line(Map* map){
+    //buffer ->* head ->* tail
+    map->buffer = create_empty_line(NULL, map->buffer);
+}
+
+void remove_buffer_line(Map* map){
+    //removes buffer lines if there are
+    if (map->buffer != map->head){
+        Line* tmp = map->buffer;
+        map->buffer = (map->buffer)->next;
+        free(tmp->tiles);
+        free(tmp);
+    }
+}
+
 Map* create_empty_map(void){
     Map* map = malloc(sizeof(Map));
     map->head = create_empty_line(NULL, NULL)
+    map->buffer = map->head;
     Line* cur = map->head;
     for(int i = 1; i<HEIGHT; i++){
         cur = create_empty_line(cur, NULL);
@@ -46,10 +62,20 @@ bool carte_vide(Map* map){
 }
 
 bool coord_remplie(Map *carte,int x,int y){
-    if(x<0 || x>LENGTH)
+    if(x<0 || x>LENGTH || y<0 || y>HEIGTH){
+        return false;
+    }
+    return true;
 }
 
-void ajout_tile(Map *carte,int x,int y,Tile tuile);//on modifie le dico, on en renvoie pas un nouveau et la tuile provenant de la pile, on la copie.
+void ajout_tile(Map *carte,int x,int y,Tile tuile){
+    Line* cl = carte->head;
+    for(int i = 1; i<=x; i++){
+        cl = cl->next;
+    }
+    cl->tiles[y] = tuile;
+}
+
 void suppression_tile(Map *carte,int x,int y);
 int nb_tiles_remplies(Map *carte); //
 Tile* tile_carte(Map *carte,int x,int y);
