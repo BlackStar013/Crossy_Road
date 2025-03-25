@@ -1,5 +1,14 @@
 #pragma once
-#include "dico.h"
+#include "tuiles.h"
+#include "mob.h"
+
+//typedef struct _tile {
+//    bool is_block;
+//    bool is_danger;
+//    char color;
+//    char type; //si on voudra en graphique des cases différentes
+//                   //Pas que en graphique 
+//} tile;
 
 typedef struct _line {
     //La tailles de tiles est LENGTH 
@@ -65,11 +74,11 @@ void freemap(map* carte); //libère la carte
 void map_shift(map* carte,player* joueur);//fait défiler la carte vers l'avant 
 bool test_death(player *joueur,map* carte); //true->le joueur est mort.
 
-map_dico* initialize_map_dico(void); 
-void moveplayer(player *joueur,map_dico *carte, int x, int y); 
-void move_up_d(player *joueur, map_dico *carte); 
-void move_down_d(player *joueur, map_dico *carte); 
-void move_right_d(player *joueur, map_dico *carte);
-void move_left_d(player *joueur, map_dico *carte);
-int map_shift_d(map_dico* carte,int score);
-bool test_death_d(player *joueur,map_dico* carte);
+//map_dico* initialize_map_dico(void); 
+//void moveplayer(player *joueur,map_dico *carte, int x, int y); 
+//void move_up_d(player *joueur, map_dico *carte); 
+//void move_down_d(player *joueur, map_dico *carte); 
+//void move_right_d(player *joueur, map_dico *carte);
+//void move_left_d(player *joueur, map_dico *carte);
+//int map_shift_d(map_dico* carte,int score);
+//bool test_death_d(player *joueur,map_dico* carte);

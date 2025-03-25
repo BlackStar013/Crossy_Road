@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "PrototypeRoutes.h"
+#include "fonctions.h"
+#include "tuiles.h"
+#include "mob.h"
 
 
 line *line_map(int y, map *carte){ 
