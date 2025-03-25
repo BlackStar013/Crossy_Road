@@ -25,4 +25,4 @@ void suppression_tile(map_dico *carte,int x,int y);
 bool coord_remplie(map_dico *carte,int x,int y);
 bool carte_vide(map_dico *carte);
 int nb_tiles_remplies(map_dico *carte);
-tile *tile_carte(map_dico *carte,int x,int y);
+tile* tile_carte(map_dico *carte,int x,int y);

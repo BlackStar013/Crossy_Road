@@ -51,7 +51,7 @@ typedef struct _player{
 
 //Déclaration des fonctions
 line* line_map(int y, map *carte); //Renvoie la ligne n°y de la carte
-tile* tile_map(int x, int y, map *carte);//Renvoie la case (x,y) de la carte
+Tile* tile_map(int x, int y, map *carte);//Renvoie la case (x,y) de la carte
 map* initialize_map(void); //Initialise la carte à partir des informations définies pour le jeu
 void movep(player *joueur,map *carte, int x, int y); //Bouge le joueur de x case horizontalement et y cases verticalement ( si possible)
 void move_up(player *joueur, map *carte); //Bouge le joueur vers le haut
@@ -64,11 +64,11 @@ void freemap(map* carte); //libère la carte
 void map_shift(map* carte,player* joueur);//fait défiler la carte vers l'avant 
 bool test_death(player *joueur,map* carte); //true->le joueur est mort.
 
-map_dico* initialize_map_dico(void); 
-void moveplayer(player *joueur,map_dico *carte, int x, int y); 
-void move_up_d(player *joueur, map_dico *carte); 
-void move_down_d(player *joueur, map_dico *carte); 
-void move_right_d(player *joueur, map_dico *carte);
-void move_left_d(player *joueur, map_dico *carte);
-int map_shift_d(map_dico* carte,int score);
-bool test_death_d(player *joueur,map_dico* carte);
+Map* initialize_Map(void); 
+void moveplayer(player *joueur,Map *carte, int x, int y); 
+void move_up_d(player *joueur, Map *carte); 
+void move_down_d(player *joueur, Map *carte); 
+void move_right_d(player *joueur, Map *carte);
+void move_left_d(player *joueur, Map *carte);
+int map_shift_d(Map* carte,int score);
+bool test_death_d(player *joueur,Map* carte);
