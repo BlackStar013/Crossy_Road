@@ -30,6 +30,14 @@ typedef struct _Map
     /* data */
 }Map;
 
+typedef struct _player{
+    int x;
+    int y;
+    int character_id;
+} player;
+
+#define HEIGTH 16
+#define LENGTH 16
 
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done
