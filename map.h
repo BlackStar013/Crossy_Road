@@ -3,13 +3,6 @@
 #include <stdbool.h>
 #include "tuiles.h"
 
-typedef struct _Line {
-    //La tailles de tiles est LENGTH 
-    tile* tiles;
-    struct _Line* prev;
-    struct _Line* next; 
-} Line;
-
 typedef struct _Tile {
     bool is_block;
     bool is_danger;
@@ -17,6 +10,13 @@ typedef struct _Tile {
     char type; //si on voudra en graphique des cases différentes
                    //Pas que en graphique 
 } Tile;
+
+typedef struct _Line {
+    //La tailles de tiles est LENGTH 
+    tile* tiles;
+    struct _Line* prev;
+    struct _Line* next; 
+} Line;
 
 #define IS_BLOCK(tile) (tile->is_block)
 #define IS_DANGER(tile) (tile->is_danger)
