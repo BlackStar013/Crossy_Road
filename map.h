@@ -13,7 +13,7 @@ typedef struct _Tile {
 
 typedef struct _Line {
     //La tailles de tiles est LENGTH 
-    tile* tiles;
+    Tile* tiles;
     struct _Line* prev;
     struct _Line* next; 
 } Line;

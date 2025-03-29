@@ -2,9 +2,6 @@
 #include "tuiles.h"
 #include <stdlib.h>
 
-#define HEIGTH 16
-#define LENGTH 16
-
 Line* create_empty_line(Line* prev, Line* next){
     //create a new empty line and connects it with the previous one and the next one if there are
     Line* nl = malloc(sizeof(Line));
@@ -54,7 +51,7 @@ Map* create_empty_map(void){
 }
 
 bool carte_vide(Map* map){
-    Line* cur = map;
+    Line* cur = map->head;
     for(int i = 0; i<HEIGTH; i++){
         for(int j = 0; j<LENGTH; j++){
             if((cur->tiles[j]).type != ' '){
@@ -66,12 +63,12 @@ bool carte_vide(Map* map){
     return true;
 }
 
-bool coord_remplie(Map *carte,int x,int y){
-    if(x<0 || x>LENGTH || y<0 || y>HEIGTH){
-        return false;
-    }
-    return true;
-}
+//bool coord_remplie(Map *carte, int x, int y){
+//    if(x<0 || x>LENGTH || y<0 || y>HEIGTH){
+//        return false;
+//    }
+//    return true;
+//}
 
 //void ajout_tile(Map *carte,int x,int y,Tile tuile){
 //    Line* cl = carte->head;

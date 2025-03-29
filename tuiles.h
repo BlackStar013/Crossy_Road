@@ -1,6 +1,6 @@
 #pragma once
-//#include "fonctions.h"
 #include <stdbool.h>
+#include "map.h"
 
 //Table de couleur : 
 //g = green, r = red, b = blue, a = gray 
