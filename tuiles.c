@@ -1,5 +1,5 @@
-//#include "fonctions.h"
 #include "tuiles.h"
+#include "map.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

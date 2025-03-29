@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <assert.h>
-#include "fonctions.h"
 #include "tuiles.h"
 #include "mob.h"
+#include "map.h"
 
 int main(void){
     printf("les tests sont lancés\n");

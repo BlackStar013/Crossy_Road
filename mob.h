@@ -1,6 +1,6 @@
 #pragma once
-//#include "fonctions.h"
 #include "tuiles.h"
+#include "map.h"
 #include <stdbool.h>
 
 typedef struct _Mob {
