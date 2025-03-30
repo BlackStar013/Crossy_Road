@@ -10,40 +10,48 @@
 #include <time.h>
 #include <unistd.h>
 
+#define ECHELLE 2
 
-//void init_display(Map *map, player *joueur){
-//    Line *line = map->head;
-//    for (int i = 0; i<HEIGTH;i++){
-//        for (int j = 0; j<LENGTH; j++){
-//            if((i==joueur->y) && (j==joueur->x)){
-//                printf(" ");
-//            }else{
-//                printf("%c", line->tiles[j].type);
-//            }
-//        }
-//        printf("\n");
-//        if(i!=LENGTH){
-//            line=line->next;
-//        }
-//    }
-//}
+void display(Map *map, player *joueur, SDL_Window *window, SDL_Renderer *renderer){
+    Line *line = map->head;
+    for (int i = 0; i<HEIGTH;i++){
+        for (int j = 0; j<LENGTH; j++){
+            SDL_Surface *spriteSurface;
+            SDL_Texture *spriteTexture;
+            if((i==joueur->y) && (j==joueur->x)){
+                spriteSurface = IMG_Load("sprites/ChariotTest.png");
+            }else{
+                spriteSurface = IMG_Load("sprites/Plaines.png");
+            }
+            if (!spriteSurface) {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
+                exit(-1);
+            }
+            int spriteFullWidth;
+            int spriteFullHeight;
+            spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+            if(!spriteTexture){
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                exit(-1);
+            }
+            SDL_FreeSurface(spriteSurface);
+            if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in query texture: %s", SDL_GetError());
+                exit(-1);
+            }
+            int spriteWidth = (spriteFullWidth / 2)*ECHELLE;
+            int spriteHeight = (spriteFullHeight / 2)*ECHELLE;
+            SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
+            SDL_Rect destRect = {.x = 32*i*ECHELLE, .y = 32*j*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect))
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
+        }
+        if(i!=LENGTH){
+            line=line->next;
+        }
+    }
+}
 
-//void update_display(Map* map, player *joueur){
-//    srand(time(NULL));
-//    Line *line = map->head;
-//    printf("\033[%dA\r", HEIGTH);
-//    for (int i = 0; i<HEIGTH;i++){
-//        for (int j = 0; j<LENGTH; j++){
-//            if((i==joueur->y) && (j==joueur->x)){
-//                printf(" ");
-//            }else{
-//                printf("\033[32m%c",line->tiles[j].type);
-//            }
-//        }
-//        printf("\n");
-//    }
-//    fflush(stdout);
-//}
 
 int main(int argc, char *argv[]){
     if(SDL_Init(SDL_INIT_EVERYTHING)){
@@ -59,7 +67,7 @@ int main(int argc, char *argv[]){
     atexit(IMG_Quit);
     
     SDL_Window *window;
-    window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (HEIGTH*32*2), (LENGTH*32*2), 0);
+    window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (HEIGTH*32*ECHELLE), (LENGTH*32*ECHELLE), 0);
     if(!window){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la fenetre : %s", SDL_GetError());
         exit(-1);
@@ -72,13 +80,13 @@ int main(int argc, char *argv[]){
         exit(-1);
     }
 
-    SDL_Surface *spriteSurface = IMG_Load("bois.png");   // a remplacer par : sprites/Plaines.aseprite ou autre format du coup
+    SDL_Surface *spriteSurface = IMG_Load("sprites/ChariotTest.png");   // a remplacer par : sprites/Plaines.aseprite ou autre format du coup
     if (!spriteSurface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
         exit(-1);
     }
 
-    SDL_Color const BACKGROUND_COLOR = {.r=0xD0, .g=0xFF, .b=0xFF, .a=SDL_ALPHA_OPAQUE};
+    SDL_Color const BACKGROUND_COLOR = {.r=0x00, .g=0x00, .b=0x00, .a=SDL_ALPHA_OPAQUE};
     if(SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b, BACKGROUND_COLOR.a)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur pour la couleur de fond : %s", SDL_GetError());
     }
@@ -101,8 +109,8 @@ int main(int argc, char *argv[]){
         exit(-1);
     }
 
-    int spriteWidth = spriteFullWidth / 4;
-    int spriteHeight = spriteFullHeight / 4;
+    int spriteWidth = (spriteFullWidth / 2);
+    int spriteHeight = (spriteFullHeight / 2);
     int offset = 0;
     int distance_x = 0;
     int distance_y = 0;
@@ -115,6 +123,7 @@ int main(int argc, char *argv[]){
     joueur->y = HEIGTH-3;
     //init_display(place, joueur);
     srand(time(NULL));
+    display(place, joueur, window, renderer);
     SDL_RenderPresent(renderer);
     while(!quit){
         //regarde si il y a des evenements clavier
@@ -123,6 +132,7 @@ int main(int argc, char *argv[]){
             printf("je rentre ici\n");
             quit = SDL_TRUE;
         }else if(event.type == SDL_KEYDOWN){
+            printf("%d\n", offset);
             //if(event.key.keysym.scancode == SDL_SCANCODE_A){
             //    printf("aaaaaaaaaaaaaaaaaaa\n");
             //}
@@ -132,6 +142,9 @@ int main(int argc, char *argv[]){
                 //printf("zzzzzzzzzzzzz\nzzzzzzzzzzzzz\nzzzzzzzzzzzzz\n");
             }else if(event.key.keysym.sym == SDLK_q){
                 distance_x -= 1;
+                offset -= 1;
+                offset %= 2;
+                if(offset<0){offset=0;}
                 //movedown(joueur, place);
                 //printf("qqqqqqqqqqqqq\nqqqqqqqqqqqqq\nqqqqqqqqqqqqq\n");
             }else if(event.key.keysym.sym == SDLK_s){
@@ -140,27 +153,31 @@ int main(int argc, char *argv[]){
                 //printf("sssssssssssss\nsssssssssssss\nsssssssssssss\n");
             }else if(event.key.keysym.sym == SDLK_d){
                 distance_x += 1;
+                offset += 1;
+                offset %= 2;
                 //move_right(joueur, place);
                 //printf("ddddddddddddd\nddddddddddddd\nddddddddddddd\n");
             }else if(event.key.keysym.sym == SDLK_m){
                 quit = SDL_TRUE;
             }
-        SDL_Color const BACKGROUND_COLOR = {.r = 0xFF, .g = 0xFF, .b = 0xFF, .a = SDL_ALPHA_OPAQUE};
-        if(SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b, BACKGROUND_COLOR.a)){
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur pour la couleur de fond : %s", SDL_GetError());
-        }
+        //SDL_Color const BACKGROUND_COLOR = {.r = 0x00, .g = 0x00, .b = 0x00, .a = SDL_ALPHA_OPAQUE};
+        //if(SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b, BACKGROUND_COLOR.a)){
+        //    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur pour la couleur de fond : %s", SDL_GetError());
+        //}
         if(SDL_RenderClear(renderer)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
         }
         SDL_Rect spriteRect = {.x = offset*spriteWidth, .y = 0, .w = spriteWidth, .h = spriteHeight};
-        SDL_Rect destRect = {.x = distance_x*10, .y = distance_y*10, .w = spriteWidth, .h = spriteHeight};
+        SDL_Rect destRect = {.x = distance_x*32*ECHELLE, .y = distance_y*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+        display(place, joueur, window, renderer);
         if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect))
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
         SDL_RenderPresent(renderer);
         }
         SDL_Delay(20);
     //update_display(place, joueur);
     }
+
     free(joueur);
     SDL_DestroyTexture(spriteTexture);
     SDL_DestroyRenderer(renderer);
