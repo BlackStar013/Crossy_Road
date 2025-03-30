@@ -58,7 +58,7 @@ void update_display(Map* map, player *joueur){
     fflush(stdout);
 }
 
-int main(int argc, char *argv[]){
+int main(void){
     struct termios old_tio = init_terminal();
     Map* place = create_empty_map();
     player *joueur = malloc(sizeof(player));
