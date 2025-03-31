@@ -18,6 +18,7 @@ Pour Yovhann et Arthur:
 - map_shift(suppression de ce qui est passé et préparation de ce qui va arriver)
 - ajout d'un champ couleur pour les tiles
 - test death
+
 Pour Louan et Félix:
 - afficher le joueur
 - revoir le mouvement en terminal
