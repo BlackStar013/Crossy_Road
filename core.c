@@ -21,9 +21,31 @@ int* initialise_proba(void){
 void generator_forest(Game *game){
     *((game->proba)+FOREST) -= 10;
     *((game->proba)+ROAD) += 10;
-    
+    add_buffer_line(game->carte);
+    Tile* tiles = game->carte->head_buffer->tiles;
+    for(int i = 0;i>LENGTH;i++){
+        if((i==5)||(i==6)||(i=9)){
+            clone(*tiles,tree);
+        } else {
+            clone(*tiles,plain);
+        }
+        tiles++;
+    }
 }
 
+void generator_road(Game *game){
+    *((game->proba)+FOREST) += 10;
+    *((game->proba)+ROAD) -= 10;
+    add_buffer_line(game->carte);
+    Tile* tiles = game->carte->head_buffer->tiles;
+    for(int i = 0;i>LENGTH;i++){
+        clone(*tiles,road);
+        tiles++;
+    }
+    list_append(game->mobs,clone_mob(car_right, -1, LENGTH+1));
+}
+
+//Non fonctionnelllelelzeùjkghbnqeiùkzrfjnziKMYGDP
 void (*initialise_generator(void))(Game*){
     void (*generators)(Game*) = malloc(NB_OBSTACLE*sizeof(void(Game*)));
     //*(generators+FOREST) = generator_forest;

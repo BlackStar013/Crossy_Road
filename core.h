@@ -47,3 +47,6 @@ void move_up(Game*);
 void move_left(Game*);
 void move_right(Game*);
 void move_down(Game*);
+
+//Fait déplacer la giga mab et les mobs dedans et les joueurs dedans.
+void move_game(Game*);

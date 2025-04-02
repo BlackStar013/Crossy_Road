@@ -5,6 +5,29 @@
 #include <stdbool.h>
 #include "mob.h"
 
+///List_Map///
+
+Liste_Mob* list_create(Mob* mob){
+    Liste_Mob* list = malloc(sizeof(Liste_Mob));
+    list->mob = mob;
+    list->next=NULL;
+    return list;
+}
+
+void list_append(Liste_Mob* list, Mob* mob){
+    ///!\Toujour mettre des clones en entrer bande de malandrin
+    if(list==NULL){
+        list = list_create(mob);
+    } else {
+        list_append(list->next,mob);
+    }
+}
+
+
+//////////////////////////////////////////////////////
+
+
+
 bool mob_in_map(Mob *mob){
     if(((mob->x - mob->length + 1)>LENGTH)||((mob->y - mob->heigth + 1)>HEIGTH)){ //Dépassement supérieur
         return false;
@@ -47,3 +70,5 @@ void path_car_left(Mob *car){
 
 const Mob car_left = {1,2,0,0,path_car_left}; 
 const Mob bus_left = {1,4,0,0,path_car_left};
+
+
