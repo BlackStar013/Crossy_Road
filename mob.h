@@ -11,6 +11,11 @@ typedef struct _Mob {
     void (*path)(struct _Mob*);
 } Mob;
 
+typedef struct _List_Mob {
+    Mob mob;
+    struct _List_Mob* next;
+} Liste_Mob;
+
 //On gère la vitesse à l'aide du nombre d'actualisation
 
 void move_mob(Mob*); //A implémenter après ajout de la structure finale de la carte (?)

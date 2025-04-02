@@ -34,8 +34,8 @@ void path_car_right(Mob *car){
     } 
 }
 
-const Mob car_right = {1,3,0,0,path_car_right}; //Note : x et y ini ne veulent rien dire ici
-const Mob bus_right = {1,6,0,0,path_car_right};
+const Mob car_right = {1,2,0,0,path_car_right}; //Note : x et y ini ne veulent rien dire ici
+const Mob bus_right = {1,4,0,0,path_car_right};
 
 void path_car_left(Mob *car){
     if(!mob_in_map(car)){
@@ -45,5 +45,5 @@ void path_car_left(Mob *car){
     } 
 }
 
-const Mob car_left = {1,3,0,0,path_car_left}; 
-const Mob bus_left = {1,6,0,0,path_car_left};
+const Mob car_left = {1,2,0,0,path_car_left}; 
+const Mob bus_left = {1,4,0,0,path_car_left};

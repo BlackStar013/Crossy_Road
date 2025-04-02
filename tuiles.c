@@ -6,20 +6,20 @@
 
 
 
-const tile plain = {false,false,'g','_'};
+const Tile plain = {false,false,'g','_'};
 
-const tile road = {false,false,'r','_'};
+const Tile road = {false,false,'r','_'};
 
-const tile  wall = {true,false,'a','#'};
+const Tile  wall = {true,false,'a','#'};
 
-const tile water = {false,true,'b','~'};
+const Tile water = {false,true,'b','~'};
 
-const tile tree = {true,false,'g','I'};
+const Tile tree = {true,false,'g','I'};
 
-const tile danger = {false,true,'r','!'};
+const Tile danger = {false,true,'r','!'};
 
-tile* clone(tile t){
-    tile* new_tile = malloc(sizeof(tile));
+Tile* clone(Tile t){
+    Tile* new_tile = malloc(sizeof(Tile));
     new_tile->color = t.color;
     new_tile->is_block = t.is_block;
     new_tile->is_danger = t.is_danger;
