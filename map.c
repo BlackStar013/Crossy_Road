@@ -90,11 +90,11 @@ int nb_tiles_remplies(Map *carte); //
 
 
 Tile tile_map(Map *carte,int x,int y){
-    if((y>HEIGTH)||(x>LENGTH)||(y<0)||(x<0)){
+    if((y>=HEIGTH)||(x>=LENGTH)||(y<0)||(x<0)){
         return danger;
     }
     Line* cur = carte->tail;
-    while((y>0)){
+    while(y>0){
         cur = cur->prev;
         y--;
     }
