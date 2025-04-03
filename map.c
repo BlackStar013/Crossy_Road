@@ -82,7 +82,7 @@ void suppression_tile(Map *carte,int x,int y);
 int nb_tiles_remplies(Map *carte); //
 
 
-Tile tile_map(Map *carte,int x,int y){
+Tile tile_map(Map *carte, int x, int y){
     if((y>=HEIGTH)||(x>=LENGTH)||(y<0)||(x<0)){
         return danger;
     }
@@ -91,14 +91,14 @@ Tile tile_map(Map *carte,int x,int y){
         cur = cur->prev;
         y--;
     }
-    return *((cur->tiles)+x);
+    //printf("%d\n", cur->tiles[x].is_block);
+    return ((cur->tiles)[x]);
 }
-
 
 Player* initialise_player(int id){
     Player* joueur = malloc(sizeof(Player));
-    joueur->x = 0;
-    joueur->y = 0;
+    joueur->x = (LENGTH-1)/2;
+    joueur->y = 2;
     joueur->character_id = id;
     return joueur;
 }
