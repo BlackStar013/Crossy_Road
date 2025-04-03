@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include "map.h"
 #include "tuiles.h"
+#include "core.h"
 #include "mob.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,32 +12,16 @@
 #include <unistd.h>
 
 
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-
-
-
 #define ECHELLE 2
 
-void display_map(Map *map, player *joueur, SDL_Renderer *renderer){
-    Line *line = map->head;
+void display_map(Map *map, Player *joueur, SDL_Renderer *renderer){
+    Line *line = map->head_map;
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
             SDL_Surface *spriteSurface;
             SDL_Texture *spriteTexture;
             //if((i==joueur->y) && (j==joueur->x)){
-            //    spriteSurface = IMG_Load("sprites/ChariotTest.png");
+            //    spriteSurface = IMG_Load("sprites/Kairon.png");
             //}else{
                 if((line->tiles[j].type=='_') && (line->tiles[j].color=='g')){              //charge le sprite a afficher
                     spriteSurface = IMG_Load("sprites/Plaines.png");
@@ -73,25 +58,12 @@ void display_map(Map *map, player *joueur, SDL_Renderer *renderer){
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect))                                                   //finalement l'ajout à l'affichage
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
             }
-        if(i!=LENGTH){
+            if(i!=LENGTH){
             line=line->next;
         }
     }
 }
 
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
 
 int main(void){
     //globalement beaucoup d'initialisation diverses et variees
@@ -121,7 +93,7 @@ int main(void){
         exit(-1);
     }
 
-    SDL_Surface *spriteSurface = IMG_Load("sprites/ChariotTest.png");
+    SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png");
     if (!spriteSurface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
         exit(-1);
@@ -150,52 +122,39 @@ int main(void){
         exit(-1);
     }
 
-    int spriteWidth = (spriteFullWidth / 2);
-    int spriteHeight = (spriteFullHeight / 2);
-    int offset = 0;
-    int distance_x = 0;
-    int distance_y = 0;
-    player *joueur = malloc(sizeof(player));
-    joueur->x = LENGTH/2;
-    joueur->y = HEIGTH-3;
+    int spriteWidth = (spriteFullWidth / 4);
+    int spriteHeight = (spriteFullHeight / 4);
+    int offset_x = 0;
+    int offset_y = 0;
+    Game *game = initalise_game();
+    int distance_x = (LENGTH-1)/2;
+    int distance_y = HEIGHT-3;
 
     SDL_Event event;
     SDL_bool quit = SDL_FALSE;
-    Map* place = create_empty_map();
+    //Map* place = create_empty_map();
     //pour tester le chargement des diffrentes tuiles
-    place->head->next->next->next->next->next->next->tiles[5].type='#';
-    place->head->next->next->next->next->next->next->tiles[7].type='#';
-    place->head->next->next->next->next->next->next->tiles[9].type='#';
+    game->carte->head_map->next->next->next->next->next->next->tiles[5].type='#';
+    game->carte->head_map->next->next->next->next->next->next->tiles[7].type='#';
+    game->carte->head_map->next->next->next->next->next->next->tiles[9].type='#';
     for(int i=0; i<LENGTH; i++){
-        place->head->next->next->next->tiles[i].type='~';
+        game->carte->head_map->next->next->next->tiles[i].type='~';
     }
     //fin de la zone de changement de map
 
     //init_display(place, joueur);
     srand(time(NULL));
-    display_map(place, joueur, renderer);
+    display_map(game->carte, game->joueur, renderer);
     //affiche le joueur
     SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
-    SDL_Rect destRect = {.x = (joueur->x)*32*ECHELLE, .y = (joueur->y)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+    SDL_Rect destRect = {.x = distance_x*32*ECHELLE, .y = distance_y*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
     if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
     }
+    
     //push l'affichage
     SDL_RenderPresent(renderer);
 
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
-    //ATTENTION, SDL INVERSE x ET y
     while(!quit){
 
         //regarde si il y a des evenements clavier
@@ -209,25 +168,32 @@ int main(void){
             //    printf("aaaaaaaaaaaaaaaaaaa\n");
             //}
             if(event.key.keysym.sym == SDLK_z){
-                distance_y -= 1;
-                //moveup(joueur, place);
+                //distance_y -= 1;
+                move_up(game);
+                offset_y = 1;
+                offset_x += 1;
+                offset_x %= 4;
                 //printf("zzzzzzzzzzzzz\nzzzzzzzzzzzzz\nzzzzzzzzzzzzz\n");
             }else if(event.key.keysym.sym == SDLK_q){
-                distance_x -= 1;
-                offset -= 1;
-                offset %= 2;
-                if(offset<0){offset=0;}
-                //movedown(joueur, place);
+                //distance_x -= 1;
+                move_left(game);
+                offset_y = 3;
+                offset_x += 1;
+                offset_x %= 4;
                 //printf("qqqqqqqqqqqqq\nqqqqqqqqqqqqq\nqqqqqqqqqqqqq\n");
             }else if(event.key.keysym.sym == SDLK_s){
-                distance_y += 1;
-                //moveleft(joueur, place);
+                //distance_y += 1;
+                move_down(game);
+                offset_y = 0;
+                offset_x += 1;
+                offset_x %= 4;
                 //printf("sssssssssssss\nsssssssssssss\nsssssssssssss\n");
             }else if(event.key.keysym.sym == SDLK_d){
-                distance_x += 1;
-                offset += 1;
-                offset %= 2;
-                //move_right(joueur, place);
+                //distance_x += 1;
+                move_right(game);
+                offset_y = 2;
+                offset_x += 1;
+                offset_x %= 4;
                 //printf("ddddddddddddd\nddddddddddddd\nddddddddddddd\n");
             }else if(event.key.keysym.sym == SDLK_m){
                 quit = SDL_TRUE;
@@ -239,9 +205,10 @@ int main(void){
         if(SDL_RenderClear(renderer)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
         }
-        SDL_Rect spriteRect = {.x = offset*spriteWidth, .y = 0, .w = spriteWidth, .h = spriteHeight};
-        SDL_Rect destRect = {.x = (joueur->x+distance_x)*32*ECHELLE, .y = (joueur->y+distance_y)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-        display_map(place, joueur, renderer);
+        SDL_Rect spriteRect = {.x = offset_x*spriteWidth, .y = offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
+        //SDL_Rect destRect = {.x = (game->joueur->x+distance_x)*32*ECHELLE, .y = ((HEIGHT-game->joueur->y)+distance_y)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+        SDL_Rect destRect = {.x = (distance_x+game->joueur->x)*32*ECHELLE, .y = (distance_y-game->joueur->y)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+        display_map(game->carte, game->joueur, renderer);
         if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect))
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
         SDL_RenderPresent(renderer);
@@ -250,23 +217,9 @@ int main(void){
     //update_display(place, joueur);
     }
 
-    free(joueur);
+    destroy_game(game);
     SDL_DestroyTexture(spriteTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     return 0;
 }
-
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y
-//ATTENTION, SDL INVERSE x ET y

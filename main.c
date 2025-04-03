@@ -24,8 +24,8 @@ void restore_terminal(struct termios* settings){
     tcsetattr(STDIN_FILENO, TCSANOW, settings);
 }
 
-void init_display(Map *map, player *joueur){
-    Line *line = map->head;
+void init_display(Map *map, Player *joueur){
+    Line *line = map->head_map;
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
             if((i==joueur->y) && (j==joueur->x)){
@@ -41,9 +41,9 @@ void init_display(Map *map, player *joueur){
     }
 }
 
-void update_display(Map* map, player *joueur){
+void update_display(Map* map, Player *joueur){
     srand(time(NULL));
-    Line *line = map->head;
+    Line *line = map->head_map;
     printf("\033[%dA\r", HEIGTH);
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
@@ -61,7 +61,7 @@ void update_display(Map* map, player *joueur){
 int main(void){
     struct termios old_tio = init_terminal();
     Map* place = create_empty_map();
-    player *joueur = malloc(sizeof(player));
+    Player *joueur = malloc(sizeof(Player));
     joueur->x = LENGTH/2;
     joueur->y = HEIGTH-3;
     init_display(place, joueur);

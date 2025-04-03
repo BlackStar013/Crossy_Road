@@ -1,29 +1,33 @@
 #pragma once
 #include <stdbool.h>
-#include "map.h"
 
 //Table de couleur : 
-//g = green, r = red, b = blue, a = gray 
-
-//Aide : struct utilisée :
-typedef struct _tile {
+typedef struct _Tile {
     bool is_block;
     bool is_danger;
     char color;
     char type; //si on voudra en graphique des cases différentes
                    //Pas que en graphique 
-} tile;
+} Tile;
+//g = green, r = red, b = blue, a = gray 
+#define IS_BLOCK(tile) (tile.is_block)
+#define IS_DANGER(tile) (tile.is_danger)
+#define TYPE(tile) (tile.type)
+#define COLOR(tile) (tile.color)
 
-extern const tile plain;
+#define LENGHT 16
+#define HEIGHT 16
 
-extern const tile road;
+extern const Tile plain;
 
-extern const tile  wall;
+extern const Tile road;
 
-extern const tile water;
+extern const Tile  wall;
 
-extern const tile tree;
+extern const Tile water;
 
-extern const tile danger;
+extern const Tile tree;
 
-tile* clone(tile);
+extern const Tile danger;
+
+void clone(Tile dest,Tile src);

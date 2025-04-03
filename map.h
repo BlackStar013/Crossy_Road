@@ -3,13 +3,6 @@
 #include <stdbool.h>
 #include "tuiles.h"
 
-typedef struct _Tile {
-    bool is_block;
-    bool is_danger;
-    char color;
-    char type; //si on voudra en graphique des cases différentes
-                   //Pas que en graphique 
-} Tile;
 
 typedef struct _Line {
     //La tailles de tiles est LENGTH 
@@ -18,23 +11,19 @@ typedef struct _Line {
     struct _Line* next; 
 } Line;
 
-#define IS_BLOCK(tile) (tile->is_block)
-#define IS_DANGER(tile) (tile->is_danger)
-#define TYPE(tile) (tile->type)
-
 typedef struct _Map
 {
-    Line* buffer;
-    Line* head;
+    Line* head_buffer;
+    Line* head_map;
     Line* tail;
     /* data */
 }Map;
 
-typedef struct _player{
+typedef struct _Player{
     int x;
     int y;
     int character_id;
-} player;
+} Player;
 
 #define HEIGTH 16
 #define LENGTH 16
@@ -46,8 +35,12 @@ void suppression_tile(Map *carte,int x,int y); //? A quoi sert cette fonction vu
 bool coord_remplie(Map *carte,int x,int y); //Done
 bool carte_vide(Map *map); //Done
 int nb_tiles_remplies(Map *carte); //return LENGHT*HEIGHT?
-Tile* tile_carte(Map *carte,int x,int y); //Que fait cette fonction?
+Tile tile_map(Map *carte,int x,int y); //Elle renvoie qu'elle est la tile (x,y) , done
+
+Player* initialise_player(int);
 
 //fonctions bonus
 void add_buffer_line(Map* map);
 void remove_buffer_line(Map* map);
+void destroy_line(Line *line);
+void destroy_map(Map *map);
