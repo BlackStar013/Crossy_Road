@@ -67,8 +67,8 @@ Game *initalise_game(void){
     return game;
 }
 
-void move(int x, int y,Game* game){
-    if(!IS_BLOCK(tile_map(game->carte,game->joueur->x + x, game->joueur->y + y))){
+void move(int x, int y, Game* game){
+    if(!IS_BLOCK(tile_map(game->carte, game->joueur->x + x, game->joueur->y + y))){
         game->joueur->x += x;
         game->joueur->y += y;
     }
