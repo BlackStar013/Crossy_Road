@@ -63,6 +63,13 @@ bool carte_vide(Map* map){
     return true;
 }
 
+void switch_map(Map *carte){
+    carte->head_map = carte->head_map->prev;
+    Line* last = carte->tail;
+    carte->tail = carte->tail->prev;
+    //free_line(last);
+}
+
 //bool coord_remplie(Map *carte, int x, int y){
 //    if(x<0 || x>LENGTH || y<0 || y>HEIGTH){
 //        return false;
@@ -88,7 +95,7 @@ Tile tile_map(Map *carte,int x,int y){
     }
     Line* cur = carte->tail;
     while((y>0)){
-        cur = cur->next;
+        cur = cur->prev;
         y--;
     }
     return *((cur->tiles)+x);
@@ -97,8 +104,8 @@ Tile tile_map(Map *carte,int x,int y){
 
 Player* initialise_player(int id){
     Player* joueur = malloc(sizeof(Player));
-    joueur->x = 0;
-    joueur->y = 0;
+    joueur->x = (LENGTH-1)/2;
+    joueur->y = 2;
     joueur->character_id = id;
     return joueur;
 }

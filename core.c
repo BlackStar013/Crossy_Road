@@ -42,28 +42,52 @@ void generator_road(Game *game){
         clone(*tiles,road);
         tiles++;
     }
-    list_append(game->mobs,clone_mob(car_right, -1, LENGTH+1));
+    list_append(game->mobs,clone_mob(car_right, -car_right.length, LENGTH));
+    list_append(game->mobs,clone_mob(car_right, 5, LENGTH));
+    list_append(game->mobs,clone_mob(car_right, 9, LENGTH+1));
 }
 
-//Non fonctionnelllelelzeùjkghbnqeiùkzrfjnziKMYGDP
-void (*initialise_generator(void))(Game*){
-    void (*generators)(Game*) = malloc(NB_OBSTACLE*sizeof(void(Game*)));
-    //*(generators+FOREST) = generator_forest;
-    return NULL;
+
+void generator_obstacle(Game*game){
+    int nb = rand()%100+1;
+    int obstacle = -1; 
+    while(nb>=0){
+        obstacle++;
+        nb -= game->proba[obstacle];
+    }
+    switch (obstacle) {
+        case FOREST:
+        generator_forest(game);
+
+        case ROAD:
+        generator_road(game);
+
+        case RIVER:
+        generator_river(game);
+
+    }
 
 }
+
 
 ////FIn de partie création d'obastcales////
 
 
 Game *initalise_game(void){
+    srand(118);
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
     game->joueur = initialise_player(0); //0 for now
     game->score = 0;
     game->mobs = NULL;
     game->proba = initialise_proba();//A changer absolument !!!!! 
-    game->generator = initialise_generator(); //De même !!
+   return game;
+}
+
+void switch_game(Game* game){
+    switch_map(game->carte);
+    switch_mob(game->mobs);
+    move_down(game);
 }
 
 void move(int x, int y,Game* game){
@@ -87,5 +111,28 @@ void move_left(Game* game){
 
 void move_down(Game* game){
     move(0,-1,game);
+}
+
+bool test_death(Game* game){
+    if(a_death_mob_collide(game->mobs, game->joueur)){
+        return true;
+    } else if(a_mob_collide(game->mobs, game->joueur)){
+        return false;
+    } else {
+        return IS_DANGER(tile_map(game->carte, game->joueur->x, game->joueur->y));
+    }
+}
+
+void update_map(Game* game){
+    move_all_mob(game->mobs);
+    Liste_Mob* cur = game->mobs;
+    while(cur!=NULL){
+        if(cur->mob->move_x){
+            if(mob_collide(cur->mob, game->joueur)){
+                game->joueur += cur->mob->move_x;
+            }
+        }
+        cur = cur->next;
+    }
 }
 

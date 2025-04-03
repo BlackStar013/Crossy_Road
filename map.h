@@ -36,6 +36,7 @@ bool coord_remplie(Map *carte,int x,int y); //Done
 bool carte_vide(Map *map); //Done
 int nb_tiles_remplies(Map *carte); //return LENGHT*HEIGHT?
 Tile tile_map(Map *carte,int x,int y); //Elle renvoie qu'elle est la tile (x,y) , done
+void switch_map(Map *carte); //TODO LE FREE EST A FAIREEJBQHGFMKAboflcjb<sHGLJEGFUV
 
 Player* initialise_player(int);
 
