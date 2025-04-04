@@ -127,7 +127,7 @@ int main(void){
     int offset_x = 0;
     int offset_y = 0;
     Game *game = initalise_game();
-    int distance_y = HEIGHT-3;
+    update_game(game);
 
     SDL_Event event;
     SDL_bool quit = SDL_FALSE;
@@ -145,16 +145,16 @@ int main(void){
     //fin de la zone de changement de map
 
 // test print map
-    Line *line = game->carte->head_map;
-    for(int i=0; i<LENGTH; i++){
-        for(int j=0; j<HEIGHT; j++){
-            printf("%d", line->tiles[j].is_block);
-        }
-        printf("\n");
-        if(i<LENGTH){
-            line=line->next;
-        }
-    }
+    // Line *line = game->carte->head_map;
+    // for(int i=0; i<LENGTH; i++){
+    //     for(int j=0; j<HEIGHT; j++){
+    //         printf("%d", line->tiles[j].is_block);
+    //     }
+    //     printf("\n");
+    //     if(i<LENGTH){
+    //         line=line->next;
+    //     }
+    // }
 //fin test print map
 
     //init_display(place, joueur);
@@ -185,6 +185,9 @@ int main(void){
             if(event.key.keysym.sym == SDLK_z){
                 //distance_y -= 1;
                 move_up(game);
+                if(game->joueur->y>=3){
+                    switch_game(game);
+                }
                 offset_y = 1;
                 offset_x += 1;
                 offset_x %= 4;
@@ -228,6 +231,7 @@ int main(void){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
         SDL_RenderPresent(renderer);
         }
+        update_game(game);
         SDL_Delay(20);
     //update_display(place, joueur);
     }

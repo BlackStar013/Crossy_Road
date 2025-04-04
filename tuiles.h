@@ -30,4 +30,4 @@ extern const Tile tree;
 
 extern const Tile danger;
 
-void clone(Tile dest,Tile src);
+void clone(Tile *dest,Tile src);

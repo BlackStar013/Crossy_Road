@@ -18,9 +18,9 @@ const Tile tree = {true,false,'g','I'};
 
 const Tile danger = {false,true,'r','!'};
 
-void clone(Tile dest,Tile src){
-    dest.color = src.color;
-    dest.is_block = src.is_block;
-    dest.is_danger = src.is_danger;
-    dest.type = src.type;
+void clone(Tile *dest, Tile src){
+    dest->color = src.color;
+    dest->is_block = src.is_block;
+    dest->is_danger = src.is_danger;
+    dest->type = src.type;
 }

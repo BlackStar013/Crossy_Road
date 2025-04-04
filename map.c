@@ -9,7 +9,7 @@ Line* create_empty_line(Line* prev, Line* next){
     for(int i = 0; i<LENGTH; i++){
         (nl->tiles[i]).is_block = false;
         (nl->tiles[i]).is_danger = false;
-        (nl->tiles[i]).color = '\033[0m';
+        (nl->tiles[i]).color = 'g';
         (nl->tiles[i]).type = '_';
     }
     if(next != NULL){
@@ -63,6 +63,14 @@ bool carte_vide(Map* map){
     return true;
 }
 
+void switch_map(Map *carte){
+    carte->head_map = carte->head_map->prev;
+    Line* last = carte->tail;
+    carte->tail = carte->tail->prev;
+    destroy_line(last);
+}
+
+
 //bool coord_remplie(Map *carte, int x, int y){
 //    if(x<0 || x>LENGTH || y<0 || y>HEIGTH){
 //        return false;
@@ -87,7 +95,7 @@ Tile tile_map(Map *carte, int x, int y){
         return danger;
     }
     Line* cur = carte->tail;
-    while((y>0)){
+    while(y>0){
         cur = cur->prev;
         y--;
     }
