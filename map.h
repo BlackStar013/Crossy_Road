@@ -27,6 +27,7 @@ typedef struct _Player{
 
 #define HEIGTH 16
 #define LENGTH 16
+#define TAILLE_BUFFER 1
 
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done

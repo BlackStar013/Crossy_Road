@@ -93,7 +93,7 @@ int main(void){
         exit(-1);
     }
 
-    SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png");
+    SDL_Surface *spriteSurface = IMG_Load("sprites/Snitch.png");
     if (!spriteSurface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
         exit(-1);
@@ -141,6 +141,7 @@ int main(void){
     game->carte->head_map->next->next->next->next->next->tiles[9].is_block = true;
     for(int i=0; i<LENGTH; i++){
         game->carte->head_map->next->next->next->tiles[i].type='~';
+        game->carte->head_map->next->next->next->tiles[i].is_danger=true;
     }
     //fin de la zone de changement de map
 

@@ -117,8 +117,8 @@ void destroy_line(Line *line){
 }
 
 void destroy_map(Map *map){
-    Line *line = map->head_map;
-    for(int i=0; i<HEIGHT-1; i++){
+    Line *line = map->head_buffer;
+    for(int i=0; i<HEIGHT-1+TAILLE_BUFFER; i++){
         line=line->next;
         destroy_line(line->prev);
     }

@@ -2,6 +2,7 @@
 #include "core.h"
 #include "mob.h"
 #include "tuiles.h"
+#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -37,10 +38,9 @@ void generator_road(Game *game){
     *((game->proba)+FOREST) += 10;
     *((game->proba)+ROAD) -= 10;
     add_buffer_line(game->carte);
-    Tile* tiles = game->carte->head_buffer->tiles;
-    for(int i = 0; i>LENGTH; i++){
-        clone(tiles, road);
-        tiles++;
+    Line *line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], road);
     }
     list_append(game->mobs,clone_mob(car_right, -car_right.length, LENGTH));
     list_append(game->mobs,clone_mob(car_right, 5, LENGTH));
@@ -48,12 +48,13 @@ void generator_road(Game *game){
 }
 
 void generator_obstacle(Game*game){
-    int nb = rand()%100+1;
+    int nb = rand()%100;
     int obstacle = -1; 
     while(nb>=0){
         obstacle++;
+        //printf("nb, obstacle : %d %d\n", nb, obstacle);
         nb -= game->proba[obstacle];
-        printf("%d, obstacle : %d\n", nb, obstacle);
+        //printf("%d, obstacle : %d\n", nb, obstacle);
     }
     switch (obstacle) {
         case FOREST:
@@ -89,11 +90,21 @@ void switch_game(Game* game){
 
 
 void move(int x, int y, Game* game){
+    //printf("%d\n", IS_BLOCK(tile_map(game->carte, game->joueur->x + x, game->joueur->y + y)));
+    //sleep(3);
+    //printf("%d %d\n", game->joueur->x, game->joueur->y);
     if(!IS_BLOCK(tile_map(game->carte, game->joueur->x + x, game->joueur->y + y))){
         game->joueur->x += x;
         game->joueur->y += y;
     }
-    printf("%c %c\n", tile_map(game->carte, game->joueur->x, game->joueur->y).type, tile_map(game->carte, game->joueur->x, game->joueur->y).color);
+    //printf("%d %d\n", game->joueur->x, game->joueur->y);
+    //sleep(3);
+    //if(test_death(game)){
+    //    printf("vous êtes mort\n");
+    //}else{
+    //    printf("cool raoul\n");
+    //}
+    //printf("%c %c\n", tile_map(game->carte, game->joueur->x, game->joueur->y).type, tile_map(game->carte, game->joueur->x, game->joueur->y).color);
 }
 
 void move_up(Game* game){
@@ -134,7 +145,8 @@ void update_game(Game* game){
         cur = cur->next;
     }
     if(game->carte->head_buffer==game->carte->head_map){
-        generator_road(game);
+        //printf("je passe la\n");
+        generator_obstacle(game);
     }
 }
 
