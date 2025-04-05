@@ -4,15 +4,14 @@
 #include "tuiles.h"
 
 
-typedef struct _Line {
+typedef struct _Line{
     //La tailles de tiles est LENGTH 
     Tile* tiles;
     struct _Line* prev;
     struct _Line* next; 
 } Line;
 
-typedef struct _Map
-{
+typedef struct _Map{
     Line* head_buffer;
     Line* head_map;
     Line* tail;
@@ -23,11 +22,10 @@ typedef struct _Player{
     int x;
     int y;
     int character_id;
-} Player;
+}Player;
 
 #define HEIGTH 16
 #define LENGTH 16
-#define TAILLE_BUFFER 1
 
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done

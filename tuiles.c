@@ -10,7 +10,7 @@ const Tile plain = {false,false,'g','_'};
 
 const Tile road = {false,false,'r','_'};
 
-const Tile  wall = {true,false,'a','#'};
+const Tile wall = {true,false,'a','#'};
 
 const Tile water = {false,true,'b','~'};
 

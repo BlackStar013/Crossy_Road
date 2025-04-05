@@ -10,16 +10,35 @@
 Liste_Mob* list_create(Mob* mob){
     Liste_Mob* list = malloc(sizeof(Liste_Mob));
     list->mob = mob;
-    list->next=NULL;
+    list->next = NULL;
     return list;
 }
 
-void list_append(Liste_Mob* list, Mob* mob){
+Liste_Mob *list_append(Liste_Mob* list, Mob* mob){
     ///!\Toujour mettre des clones en entrer bande de malandrin
     if(list==NULL){
-        list = list_create(mob);
+        return list_create(mob);
     } else {
-        list_append(list->next,mob);
+        list->next = list_append(list->next, mob);
+        return list;
+    }
+}
+
+void print_rest_liste(Liste_Mob *list){
+    if(list==NULL){
+        printf(" ]\n");
+    }else{
+        printf(", %d", list->mob->y);
+        print_rest_liste(list->next);
+    }
+}
+
+void print_liste(Liste_Mob *list){
+    if(list==NULL){
+        printf("[]\n");
+    }else{
+        printf("[ %d", list->mob->id_mob);
+        print_rest_liste(list->next);
     }
 }
 
@@ -71,8 +90,12 @@ Mob* clone_mob(Mob mob, int x_ini, int y_ini){
     Mob *new_mob = malloc(sizeof(mob));
     new_mob->heigth = mob.heigth;
     new_mob->length = mob.length;
+    new_mob->is_death = mob.is_death;
+    new_mob->move_x = mob.move_x;
     new_mob->x = x_ini;
     new_mob->y = y_ini;
+    new_mob->delay = mob.delay;
+    new_mob->id_mob = mob.id_mob;
     new_mob->path = mob.path;
     return new_mob;
 }
@@ -113,8 +136,8 @@ void path_car_right(Mob *car){
     }
 }
 
-const Mob car_right = {1,2,true,0,0,0,0,path_car_right}; //Note : x et y ini ne veulent rien dire ici
-const Mob bus_right = {1,4,true,0,0,0,0,path_car_right};
+const Mob car_right = {1,2,true,0,0,0,0,CAR_RIGHT,path_car_right}; //Note : x et y ini ne veulent rien dire ici
+const Mob bus_right = {1,4,true,0,0,0,0,BUS_RIGHT,path_car_right};
 
 void path_car_left(Mob *car){
     if(!car->delay){
@@ -129,8 +152,8 @@ void path_car_left(Mob *car){
     }
 }
 
-const Mob car_left = {1,2,true,0,0,0,0,path_car_left}; 
-const Mob bus_left = {1,4,true,0,0,0,0,path_car_left};
+const Mob car_left = {1,2,true,0,0,0,0,CAR_LEFT,path_car_left}; 
+const Mob bus_left = {1,4,true,0,0,0,0,BUS_LEFT,path_car_left};
 
 
 

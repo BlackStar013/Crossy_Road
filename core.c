@@ -10,11 +10,11 @@
 
 int* initialise_proba(void){
     int* proba = malloc((NB_OBSTACLE)*sizeof(int));
-    for(int i = 0;i<NB_OBSTACLE;i++){
+    for(int i = 0; i<NB_OBSTACLE; i++){
         *(proba+i) = 0;
     }
-    *(proba+FOREST) = 20;
-    *(proba+ROAD) = 80;
+    *(proba+FOREST) = 100;
+    *(proba+ROAD) = 0;
     *(proba+RIVER) = 0;
     return proba;
 }
@@ -23,28 +23,27 @@ void generator_forest(Game *game){
     *((game->proba)+FOREST) -= 10;
     *((game->proba)+ROAD) += 10;
     add_buffer_line(game->carte);
-    Tile* tiles = game->carte->head_buffer->tiles;
-    for(int i = 0;i>LENGTH;i++){
-        if((i==5)||(i==6)||(i=9)){
-            clone(tiles,tree);
-        } else {
-            clone(tiles,plain);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        if((i==5)||(i==6)||(i==9)){
+            clone(&line->tiles[i], wall);
+        }else{
+            clone(&line->tiles[i], plain);
         }
-        tiles++;
     }
 }
 
 void generator_road(Game *game){
-    *((game->proba)+FOREST) += 10;
-    *((game->proba)+ROAD) -= 10;
+    *((game->proba)+FOREST) += 5;
+    *((game->proba)+ROAD) -= 5;
     add_buffer_line(game->carte);
     Line *line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], road);
     }
-    list_append(game->mobs,clone_mob(car_right, -car_right.length, LENGTH));
-    list_append(game->mobs,clone_mob(car_right, 5, LENGTH));
-    list_append(game->mobs,clone_mob(car_right, 9, LENGTH+1));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, -car_right.length, LENGTH-1));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, 5, LENGTH-1));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, 9, LENGTH-1));
 }
 
 void generator_obstacle(Game*game){
@@ -76,7 +75,7 @@ Game *initalise_game(void){
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
     game->joueur = initialise_player(0); //0 for now
-    game->score = 0;
+    game->score = -1;
     game->mobs = NULL;
     game->proba = initialise_proba();
     return game;
@@ -86,6 +85,7 @@ void switch_game(Game* game){
     switch_map(game->carte);
     switch_mob(game->mobs);
     move_down(game);
+    game->score++;
 }
 
 
@@ -145,7 +145,6 @@ void update_game(Game* game){
         cur = cur->next;
     }
     if(game->carte->head_buffer==game->carte->head_map){
-        //printf("je passe la\n");
         generator_obstacle(game);
     }
 }

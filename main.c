@@ -51,7 +51,7 @@ void update_display(Map* map, Player *joueur){
             if((HEIGHT-i-1==joueur->y) && (j==joueur->x)){
                 printf(" ");
             }else{
-                printf("\033[32m%c",line->tiles[j].type);
+                printf("%c",line->tiles[j].type);
             }
         }
         printf("\n");
