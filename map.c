@@ -123,5 +123,4 @@ void destroy_map(Map *map){
         destroy_line(line);
         line=mem;
     }
-    free(map);
 }

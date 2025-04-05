@@ -13,15 +13,15 @@ int* initialise_proba(void){
     for(int i = 0; i<NB_OBSTACLE; i++){
         *(proba+i) = 0;
     }
-    *(proba+FOREST) = 100;
-    *(proba+ROAD) = 0;
+    *(proba+FOREST) = 50;
+    *(proba+ROAD) = 50;
     *(proba+RIVER) = 0;
     return proba;
 }
 
 void generator_forest(Game *game){
-    *((game->proba)+FOREST) -= 10;
-    *((game->proba)+ROAD) += 10;
+    //*((game->proba)+FOREST) -= 10;
+    //*((game->proba)+ROAD) += 10;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -34,36 +34,43 @@ void generator_forest(Game *game){
 }
 
 void generator_road(Game *game){
-    *((game->proba)+FOREST) += 5;
-    *((game->proba)+ROAD) -= 5;
+    //*((game->proba)+FOREST) += 5;
+    //*((game->proba)+ROAD) -= 5;
     add_buffer_line(game->carte);
     Line *line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], road);
     }
-    game->mobs = list_append(game->mobs, clone_mob(car_right, -car_right.length, LENGTH-1));
-    game->mobs = list_append(game->mobs, clone_mob(car_right, 5, LENGTH-1));
-    game->mobs = list_append(game->mobs, clone_mob(car_right, 9, LENGTH-1));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, -car_right.length, LENGTH));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, 5, LENGTH));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, 9, LENGTH));
 }
 
 void generator_obstacle(Game*game){
     int nb = rand()%100;
     int obstacle = -1; 
-    while(nb>=0){
+    //printf("avant nb, obstacle : %d %d\n", nb, obstacle);
+    while(nb>0){
         obstacle++;
-        //printf("nb, obstacle : %d %d\n", nb, obstacle);
+        //printf("pendant avant nb, obstacle : %d %d\n", nb, obstacle);
         nb -= game->proba[obstacle];
-        //printf("%d, obstacle : %d\n", nb, obstacle);
+        //printf("%d, pendant apres obstacle : %d\n", nb, obstacle);
     }
+    //printf("apres nb, obstacle : %d %d\n", nb, obstacle);
+    //printf("bonjour\n");
     switch (obstacle) {
         case FOREST:
+        //printf("comment\n");
         generator_forest(game);
+        break;
 
         case ROAD:
+        //printf("ca va\n");
         generator_road(game);
+        break;
 
-        //case RIVER:
-        //generator_river(game);
+    //     //case RIVER:
+    //     //generator_river(game);
 
     }
 

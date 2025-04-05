@@ -103,7 +103,7 @@ int main(void){
     }
 
     Game *game = initalise_game();
-    //update_game(game);
+    update_game(game);
 
     SDL_Event event;
     SDL_bool quit = SDL_FALSE;
@@ -119,7 +119,7 @@ int main(void){
         game->carte->head_map->next->next->next->tiles[i].type='~';
         game->carte->head_map->next->next->next->tiles[i].is_danger=true;
     }
-    //game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5));
     //fin de la zone de changement de map
 
 // test print map
@@ -172,10 +172,13 @@ int main(void){
     
     //push l'affichage
     SDL_RenderPresent(renderer);
+    //print_liste(game->mobs);
 
     while(!quit){
-        SDL_WaitEvent(&event);
-
+        //if(SDL_RenderClear(renderer)){
+        //    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
+        //}
+        display_map(game->carte, game->joueur, renderer);
         Liste_Mob *cur = game->mobs;
         while(cur!=NULL){
             if(cur->mob->id_mob==CAR_RIGHT){
@@ -206,13 +209,45 @@ int main(void){
             }
             cur = cur->next;
         }
+        SDL_Surface *spriteSurface = IMG_Load("sprites/Snitch.png");
+        if (!spriteSurface) {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
+            exit(-1);
+        }
+        SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+        if(!spriteTexture){
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+            exit(-1);
+        }
+        SDL_FreeSurface(spriteSurface);
+    
+        int spriteFullWidth;
+        int spriteFullHeight;
+        if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+            exit(-1);
+        }
+    
+        int spriteWidth = (spriteFullWidth / 4);
+        int spriteHeight = (spriteFullHeight / 4);
+        // if(SDL_RenderClear(renderer)){
+        //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
+        // }
+        SDL_Rect spriteRect = {.x = offset_x*spriteWidth, .y = offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
+        //SDL_Rect destRect = {.x = (game->joueur->x+distance_x)*32*ECHELLE, .y = ((HEIGHT-game->joueur->y)+distance_y)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+        SDL_Rect destRect = {.x = (game->joueur->x)*32*ECHELLE, .y = (HEIGHT-game->joueur->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+        display_map(game->carte, game->joueur, renderer);
+        if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+        }
         SDL_RenderPresent(renderer);
-
+        update_game(game);
+        SDL_PollEvent(&event);
         //regarde si il y a des evenements clavier
         if(event.type == SDL_QUIT){
             printf("je rentre ici\n");
             quit = SDL_TRUE;
-        }else if(event.type == SDL_KEYDOWN){
+        }else if(event.type == SDL_KEYUP){
             //print_liste(game->mobs);
             //printf("%d\n", offset);
             //if(event.key.keysym.scancode == SDL_SCANCODE_A){
@@ -252,47 +287,12 @@ int main(void){
             }else if(event.key.keysym.sym == SDLK_m){
                 quit = SDL_TRUE;
             }
+        }
         //SDL_Color const BACKGROUND_COLOR = {.r = 0x00, .g = 0x00, .b = 0x00, .a = SDL_ALPHA_OPAQUE};
         //if(SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b, BACKGROUND_COLOR.a)){
         //    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur pour la couleur de fond : %s", SDL_GetError());
         //}
-        
-        SDL_Surface *spriteSurface = IMG_Load("sprites/Snitch.png");
-        if (!spriteSurface) {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
-            exit(-1);
-        }
-        SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
-        if(!spriteTexture){
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
-            exit(-1);
-        }
-        SDL_FreeSurface(spriteSurface);
-    
-        int spriteFullWidth;
-        int spriteFullHeight;
-        if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
-            exit(-1);
-        }
-    
-        int spriteWidth = (spriteFullWidth / 4);
-        int spriteHeight = (spriteFullHeight / 4);
-        // if(SDL_RenderClear(renderer)){
-        //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-        // }
-        SDL_Rect spriteRect = {.x = offset_x*spriteWidth, .y = offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
-        //SDL_Rect destRect = {.x = (game->joueur->x+distance_x)*32*ECHELLE, .y = ((HEIGHT-game->joueur->y)+distance_y)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-        SDL_Rect destRect = {.x = (game->joueur->x)*32*ECHELLE, .y = (HEIGHT-game->joueur->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-        display_map(game->carte, game->joueur, renderer);
-        if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
-        }
-        update_game(game);
-        SDL_RenderPresent(renderer);
-        SDL_Delay(20);
-    //update_display(place, joueur);
-        }
+        //update_display(place, joueur);
         // Liste_Mob *cur = game->mobs;
         // while(cur!=NULL){
         //     if(cur->mob->id_mob==CAR_RIGHT){
@@ -325,7 +325,6 @@ int main(void){
         //     cur = cur->next;
         // }
     }
-
     //destroy_game(game);
     SDL_DestroyTexture(spriteTexture);
     SDL_DestroyRenderer(renderer);
