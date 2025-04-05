@@ -21,6 +21,8 @@ typedef struct _Map{
 typedef struct _Player{
     int x;
     int y;
+    int offset_x;
+    int offset_y;
     int character_id;
 }Player;
 

@@ -25,14 +25,26 @@ void restore_terminal(struct termios* settings){
     tcsetattr(STDIN_FILENO, TCSANOW, settings);
 }
 
-void init_display(Map *map, Player *joueur){
-    Line *line = map->head_map;
+void init_display(Game *game){
+    Line *line = game->carte->head_map;
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGHT-i-1==joueur->y) && (j==joueur->x)){
+            if((HEIGHT-i-1==game->joueur->y) && (j==game->joueur->x)){
                 printf(" ");
             }else{
-                printf("%c", line->tiles[j].type);
+                Liste_Mob *liste = game->mobs;
+                bool trouve = false;
+                while((!trouve) && (liste!=NULL)){
+                    if((HEIGHT-i-1==liste->mob->y) && (j==liste->mob->x)){
+                        printf("%d", liste->mob->id_mob);
+                        trouve = true;
+                    }else{
+                        liste=liste->next;
+                    }
+                }
+                if(!trouve){
+                    printf("%c", line->tiles[j].type);
+                }
             }
         }
         printf("\n");
@@ -42,16 +54,28 @@ void init_display(Map *map, Player *joueur){
     }
 }
 
-void update_display(Map* map, Player *joueur){
+void update_display(Game *game){
     srand(time(NULL));
-    Line *line = map->head_map;
+    Line *line = game->carte->head_map;
     printf("\033[%dA\r", HEIGTH);
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGHT-i-1==joueur->y) && (j==joueur->x)){
+            if((HEIGHT-i-1==game->joueur->y) && (j==game->joueur->x)){
                 printf(" ");
             }else{
-                printf("%c",line->tiles[j].type);
+                Liste_Mob *liste = game->mobs;
+                bool trouve = false;
+                while((!trouve) && (liste!=NULL)){
+                    if((HEIGHT-i-1==liste->mob->y) && (j==liste->mob->x)){
+                        printf("%d", liste->mob->id_mob);
+                        trouve = true;
+                    }else{
+                        liste=liste->next;
+                    }
+                }
+                if(!trouve){
+                    printf("%c", line->tiles[j].type);
+                }
             }
         }
         printf("\n");
@@ -66,6 +90,7 @@ void update_display(Map* map, Player *joueur){
 int main(void){
     struct termios old_tio = init_terminal();
     Game *game = initalise_game();
+    update_game(game);
     game->carte->head_map->next->next->next->next->next->tiles[5].type='#';
     game->carte->head_map->next->next->next->next->next->tiles[5].is_block = true;
     game->carte->head_map->next->next->next->next->next->tiles[7].type='#';
@@ -76,16 +101,21 @@ int main(void){
         game->carte->head_map->next->next->next->tiles[i].type='~';
         game->carte->head_map->next->next->next->tiles[i].is_danger=true;
     }
-    update_game(game);
+    game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5));
+    //print_liste(game->mobs);
+    //sleep(1);
     //Map* place = create_empty_map();
     //Player *joueur = malloc(sizeof(Player));
     //joueur->x = LENGTH/2;
     //joueur->y = HEIGTH-3;
-    init_display(game->carte, game->joueur);
+    init_display(game);
     srand(time(NULL));
     char ch;
     bool quit = false;
     while(!quit){
+        //printf("bonjourrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\n");
+        update_game(game);
+        update_display(game);
         read(STDIN_FILENO, &ch, 1);
         //printf("Key pressed: %c\n", ch);
         if (ch == 'm') {
@@ -116,11 +146,9 @@ int main(void){
         }
     //printf("%d %d\n", game->joueur->x, game->joueur->y);
     //sleep(3);
-    update_game(game);
-    update_display(game->carte, game->joueur);
     }
     //free(joueur);
-    destroy_game(game);
+    //destroy_game(game);
     restore_terminal(&old_tio);
     return 0;
 }

@@ -107,13 +107,15 @@ Player* initialise_player(int id){
     Player* joueur = malloc(sizeof(Player));
     joueur->x = (LENGTH-1)/2;
     joueur->y = 2;
+    joueur->offset_x = 0;
+    joueur->offset_y = 0;
     joueur->character_id = id;
     return joueur;
 }
 
 void destroy_line(Line *line){
     free(line->tiles);
-    free(line);
+    //free(line);
 }
 
 void destroy_map(Map *map){

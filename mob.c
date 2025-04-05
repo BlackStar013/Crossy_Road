@@ -130,7 +130,7 @@ void path_car_right(Mob *car){
         } else {
             car->x +=1; //À remplacer par move_mob (?)
         }
-        car->delay = 20;
+        car->delay = 0;
     } else {
         car->delay--;
     }
