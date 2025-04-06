@@ -15,6 +15,7 @@
 #define ECHELLE 2
 
 void display_map(Map *map, SDL_Renderer *renderer){
+    //parcours toute la map ligne par ligne et charge le sprite correspondant
     Line *line = map->head_map;
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
@@ -30,27 +31,32 @@ void display_map(Map *map, SDL_Renderer *renderer){
             }else{
                 spriteSurface = IMG_Load("sprites/Planche.png");
             }
+            // creer la surface pour afficher
             if (!spriteSurface) {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
             }
             int spriteFullWidth;
             int spriteFullHeight;
-            SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);                                                // créer la surface avec le sprite
+            //creer la textire avec la surface et le sprite
+            SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
             if(!spriteTexture){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
                 exit(-1);
             }
             SDL_FreeSurface(spriteSurface);
-            if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {                             //creer la texture 
+            if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) { 
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
                 exit(-1);
             }
-            int spriteWidth = (spriteFullWidth / 2)*ECHELLE;
-            int spriteHeight = (spriteFullHeight / 2)*ECHELLE;
+            // spriteWidth correspond à la largeur du fichier, ici je me sers de la taille des cases simples pour l'échelle, donc pas de division ni produit
+            int spriteWidth = spriteFullWidth;   //sinon (spriteFullWidth / nbSpritesInSprite)*ECHELLE
+            int spriteHeight = spriteFullHeight;
+            // recupère dans le fichier la position depuis en haut à gauche (d'ou le (0, 0)pour x et y) et la taille calculée au dessus
             SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
+            // x et y correspondent à la position où on va l'afficher, et w et h sa taille
             SDL_Rect destRect = {.x = 32*j*ECHELLE, .y = 32*i*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-            if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){                                                //finalement l'ajout à l'affichage
+            if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
@@ -62,6 +68,7 @@ void display_map(Map *map, SDL_Renderer *renderer){
 }
 
 void display_joueur(Player *joueur, SDL_Renderer *renderer){
+    // affiche le joueur selon le même principe que ci-dessus
     SDL_Surface *spriteSurface = IMG_Load("sprites/Snitch.png");
     if (!spriteSurface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
@@ -80,7 +87,7 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
         exit(-1);
     }
-    int spriteWidth = (spriteFullWidth / 4);
+    int spriteWidth = (spriteFullWidth / 4); //ici pour le joueur, on a 4 lignes et 4 colonnes pour les 4 orientations et 4 "gestes" d'où le /4
     int spriteHeight = (spriteFullHeight / 4);
     SDL_Rect spriteRect = {.x = joueur->offset_x*spriteWidth, .y = joueur->offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
     SDL_Rect destRect = {.x = (joueur->x)*32*ECHELLE, .y = (HEIGHT-joueur->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
@@ -91,12 +98,13 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer){
 }
 
 void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
+    // affiche les mobs un par un selon le même principe que ci-ci-dessus-dessus
     SDL_Surface *spriteSurface = IMG_Load("sprites/Chariot.png");
-    if (!spriteSurface) {
+    if (!spriteSurface){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
         exit(-1);
     }
-    SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);                                                // créer la surface avec le sprite
+    SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
     if(!spriteTexture){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
         exit(-1);
@@ -104,14 +112,14 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
     SDL_FreeSurface(spriteSurface);
     int spriteFullWidth;
     int spriteFullHeight;
-    if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {                             //creer la texture 
+    if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
         exit(-1);
     }
-    int spriteWidth = (spriteFullWidth / 2);
+    int spriteWidth = (spriteFullWidth / 2); // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
     int spriteHeight = (spriteFullHeight / 2);
     while(liste!=NULL){
-        if(liste->mob->id_mob==CAR_RIGHT && !liste->mob->delay){
+        if(liste->mob->id_mob==CAR_RIGHT){
             SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
             SDL_Rect destRect = {.x = liste->mob->x*32*ECHELLE, .y = (HEIGHT-liste->mob->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
@@ -124,6 +132,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
 }
 
 void display_all(Game *game, SDL_Renderer *renderer){
+    // affiche toute la carte dans l'ordre, map puis mobs puis joueur
     if(SDL_RenderClear(renderer)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
     }
@@ -162,16 +171,26 @@ int main(void){
         exit(-1);
     }
 
+    // permet de choisir un arrière plan, mais pas utile là puis on recouvre toute la fenetre
     //SDL_Color const BACKGROUND_COLOR = {.r=0x00, .g=0x00, .b=0x00, .a=SDL_ALPHA_OPAQUE};
     //if(SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b, BACKGROUND_COLOR.a)){
     //    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur pour la couleur de fond : %s", SDL_GetError());
     //}
 
+    //vide la fenetre
     if(SDL_RenderClear(renderer)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
     }
 
     Game *game = initalise_game();
+    // Line *line = game->carte->head_map;
+    // while(line!=NULL){
+    //     for(int i=0; i<HEIGHT; i++){
+    //         printf("%c", line->tiles[i].type);
+    //     }
+    //     printf("\n");
+    //     line=line->next;
+    // }
     update_game(game);
 
     SDL_Event event;
@@ -187,266 +206,74 @@ int main(void){
         game->carte->head_map->next->next->next->tiles[i].type='~';
         game->carte->head_map->next->next->next->tiles[i].is_danger=true;
     }
+    game->carte->head_map->next->next->next->tiles[7].type='_';
+    game->carte->head_map->next->next->next->tiles[7].is_danger=false;
     //game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5));
     //fin de la zone de changement de map
 
-    // SDL_Surface *spriteSurface = IMG_Load("sprites/Snitch.png");
-    // if (!spriteSurface) {
-    //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
-    //     exit(-1);
-    // }
-    // SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
-    // if(!spriteTexture){
-    //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
-    //     exit(-1);
-    // }
-    // SDL_FreeSurface(spriteSurface);
-
-    // if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
-    //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
-    //     exit(-1);
-    // }
-
-    // int spriteWidth = (spriteFullWidth / 4);
-    // int spriteHeight = (spriteFullHeight / 4);
-    // int offset_x = 0;
-    // int offset_y = 0;
-    // if(SDL_RenderClear(renderer)){
-    //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-    // // }
-    // //init_display(place, joueur);
-    // srand(time(NULL));
-    // // display_map(game->carte, renderer);
-    //affiche le joueur
-    // SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
-    // SDL_Rect destRect = {.x = game->joueur->x*32*ECHELLE, .y = (HEIGHT-game->joueur->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-    // if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
-    //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
-    // }
-    // while(cur!=NULL){
-    //     if(cur->mob->id_mob==CAR_RIGHT && !cur->mob->delay){
-    //         int spriteFullWidth;
-    //         int spriteFullHeight;
-    //         int spriteWidth = (spriteFullWidth / 2);
-    //         int spriteHeight = (spriteFullHeight / 2);
-    //         SDL_Surface *spriteSurface = IMG_Load("sprites/Chariot.png");
-    //         if (!spriteSurface) {
-    //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
-    //             exit(-1);
-    //         }
-    //         spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);                                                // créer la surface avec le sprite
-    //         if(!spriteTexture){
-    //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
-    //             exit(-1);
-    //         }
-    //         SDL_FreeSurface(spriteSurface);
-    //         if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {                             //creer la texture 
-    //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
-    //             exit(-1);
-    //         }
-    //         SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
-    //         SDL_Rect destRect = {.x = cur->mob->x*32*ECHELLE, .y = (HEIGHT-cur->mob->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-    //         if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
-    //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
-    //         }
+    //a servi pour vérifier que la map s'affichait bien
+    // Line *line = game->carte->head_map;
+    // while(line!=NULL){
+    //     for(int i=0; i<HEIGHT; i++){
+    //         printf("%c", line->tiles[i].type);
     //     }
-    //     cur = cur->next;
-    //     //SDL_RenderPresent(renderer);                
+    //     printf("\n");
+    //     line=line->next;
     // }
-    //push l'affichage
-    //print_liste(game->mobs);
-    // SDL_RenderPresent(renderer);
+    // printf("\n");
+
     while(!quit){
+        // printf("score :%d\n", game->score);
         update_game(game);
+        // test la mort, pour le moment juste quitte le jeu
+        if(test_death(game)){
+            if(SDL_RenderClear(renderer)){
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
+            }
+            quit = SDL_TRUE;
+        }
         display_all(game, renderer);
-        // Liste_Mob *cur = game->mobs;
-        //printf("%d\n", delai);
-        //if(SDL_RenderClear(renderer)){
-        //    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-        //}
+       
+        // une fois l'affichage fait, on regarde si le joueur se déplace
         SDL_PollEvent(&event);
         //regarde si il y a des evenements clavier
         if(event.type == SDL_QUIT){
             printf("je rentre ici\n");
             quit = SDL_TRUE;
         }else if(event.type == SDL_KEYUP){
-            //print_liste(game->mobs);
-            //printf("%d\n", offset);
-            //if(event.key.keysym.scancode == SDL_SCANCODE_A){
-            //    printf("aaaaaaaaaaaaaaaaaaa\n");
-            //}
+            // bouge le joueur dans la direction selon la touche pressée, ZQSD, ou quitte avec M
             if(event.key.keysym.sym == SDLK_z){
-                //distance_y -= 1;
                 move_up(game);
+                // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
                 if(game->joueur->y>=3){
                     switch_game(game);
                 }
+                //sert à changement l'image du joueur quand il se déplace
                 game->joueur->offset_y = 1;
                 game->joueur->offset_x += 1;
                 game->joueur->offset_x %= 4;
-                //printf("zzzzzzzzzzzzz\nzzzzzzzzzzzzz\nzzzzzzzzzzzzz\n");
             }else if(event.key.keysym.sym == SDLK_q){
-                //distance_x -= 1;
                 move_left(game);
                 game->joueur->offset_y = 3;
                 game->joueur->offset_x += 1;
                 game->joueur->offset_x %= 4;
-                //printf("qqqqqqqqqqqqq\nqqqqqqqqqqqqq\nqqqqqqqqqqqqq\n");
             }else if(event.key.keysym.sym == SDLK_s){
-                //distance_y += 1;
                 move_down(game);
                 game->joueur->offset_y = 0;
                 game->joueur->offset_x += 1;
                 game->joueur->offset_x %= 4;
-                //printf("sssssssssssss\nsssssssssssss\nsssssssssssss\n");
             }else if(event.key.keysym.sym == SDLK_d){
-                //distance_x += 1;
                 move_right(game);
                 game->joueur->offset_y = 2;
                 game->joueur->offset_x += 1;
                 game->joueur->offset_x %= 4;
-                //printf("ddddddddddddd\nddddddddddddd\nddddddddddddd\n");
             }else if(event.key.keysym.sym == SDLK_m){
                 quit = SDL_TRUE;
             }
         }
         //SDL_Delay(50);
-            // SDL_Surface *spriteSurface = IMG_Load("sprites/Snitch.png");
-            // if (!spriteSurface) {
-            //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
-            //     exit(-1);
-            // }
-            // SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
-            // if(!spriteTexture){
-            //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
-            //     exit(-1);
-            // }
-            // SDL_FreeSurface(spriteSurface);
-        
-            // int spriteFullWidth;
-            // int spriteFullHeight;
-            // if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
-            //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
-            //     exit(-1);
-            // }
-        
-            // int spriteWidth = (spriteFullWidth / 4);
-            // int spriteHeight = (spriteFullHeight / 4);
-            // // if(SDL_RenderClear(renderer)){
-            // //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-            // // }
-            // SDL_Rect spriteRect = {.x = offset_x*spriteWidth, .y = offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
-            // //SDL_Rect destRect = {.x = (game->joueur->x+distance_x)*32*ECHELLE, .y = ((HEIGHT-game->joueur->y)+distance_y)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-            // SDL_Rect destRect = {.x = (game->joueur->x)*32*ECHELLE, .y = (HEIGHT-game->joueur->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-            // display_map(game->carte, game->joueur, renderer);
-            // if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
-            //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
-            // }
-            //SDL_RenderPresent(renderer);
-
-            //display_map(game->carte, game->joueur, renderer);
-            // while(cur!=NULL){
-            //     if(cur->mob->id_mob==CAR_RIGHT && !cur->mob->delay){
-            //         int spriteFullWidth;
-            //         int spriteFullHeight;
-            //         int spriteWidth = (spriteFullWidth / 2);
-            //         int spriteHeight = (spriteFullHeight / 2);
-            //         SDL_Surface *spriteSurface = IMG_Load("sprites/Chariot.png");
-            //         if (!spriteSurface) {
-            //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
-            //             exit(-1);
-            //         }
-            //         spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);                                                // créer la surface avec le sprite
-            //         if(!spriteTexture){
-            //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
-            //             exit(-1);
-            //         }
-            //         SDL_FreeSurface(spriteSurface);
-            //         if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {                             //creer la texture 
-            //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
-            //             exit(-1);
-            //         }
-            //         SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
-            //         SDL_Rect destRect = {.x = cur->mob->x*32*ECHELLE, .y = (HEIGHT-cur->mob->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-            //         if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
-            //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
-            //         }
-            //     }
-            //     cur = cur->next;
-            //     //SDL_RenderPresent(renderer);                
-            // }
-        
-            // SDL_RenderPresent(renderer);
-            // SDL_Surface *spriteSurface = IMG_Load("sprites/Snitch.png");
-            // if (!spriteSurface) {
-            //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
-            //     exit(-1);
-            // }
-            // SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
-            // if(!spriteTexture){
-            //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
-            //     exit(-1);
-            // }
-            // SDL_FreeSurface(spriteSurface);
-        
-            // int spriteFullWidth;
-            // int spriteFullHeight;
-            // if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
-            //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
-            //     exit(-1);
-            // }
-        
-            // int spriteWidth = (spriteFullWidth / 4);
-            // int spriteHeight = (spriteFullHeight / 4);
-            // // if(SDL_RenderClear(renderer)){
-            // //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-            // // }
-            // SDL_Rect spriteRect = {.x = offset_x*spriteWidth, .y = offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
-            // //SDL_Rect destRect = {.x = (game->joueur->x+distance_x)*32*ECHELLE, .y = ((HEIGHT-game->joueur->y)+distance_y)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-            // SDL_Rect destRect = {.x = (game->joueur->x)*32*ECHELLE, .y = (HEIGHT-game->joueur->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-            // display_map(game->carte, game->joueur, renderer);
-            // if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
-            //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
-            // }
-            // SDL_RenderPresent(renderer);
-        //SDL_Color const BACKGROUND_COLOR = {.r = 0x00, .g = 0x00, .b = 0x00, .a = SDL_ALPHA_OPAQUE};
-        //if(SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b, BACKGROUND_COLOR.a)){
-        //    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur pour la couleur de fond : %s", SDL_GetError());
-        //}
-        //update_display(place, joueur);
-        // Liste_Mob *cur = game->mobs;
-        // while(cur!=NULL){
-        //     if(cur->mob->id_mob==CAR_RIGHT){
-        //         int spriteFullWidth;
-        //         int spriteFullHeight;
-        //         int spriteWidth = (spriteFullWidth / 2);
-        //         int spriteHeight = (spriteFullHeight / 2);
-        //         SDL_Surface *spriteSurface = IMG_Load("sprites/Chariot.png");
-        //         if (!spriteSurface) {
-        //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
-        //             exit(-1);
-        //         }
-        //         spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);                                                // créer la surface avec le sprite
-        //         if(!spriteTexture){
-        //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
-        //             exit(-1);
-        //         }
-        //         SDL_FreeSurface(spriteSurface);
-        //         if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {                             //creer la texture 
-        //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
-        //             exit(-1);
-        //         }
-        //         SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
-        //         SDL_Rect destRect = {.x = cur->mob->x*32*ECHELLE, .y = (HEIGHT-cur->mob->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
-        //         if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
-        //             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
-        //         }
-        //         SDL_RenderPresent(renderer);
-        //     }
-        //     cur = cur->next;
-        // }
     }
-    //destroy_game(game);
+    destroy_game(game);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     return 0;

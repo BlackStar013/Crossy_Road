@@ -53,3 +53,5 @@ void move_all_mob(Liste_Mob* list);
 void switch_mob(Liste_Mob* list);
 bool a_death_mob_collide(Liste_Mob* list,Player* player);
 bool a_mob_collide(Liste_Mob* list,Player* player);
+void destroy_mobs(Liste_Mob *liste);
+void destroy_liste_mob(Liste_Mob *liste);

@@ -5,7 +5,6 @@
 #include <stdbool.h>
 
 
-
 const Tile plain = {false,false,'g','_'};
 
 const Tile road = {false,false,'r','_'};

@@ -13,7 +13,7 @@ int main(void){
     list_append(liste, clone_mob(car_right, 0, 0));
     list_append(liste, clone_mob(car_right, 5, 5));
     print_liste(liste);
-    //destroy_mobs(liste);
+    destroy_liste_mob(liste);
     printf("les tests sont passés\n");
     return 0;
 }

@@ -9,7 +9,7 @@ typedef struct _Line{
     Tile* tiles;
     struct _Line* prev;
     struct _Line* next; 
-} Line;
+}Line;
 
 typedef struct _Map{
     Line* head_buffer;

@@ -1,6 +1,3 @@
-//#include <SDL2/SDL.h>
-//#include <SDL2/SDL_timer.h>
-//#include <SDL2/SDL_image.h>
 #include "map.h"
 #include "tuiles.h"
 #include "core.h"
@@ -113,33 +110,28 @@ int main(void){
     char ch;
     bool quit = false;
     while(!quit){
-        //printf("bonjourrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\n");
         update_game(game);
         update_display(game);
         read(STDIN_FILENO, &ch, 1);
         //printf("Key pressed: %c\n", ch);
-        if (ch == 'm') {
+        if(ch == 'm'){
             quit = true;
-        }
-        if (ch == 'z') {
+        }else if(ch == 'z'){
             move_up(game);
             if(game->joueur->y>=3){
                 switch_game(game);
             }
             //joueur->y--;
             //update_display(place, joueur);
-        }
-        if (ch == 'q') {
+        }else if(ch == 'q'){
             move_left(game);
             //joueur->x--;
             //update_display(place, joueur);
-        }
-        if (ch == 's') {
+        }else if(ch == 's'){
             move_down(game);
             //joueur->y++;
             //update_display(place, joueur);
-        }
-        if (ch == 'd') {
+        }else if(ch == 'd'){
             move_right(game);
             //joueur->x++;
             //update_display(place, joueur);

@@ -9,6 +9,7 @@
 ////Partie Création d'obstacles !///
 
 int* initialise_proba(void){
+    // explicite 
     int* proba = malloc((NB_OBSTACLE)*sizeof(int));
     for(int i = 0; i<NB_OBSTACLE; i++){
         *(proba+i) = 0;
@@ -20,8 +21,9 @@ int* initialise_proba(void){
 }
 
 void generator_forest(Game *game){
-    //*((game->proba)+FOREST) -= 10;
-    //*((game->proba)+ROAD) += 10;
+    // explicite
+    *((game->proba)+FOREST) -= 10;
+    *((game->proba)+ROAD) += 10;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -34,8 +36,9 @@ void generator_forest(Game *game){
 }
 
 void generator_road(Game *game){
-    //*((game->proba)+FOREST) += 5;
-    //*((game->proba)+ROAD) -= 5;
+    // explicite
+    *((game->proba)+FOREST) += 5;
+    *((game->proba)+ROAD) -= 5;
     add_buffer_line(game->carte);
     Line *line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -47,25 +50,19 @@ void generator_road(Game *game){
 }
 
 void generator_obstacle(Game*game){
+    // calcule l'obstacle a généré selon les probas
     int nb = rand()%100;
     int obstacle = -1; 
-    //printf("avant nb, obstacle : %d %d\n", nb, obstacle);
     while(nb>0){
         obstacle++;
-        //printf("pendant avant nb, obstacle : %d %d\n", nb, obstacle);
         nb -= game->proba[obstacle];
-        //printf("%d, pendant apres obstacle : %d\n", nb, obstacle);
     }
-    //printf("apres nb, obstacle : %d %d\n", nb, obstacle);
-    //printf("bonjour\n");
     switch (obstacle) {
         case FOREST:
-        //printf("comment\n");
         generator_forest(game);
         break;
 
         case ROAD:
-        //printf("ca va\n");
         generator_road(game);
         break;
 
@@ -79,6 +76,7 @@ void generator_obstacle(Game*game){
 
 
 Game *initalise_game(void){
+    // explicite
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
     game->joueur = initialise_player(0); //0 for now
@@ -89,6 +87,7 @@ Game *initalise_game(void){
 }
 
 void switch_game(Game* game){
+    // quand le joueur avance suffisemment, on avance la map, et les mob, et incrément le score
     switch_map(game->carte);
     switch_mob(game->mobs);
     move_down(game);
@@ -97,21 +96,10 @@ void switch_game(Game* game){
 
 
 void move(int x, int y, Game* game){
-    //printf("%d\n", IS_BLOCK(tile_map(game->carte, game->joueur->x + x, game->joueur->y + y)));
-    //sleep(3);
-    //printf("%d %d\n", game->joueur->x, game->joueur->y);
     if(!IS_BLOCK(tile_map(game->carte, game->joueur->x + x, game->joueur->y + y))){
         game->joueur->x += x;
         game->joueur->y += y;
     }
-    //printf("%d %d\n", game->joueur->x, game->joueur->y);
-    //sleep(3);
-    //if(test_death(game)){
-    //    printf("vous êtes mort\n");
-    //}else{
-    //    printf("cool raoul\n");
-    //}
-    //printf("%c %c\n", tile_map(game->carte, game->joueur->x, game->joueur->y).type, tile_map(game->carte, game->joueur->x, game->joueur->y).color);
 }
 
 void move_up(Game* game){
@@ -131,16 +119,18 @@ void move_down(Game* game){
 }
 
 bool test_death(Game* game){
+    // test si le joueur rentre dans un mon, avance sur une case danger
     if(a_death_mob_collide(game->mobs, game->joueur)){
         return true;
-    } else if(a_mob_collide(game->mobs, game->joueur)){
+    }else if(a_mob_collide(game->mobs, game->joueur)){
         return false;
-    } else {
+    }else{
         return IS_DANGER(tile_map(game->carte, game->joueur->x, game->joueur->y));
     }
 }
 
 void update_game(Game* game){
+    // avance les mobs de leur path et génére un obstacle dans le buffer
     move_all_mob(game->mobs);
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
@@ -157,7 +147,10 @@ void update_game(Game* game){
 }
 
 void destroy_game(Game *game){
+    // Kaboum
     destroy_map(game->carte);
+    free(game->carte);
+    destroy_liste_mob(game->mobs);
     free(game->joueur);
     free(game->proba);
     free(game);
