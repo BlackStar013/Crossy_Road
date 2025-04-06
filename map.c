@@ -1,5 +1,6 @@
 #include "map.h"
 #include "tuiles.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 Line* create_empty_line(Line* prev, Line* next){
@@ -9,8 +10,14 @@ Line* create_empty_line(Line* prev, Line* next){
     for(int i = 0; i<LENGTH; i++){
         (nl->tiles[i]).is_block = false;
         (nl->tiles[i]).is_danger = false;
-        (nl->tiles[i]).color = '\033[0m';
+        (nl->tiles[i]).color = 'g';
         (nl->tiles[i]).type = '_';
+    }
+    if(next == NULL){
+        nl->next = NULL;
+    }
+    if(prev == NULL){
+        nl->prev = NULL;
     }
     if(next != NULL){
         nl->next = next;
@@ -64,48 +71,53 @@ bool carte_vide(Map* map){
 }
 
 void switch_map(Map *carte){
+    // ajoute la premiere ligne du buffer a la map, et retire la dernière
     carte->head_map = carte->head_map->prev;
     Line* last = carte->tail;
     carte->tail = carte->tail->prev;
-    //free_line(last);
+    carte->tail->next = NULL;
+    destroy_line(last);
 }
 
-//bool coord_remplie(Map *carte, int x, int y){
-//    if(x<0 || x>LENGTH || y<0 || y>HEIGTH){
-//        return false;
-//    }
-//    return true;
-//}
-
-//void ajout_tile(Map *carte,int x,int y,Tile tuile){
-//    Line* cl = carte->head;
-//    for(int i = 1; i<=x; i++){
-//        cl = cl->next;
-//    }
-//    cl->tiles[y] = tuile;
-//}
-
 void suppression_tile(Map *carte,int x,int y);
-int nb_tiles_remplies(Map *carte); //
+int nb_tiles_remplies(Map *carte);
 
 
-Tile tile_map(Map *carte,int x,int y){
+Tile tile_map(Map *carte, int x, int y){
+    // renvoie la tuile de la map a ces coordonnées, et empêche de sortir des côtés de la carte
     if((y>=HEIGTH)||(x>=LENGTH)||(y<0)||(x<0)){
-        return danger;
+        return wall;
     }
     Line* cur = carte->tail;
     while(y>0){
         cur = cur->prev;
         y--;
     }
-    return *((cur->tiles)+x);
+    //printf("%d\n", cur->tiles[x].is_block);
+    return ((cur->tiles)[x]);
 }
 
-
 Player* initialise_player(int id){
+    // intitialise le joueur au milieu en bas de la carte
     Player* joueur = malloc(sizeof(Player));
     joueur->x = (LENGTH-1)/2;
     joueur->y = 2;
+    joueur->offset_x = 0;
+    joueur->offset_y = 0;
     joueur->character_id = id;
     return joueur;
+}
+
+void destroy_line(Line *line){
+    free(line->tiles);
+    free(line);
+}
+
+void destroy_map(Map *map){
+    Line *line = map->head_buffer;
+    while(line != NULL){
+        Line *mem = line->next;
+        destroy_line(line);
+        line = mem;
+    }
 }

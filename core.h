@@ -13,6 +13,7 @@ typedef struct _Game {
     Liste_Mob* mobs;
     int score;
     int* proba;
+    void (*generator)(struct _Game*);
 } Game;
 
 enum Obstacle {
@@ -31,11 +32,14 @@ void generator_road(Game*);
 void generator_river(Game*);
 void generator_obstacle(Game*);
 
+//Initialise les générateurs
+void (*initialise_generator(void))(Game*);
+
 
 //Initialise une partie
 Game *initalise_game(void);
+void update_game(Game* game);
 
-//Fait abaisser la game
 void switch_game(Game *game);
 
 //Ajoute aléatoirement un obstacle dans le buffer
@@ -48,5 +52,7 @@ void move_left(Game*);
 void move_right(Game*);
 void move_down(Game*);
 
-//Test si le joueur est mort '^'
+//Fait déplacer la giga mab et les mobs dedans et les joueurs dedans.
 bool test_death(Game*);
+
+void destroy_game(Game *game);

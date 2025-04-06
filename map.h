@@ -4,15 +4,14 @@
 #include "tuiles.h"
 
 
-typedef struct _Line {
+typedef struct _Line{
     //La tailles de tiles est LENGTH 
     Tile* tiles;
     struct _Line* prev;
     struct _Line* next; 
-} Line;
+}Line;
 
-typedef struct _Map
-{
+typedef struct _Map{
     Line* head_buffer;
     Line* head_map;
     Line* tail;
@@ -22,8 +21,10 @@ typedef struct _Map
 typedef struct _Player{
     int x;
     int y;
+    int offset_x;
+    int offset_y;
     int character_id;
-} Player;
+}Player;
 
 #define HEIGTH 16
 #define LENGTH 16
@@ -36,10 +37,12 @@ bool coord_remplie(Map *carte,int x,int y); //Done
 bool carte_vide(Map *map); //Done
 int nb_tiles_remplies(Map *carte); //return LENGHT*HEIGHT?
 Tile tile_map(Map *carte,int x,int y); //Elle renvoie qu'elle est la tile (x,y) , done
-void switch_map(Map *carte); //TODO LE FREE EST A FAIREEJBQHGFMKAboflcjb<sHGLJEGFUV
+void switch_map(Map *carte);
 
 Player* initialise_player(int);
 
 //fonctions bonus
 void add_buffer_line(Map* map);
 void remove_buffer_line(Map* map);
+void destroy_line(Line *line);
+void destroy_map(Map *map);

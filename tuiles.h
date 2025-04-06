@@ -15,6 +15,8 @@ typedef struct _Tile {
 #define TYPE(tile) (tile.type)
 #define COLOR(tile) (tile.color)
 
+#define LENGHT 16
+#define HEIGHT 16
 
 extern const Tile plain;
 
@@ -28,4 +30,4 @@ extern const Tile tree;
 
 extern const Tile danger;
 
-void clone(Tile dest,Tile src);
+void clone(Tile *dest,Tile src);
