@@ -10,6 +10,7 @@ typedef struct _Mob {
     int move_x;
     int x;
     int y;
+    int speed; // ==Delay_max 
     int delay;
     int id_mob;
     void (*path)(struct _Mob*);
@@ -33,13 +34,13 @@ bool mob_collide(Mob*,Player*);
 //On gère la vitesse à l'aide du nombre d'actualisation
 
 bool mob_in_map(Mob*);
-Mob* clone_mob(Mob,int,int);
+Mob* clone_mob(Mob,int,int,int);
 
-void path_car_right(Mob*);
+void path_right(Mob*);
 extern const Mob car_right;
 extern const Mob bus_right;
 
-void path_car_left(Mob*);
+void path_left(Mob*);
 extern const Mob car_left;
 extern const Mob bus_left;
 
