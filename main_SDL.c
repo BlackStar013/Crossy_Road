@@ -119,13 +119,13 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
     int spriteWidth = (spriteFullWidth / 2); // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
     int spriteHeight = (spriteFullHeight / 2);
     while(liste!=NULL){
-        if((liste->mob->id_mob==CAR_RIGHT)||(liste->mob->id_mob==CAR_LEFT)){
+        if((liste->mob->id_mob==CAR_RIGHT)||(liste->mob->id_mob==CAR_LEFT)||(liste->mob->id_mob==PLANK_LEFT)||(liste->mob->id_mob==PLANK_RIGHT)){
             SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
             SDL_Rect destRect = {.x = liste->mob->x*32*ECHELLE, .y = (HEIGHT-liste->mob->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
-        }
+        } 
         liste = liste->next;
     }
     SDL_DestroyTexture(spriteTexture);

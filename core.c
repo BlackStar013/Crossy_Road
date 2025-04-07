@@ -15,8 +15,8 @@ int* initialise_proba(void){
         *(proba+i) = 0;
     }
     *(proba+FOREST) = 20;
-    *(proba+ROAD) = 80;
-    *(proba+RIVER) = 0;
+    *(proba+ROAD) = 60;
+    *(proba+RIVER) = 20;
     return proba;
 }
 
@@ -24,14 +24,14 @@ void generator_forest(Game *game){
     // explicite
     int proba_change = (rand()%4)*5 + 10;
     if(*((game->proba)+FOREST) <= proba_change){
-        *((game->proba)+ROAD) += *((game->proba)+FOREST) ;
+        *((game->proba)+ROAD) += (2*(*((game->proba)+FOREST)))/3 ;
+        *((game->proba)+RIVER) += (*((game->proba)+FOREST))/3+1 ;
         *((game->proba)+FOREST) = 0 ;
     } else {
-        *((game->proba)+ROAD) += proba_change ;
+        *((game->proba)+ROAD) += 2*proba_change/3 ;
         *((game->proba)+FOREST) -= proba_change ;
+        *((game->proba)+RIVER) += proba_change/3+1 ;
     }
-    *((game->proba)+FOREST) -= 10;
-    *((game->proba)+ROAD) += 10;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -52,13 +52,13 @@ void add_road(Game *game, Mob car, int pos, int speed, int nb_car){
     }
     int init_x = -car.length+(rand()%3+1)*pos;
     for(int i = 0; i < nb_car; i++){
-        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(LENGHT/nb_car)*i, LENGTH+pos,speed));
+        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(HEIGHT/nb_car)*i, HEIGHT+pos,speed));
     }
 }
 
 void generator_road(Game *game){
     // explicite
-    int nb_line = rand()%3+1;
+    int nb_line = rand()%2+1;
     for(int i = 0 ; i < nb_line ; i++){
         int direction = rand()%2;
         int level = rand()%3;
@@ -75,11 +75,77 @@ void generator_road(Game *game){
     }
     int proba_change = 5 + (nb_line-1)*(rand()%6+5);
     if(*((game->proba)+ROAD) <= proba_change){
-        *((game->proba)+FOREST) += *((game->proba)+ROAD) ;
+        *((game->proba)+FOREST) += (2*(*((game->proba)+ROAD)))/3 ;
+        *((game->proba)+RIVER) += (*((game->proba)+ROAD))/3+1 ;
         *((game->proba)+ROAD) = 0 ;
     } else {
         *((game->proba)+ROAD) -= proba_change ;
-        *((game->proba)+FOREST) += proba_change ;
+        *((game->proba)+FOREST) += 2*proba_change/3 ;
+        *((game->proba)+RIVER) += proba_change/3+1 ;
+    }
+    
+}
+
+void add_plank(Game *game, Mob plank, int pos, int speed){
+    add_buffer_line(game->carte);
+    Line *line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], water);
+    }
+    int proba_plank = 50;
+    int plank_lenght = 0;
+    int cons = 0;
+    for(int i = 0; i < LENGHT; i++){
+        int dice = rand()%100+1;
+        if(dice<proba_plank){
+            game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, HEIGHT+pos,speed));
+            if(plank_lenght<3){
+                proba_plank += 10;
+            } else if (plank_lenght<5){
+                proba_plank -= 10;
+            } else {
+                proba_plank -= 20;
+            }
+            cons = 0;
+            plank_lenght++;
+        } else {
+            if(plank_lenght == 0){
+                proba_plank += 10*(cons/2);
+            }else if(plank_lenght<3){
+                proba_plank = 50;
+            } else if (plank_lenght<5){
+                proba_plank = 30;
+            } else {
+                proba_plank = 10;
+            }
+            plank_lenght = 0;
+            cons++;
+        }
+    }
+}
+
+void generator_river(Game *game){
+    // explicite
+    int nb_line = rand()%(4)+1;
+    int direction = rand()%2;
+    for(int i = 0 ; i < nb_line ; i++){
+        int level = rand()%3;
+        int speed = (level)*5 + 5;
+        if(direction == i%2){
+            add_plank(game, plank_right,i,speed);
+        } else {
+            add_plank(game,plank_left,i,speed);
+        }
+    }
+    int proba_change = 5 + (nb_line-1)*(rand()%6+5);
+    if(*((game->proba)+RIVER) <= proba_change){
+        *((game->proba)+FOREST) += (2*(*((game->proba)+ROAD)))/3 ;
+        *((game->proba)+ROAD) += (*((game->proba)+ROAD))/3+1 ;
+        *((game->proba)+RIVER) = 0 ;
+    } else {
+        *((game->proba)+RIVER) -= proba_change ;
+        *((game->proba)+FOREST) += 2*proba_change/3 ;
+        *((game->proba)+ROAD) += proba_change/3+1 ;
     }
     
 }
@@ -102,8 +168,9 @@ void generator_obstacle(Game*game){
         generator_road(game);
         break;
 
-    //     //case RIVER:
-    //     //generator_river(game);
+        case RIVER:
+        generator_river(game);
+        break;
 
     }
 

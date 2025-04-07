@@ -146,6 +146,7 @@ void path_right(Mob *car){
 }
 
 const Mob car_right = {1,2,true,0,0,0,0,0,CAR_RIGHT,path_right}; //Note : x et y ini ne veulent rien dire ici
+const Mob plank_right = {1,1,false,0,0,0,0,0,PLANK_RIGHT,path_right}; 
 const Mob bus_right = {1,4,true,0,0,0,0,0,BUS_RIGHT,path_right};
 
 void path_left(Mob *car){
@@ -161,7 +162,8 @@ void path_left(Mob *car){
     }
 }
 
-const Mob car_left = {1,2,true,0,0,0,0,0,CAR_LEFT,path_left}; 
+const Mob car_left = {1,2,true,0,0,0,0,0,CAR_LEFT,path_left};
+const Mob plank_left = {1,1,false,0,0,0,0,0,PLANK_LEFT,path_left}; 
 const Mob bus_left = {1,4,true,0,0,0,0,0,BUS_LEFT,path_left};
 
 void destroy_mobs(Liste_Mob *liste){
