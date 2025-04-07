@@ -125,6 +125,12 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
+        }else if(liste->mob->id_mob==CAR_LEFT){
+            SDL_Rect spriteRect = {.x = 0, .y = spriteHeight, .w = spriteWidth, .h = spriteHeight};
+            SDL_Rect destRect = {.x = liste->mob->x*32*ECHELLE, .y = (HEIGHT-liste->mob->y-1)*32*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+            }
         }
         liste = liste->next;
     }
@@ -208,7 +214,7 @@ int main(void){
     }
     game->carte->head_map->next->next->next->tiles[7].type='_';
     game->carte->head_map->next->next->next->tiles[7].is_danger=false;
-    //game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5));
+    //game->mobs = list_append(game->mobs, clone_mob(car_left, 3, 5, 10));
     //fin de la zone de changement de map
 
     //a servi pour vérifier que la map s'affichait bien

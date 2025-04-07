@@ -98,7 +98,7 @@ int main(void){
         game->carte->head_map->next->next->next->tiles[i].type='~';
         game->carte->head_map->next->next->next->tiles[i].is_danger=true;
     }
-    game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5, 10));
     //print_liste(game->mobs);
     //sleep(1);
     //Map* place = create_empty_map();

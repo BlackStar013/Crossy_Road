@@ -93,7 +93,7 @@ bool mob_in_map(Mob *mob){
     }
 }
 
-Mob* clone_mob(Mob mob, int x_ini, int y_ini){
+Mob* clone_mob(Mob mob, int x_ini, int y_ini, int speed){
     // creer un mob selon le modèle rentré
     Mob *new_mob = malloc(sizeof(mob));
     new_mob->heigth = mob.heigth;
@@ -102,7 +102,8 @@ Mob* clone_mob(Mob mob, int x_ini, int y_ini){
     new_mob->move_x = mob.move_x;
     new_mob->x = x_ini;
     new_mob->y = y_ini;
-    new_mob->delay = mob.delay;
+    new_mob->speed = speed;
+    new_mob->delay = speed;
     new_mob->id_mob = mob.id_mob;
     new_mob->path = mob.path;
     return new_mob;
@@ -138,14 +139,14 @@ void path_car_right(Mob *car){
         } else {
             car->x += 1; //À remplacer par move_mob (?)
         }
-        car->delay = 10;
+        car->delay = car->speed;
     } else {
         car->delay--;
     }
 }
 
-const Mob car_right = {1,2,true,0,0,0,10,CAR_RIGHT,path_car_right}; //Note : x et y ini ne veulent rien dire ici
-const Mob bus_right = {1,4,true,0,0,0,0,BUS_RIGHT,path_car_right};
+const Mob car_right = {1,2,true,0,0,0,0,0,CAR_RIGHT,path_car_right}; //Note : x et y ini ne veulent rien dire ici
+const Mob bus_right = {1,4,true,0,0,0,0,0,BUS_RIGHT,path_car_right};
 
 void path_car_left(Mob *car){
     if(!car->delay){
@@ -154,14 +155,14 @@ void path_car_left(Mob *car){
         } else {
             car->x -=1; //À remplacer par move_mob (?)
         }
-        car->delay = 0;
+        car->delay = car->speed;
     } else {
         car->delay--;
     }
 }
 
-const Mob car_left = {1,2,true,0,0,0,0,CAR_LEFT,path_car_left}; 
-const Mob bus_left = {1,4,true,0,0,0,0,BUS_LEFT,path_car_left};
+const Mob car_left = {1,2,true,0,0,0,0,0,CAR_LEFT,path_car_left}; 
+const Mob bus_left = {1,4,true,0,0,0,0,0,BUS_LEFT,path_car_left};
 
 void destroy_mobs(Liste_Mob *liste){
     free(liste->mob);
