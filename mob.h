@@ -21,6 +21,10 @@ enum MOB{
     CAR_LEFT,
     BUS_RIGHT,
     BUS_LEFT,
+    PLANK_RIGHT,
+    PLANK_LEFT,
+    NB_MOB
+
 };
 
 typedef struct _List_Mob {
@@ -38,10 +42,12 @@ Mob* clone_mob(Mob mob, int x_ini, int y_ini, int speed);
 
 void path_car_right(Mob*);
 extern const Mob car_right;
+extern const Mob plank_right;
 extern const Mob bus_right;
 
 void path_car_left(Mob*);
 extern const Mob car_left;
+extern const Mob plank_left;
 extern const Mob bus_left;
 
 //Fonction liés à List_Mob
