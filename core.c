@@ -62,7 +62,7 @@ void generator_road(Game *game){
     for(int i = 0 ; i < nb_line ; i++){
         int direction = rand()%2;
         int level = rand()%3;
-        int speed = (level)*5 + 5;
+        int speed = (level) + 1;
         int nb_car = rand()%4 + 1;
         if(nb_car > 1){
             nb_car -= (2 - level)/2;
@@ -130,7 +130,7 @@ void generator_river(Game *game){
     int direction = rand()%2;
     for(int i = 0 ; i < nb_line ; i++){
         int level = rand()%3;
-        int speed = (level)*5 + 5;
+        int speed = (level) + 1;
         if(direction == i%2){
             add_plank(game, plank_right,i,speed);
         } else {
@@ -199,10 +199,9 @@ void switch_game(Game* game){
 
 
 void move(int x, int y, Game* game){
-    print_liste(game->mobs);
-    if(!IS_BLOCK(tile_map(game->carte, game->joueur->x + x, game->joueur->y + y))){
-        game->joueur->x += x;
-        game->joueur->y += y;
+    if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x/32 + x, game->joueur->_y/32 + y))){
+        game->joueur->_x += x*32;
+        game->joueur->_y += y*32;
     }
 }
 
@@ -229,7 +228,7 @@ bool test_death(Game* game){
     }else if(a_mob_collide(game->mobs, game->joueur)){
         return false;
     }else{
-        return IS_DANGER(tile_map(game->carte, game->joueur->x, game->joueur->y));
+        return IS_DANGER(tile_map(game->carte, game->joueur->_x/32, game->joueur->_y/32));
     }
 }
 
@@ -240,7 +239,7 @@ void update_game(Game* game){
     while(cur!=NULL){
         if(cur->mob->move_x){
             if(mob_collide(cur->mob, game->joueur)){
-                game->joueur += cur->mob->move_x;
+                game->joueur->_x += cur->mob->move_x;
             }
         }
         cur = cur->next;

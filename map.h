@@ -19,8 +19,8 @@ typedef struct _Map{
 }Map;
 
 typedef struct _Player{
-    int x;
-    int y;
+    int _x;
+    int _y;
     int offset_x;
     int offset_y;
     int character_id;

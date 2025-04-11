@@ -8,8 +8,8 @@ typedef struct _Mob {
     int length;
     bool is_death;
     int move_x;
-    int x;
-    int y;
+    int _x; //new x = ans x/32;
+    int _y; //mismo por y;
     int speed; // ==Delay_max 
     int delay;
     int id_mob;

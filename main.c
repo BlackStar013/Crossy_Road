@@ -26,13 +26,13 @@ void init_display(Game *game){
     Line *line = game->carte->head_map;
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGHT-i-1==game->joueur->y) && (j==game->joueur->x)){
+            if((HEIGHT-i-1==game->joueur->_y*32) && (j==game->joueur->_x*32)){
                 printf(" ");
             }else{
                 Liste_Mob *liste = game->mobs;
                 bool trouve = false;
                 while((!trouve) && (liste!=NULL)){
-                    if((HEIGHT-i-1==liste->mob->y) && (j==liste->mob->x)){
+                    if(((HEIGHT-i-1)*32==liste->mob->_y) && (j*32==liste->mob->_x)){
                         printf("%d", liste->mob->id_mob);
                         trouve = true;
                     }else{
@@ -57,13 +57,13 @@ void update_display(Game *game){
     printf("\033[%dA\r", HEIGTH);
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGHT-i-1==game->joueur->y) && (j==game->joueur->x)){
+            if((HEIGHT-i-1==game->joueur->_y*32) && (j==game->joueur->_x*32)){
                 printf(" ");
             }else{
                 Liste_Mob *liste = game->mobs;
                 bool trouve = false;
                 while((!trouve) && (liste!=NULL)){
-                    if((HEIGHT-i-1==liste->mob->y) && (j==liste->mob->x)){
+                    if(((HEIGHT-i-1)*32==liste->mob->_y) && (j*32==liste->mob->_x)){
                         printf("%d", liste->mob->id_mob);
                         trouve = true;
                     }else{
@@ -98,7 +98,7 @@ int main(void){
         game->carte->head_map->next->next->next->tiles[i].type='~';
         game->carte->head_map->next->next->next->tiles[i].is_danger=true;
     }
-    game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5,10));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5, 10));
     //print_liste(game->mobs);
     //sleep(1);
     //Map* place = create_empty_map();
@@ -111,6 +111,9 @@ int main(void){
     bool quit = false;
     while(!quit){
         update_game(game);
+        if(test_death(game)){
+            quit = true;
+        }
         update_display(game);
         read(STDIN_FILENO, &ch, 1);
         //printf("Key pressed: %c\n", ch);
@@ -118,7 +121,7 @@ int main(void){
             quit = true;
         }else if(ch == 'z'){
             move_up(game);
-            if(game->joueur->y>=3){
+            if(game->joueur->_y>=3*32){
                 switch_game(game);
             }
             //joueur->y--;

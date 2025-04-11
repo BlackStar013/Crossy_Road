@@ -31,7 +31,7 @@ void print_rest_liste(Liste_Mob *list){
     if(list==NULL){
         printf(" ]\n");
     }else{
-        printf(", %d", list->mob->y);
+        printf(", %d", list->mob->_y);
         print_rest_liste(list->next);
     }
 }
@@ -57,7 +57,7 @@ void move_all_mob(Liste_Mob* list){
 void switch_mob(Liste_Mob* list){
     // fait descendre les mobs quand la map avance
     if(list!=NULL){
-        list->mob->y--;
+        list->mob->_y -= 32;
         switch_mob(list->next);
     }
 }
@@ -84,9 +84,9 @@ bool a_mob_collide(Liste_Mob* list,Player* player){
 
 
 bool mob_in_map(Mob *mob){
-    if(((mob->x)>LENGTH)||((mob->y)>HEIGTH)){ //Dépassement supérieur
+    if(((mob->_x)/32>LENGTH)||((mob->_y)/32>HEIGTH)){ //Dépassement supérieur
         return false;
-    } else if(((mob->x + mob->length - 1)<0)||((mob->y + mob->heigth - 1)<0)) {
+    } else if(((mob->_x/32 + mob->length - 1)<0)||((mob->_y/32 + mob->heigth - 1)<0)) {
         return false;
     } else { 
         return true;
@@ -100,8 +100,8 @@ Mob* clone_mob(Mob mob, int x_ini, int y_ini, int speed){
     new_mob->length = mob.length;
     new_mob->is_death = mob.is_death;
     new_mob->move_x = mob.move_x;
-    new_mob->x = x_ini;
-    new_mob->y = y_ini;
+    new_mob->_x = x_ini*32;
+    new_mob->_y = y_ini*32;
     new_mob->speed = speed;
     new_mob->delay = speed;
     new_mob->id_mob = mob.id_mob;
@@ -113,8 +113,8 @@ bool death_mob_collide(Mob* mob,Player* player){
     if(!mob->is_death){
         return false;
     }
-    if(((mob->x)<=player->x)&&(player->x <= mob->x + mob->length - 1)){ //Dépassement supérieur
-        if(((mob->y)<=player->y)&&(player->y <= mob->y + mob->heigth - 1)) {
+    if(((mob->_x)<=player->_x)&&(player->_x <= mob->_x + (mob->length - 1)*32)){ //Dépassement supérieur
+        if(((mob->_y)<=player->_y)&&(player->_y <= mob->_y + (mob->heigth - 1))*32) {
          return true;
         }
     }
@@ -122,8 +122,8 @@ bool death_mob_collide(Mob* mob,Player* player){
 }
 
 bool mob_collide(Mob* mob, Player* player){
-    if(((mob->x)<=player->x)&&(player->x <= mob->x + mob->length - 1)){ //Dépassement supérieur
-        if(((mob->y)<=player->y)&&(player->y <= mob->y + mob->heigth - 1)) {
+    if(((mob->_x)<=player->_x)&&(player->_x <= mob->_x + (mob->length - 1)*32)){ //Dépassement supérieur
+        if(((mob->_y)<=player->_y)&&(player->_y <= mob->_y + (mob->heigth - 1)*32)) {
          return true;
         }
     }
@@ -134,10 +134,10 @@ bool mob_collide(Mob* mob, Player* player){
 
 void path_right(Mob *car){
     if(!car->delay){
-        if(car->x >= LENGHT){
-            car->x = -car->length;
+        if(car->_x/32 >= LENGHT){
+            car->_x = -car->length*32;
         } else {
-            car->x += 1; 
+            car->_x += 2; 
         }
         car->delay = car->speed;
     } else {
@@ -146,15 +146,15 @@ void path_right(Mob *car){
 }
 
 const Mob car_right = {1,2,true,0,0,0,0,0,CAR_RIGHT,path_right}; //Note : x et y ini ne veulent rien dire ici
-const Mob plank_right = {1,1,false,0,0,0,0,0,PLANK_RIGHT,path_right}; 
+const Mob plank_right = {1,1,false,2,0,0,0,0,PLANK_RIGHT,path_right}; 
 const Mob bus_right = {1,4,true,0,0,0,0,0,BUS_RIGHT,path_right};
 
 void path_left(Mob *car){
     if(!car->delay){
-        if(car->x < -car->length+1){
-            car->x = LENGTH;
+        if(car->_x/32 < -car->length+1){
+            car->_x = LENGTH*32;
         } else {
-            car->x -=1; //À remplacer par move_mob (?)
+            car->_x -=2; //À remplacer par move_mob (?)
         }
         car->delay = car->speed;
     } else {
@@ -163,7 +163,7 @@ void path_left(Mob *car){
 }
 
 const Mob car_left = {1,2,true,0,0,0,0,0,CAR_LEFT,path_left};
-const Mob plank_left = {1,1,false,0,0,0,0,0,PLANK_LEFT,path_left}; 
+const Mob plank_left = {1,1,false,-2,0,0,0,0,PLANK_LEFT,path_left}; 
 const Mob bus_left = {1,4,true,0,0,0,0,0,BUS_LEFT,path_left};
 
 void destroy_mobs(Liste_Mob *liste){

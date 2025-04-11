@@ -38,6 +38,9 @@ test: test.o tuiles.o mob.o map.o core.o
 clean: 
 	rm -f main sdl_main test *.o
 
+run: sdl_main
+	./sdl_main
+
 
 #main.o: main.c fonctions.h tuiles.h mob.h
 #	clang -c $(CFLAGS) main.c
