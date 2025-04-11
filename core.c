@@ -15,8 +15,8 @@ int* initialise_proba(void){
         *(proba+i) = 0;
     }
     *(proba+FOREST) = 40;
-    *(proba+ROAD) = 40;
-    *(proba+RIVER) = 20;
+    *(proba+ROAD) = 60;
+    *(proba+RIVER) = 0;
     return proba;
 }
 
