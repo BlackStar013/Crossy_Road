@@ -42,7 +42,6 @@ void display_map(Map *map, SDL_Renderer *renderer){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
                 exit(-1);
             }
-            SDL_FreeSurface(spriteSurface);
             if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) { 
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
                 exit(-1);
@@ -58,6 +57,7 @@ void display_map(Map *map, SDL_Renderer *renderer){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
+            SDL_FreeSurface(spriteSurface);
         }
         if(i!=LENGTH){
             line=line->next;
@@ -77,8 +77,6 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
         exit(-1);
     }
-    SDL_FreeSurface(spriteSurface);
-
     int spriteFullWidth;
     int spriteFullHeight;
     if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
@@ -93,6 +91,7 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
     }
     SDL_DestroyTexture(spriteTexture);
+    SDL_FreeSurface(spriteSurface);
 }
 
 void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
@@ -109,7 +108,6 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
                 exit(-1);
             }
-            SDL_FreeSurface(spriteSurface);
             int spriteFullWidth;
             int spriteFullHeight;
             if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)){
@@ -124,6 +122,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
+            SDL_FreeSurface(spriteSurface);
         }else if(liste->mob->id_mob==PLANK_RIGHT || liste->mob->id_mob==PLANK_LEFT){
             SDL_Surface *spriteSurface = IMG_Load("sprites/Planche.png");
             if (!spriteSurface){
@@ -135,7 +134,6 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
                 exit(-1);
             }
-            SDL_FreeSurface(spriteSurface);
             int spriteFullWidth;
             int spriteFullHeight;
             if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)){
@@ -150,6 +148,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
+            SDL_FreeSurface(spriteSurface);
         }
         liste = liste->next;
     }
@@ -255,6 +254,9 @@ int main(void){
             }
             quit = SDL_TRUE;
         }
+        if(SDL_RenderClear(renderer)){
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
+        }    
         display_all(game, renderer);
 
         // une fois l'affichage fait, on regarde si le joueur se déplace
@@ -299,6 +301,7 @@ int main(void){
     destroy_game(game);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_Quit();
     return 0;
 }
 

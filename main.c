@@ -111,6 +111,9 @@ int main(void){
     bool quit = false;
     while(!quit){
         update_game(game);
+        if(test_death(game)){
+            quit = true;
+        }
         update_display(game);
         read(STDIN_FILENO, &ch, 1);
         //printf("Key pressed: %c\n", ch);

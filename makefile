@@ -1,6 +1,6 @@
 CFLAGS = -Wall -Wextra -Wpedantic -std=c99 -g -fsanitize=address
 
-all: main sdl_main test
+all: clean main sdl_main test
 
 main.o: main.c tuiles.h mob.h
 	clang -c $(CFLAGS) main.c

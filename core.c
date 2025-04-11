@@ -15,14 +15,14 @@ int* initialise_proba(void){
         *(proba+i) = 0;
     }
     *(proba+FOREST) = 40;
-    *(proba+ROAD) = 60;
-    *(proba+RIVER) = 0;
+    *(proba+ROAD) = 40;
+    *(proba+RIVER) = 20;
     return proba;
 }
 
 void generator_forest(Game *game){
     // explicite
-    int proba_change = (rand()%4)*5 + 10;
+    // int proba_change = (rand()%4)*5 + 10;
     // if(*((game->proba)+FOREST) <= proba_change){
     //     *((game->proba)+ROAD) += (2*(*((game->proba)+FOREST)))/3 ;
     //     // *((game->proba)+RIVER) += (*((game->proba)+FOREST))/3+1 ;
