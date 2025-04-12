@@ -67,7 +67,7 @@ void display_map(Map *map, SDL_Renderer *renderer){
 
 void display_joueur(Player *joueur, SDL_Renderer *renderer){
     // affiche le joueur selon le même principe que ci-dessus
-    SDL_Surface *spriteSurface = IMG_Load("sprites/Snitch.png");
+    SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png");
     if (!spriteSurface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
         exit(-1);
@@ -83,8 +83,8 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
         exit(-1);
     }
-    int spriteWidth = (spriteFullWidth / 4); //ici pour le joueur, on a 4 lignes et 4 colonnes pour les 4 orientations et 4 "gestes" d'où le /4
-    int spriteHeight = (spriteFullHeight / 4);
+    int spriteWidth = (spriteFullWidth / 4 ); //ici pour le joueur, on a 4 lignes et 4 colonnes pour les 4 orientations et 4 "gestes" d'où le /4
+    int spriteHeight = (spriteFullHeight / 4 );
     SDL_Rect spriteRect = {.x = joueur->offset_x*spriteWidth, .y = joueur->offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
     SDL_Rect destRect = {.x = (joueur->_x)*ECHELLE, .y = (HEIGHT*32-joueur->_y-32)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
     if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
@@ -180,7 +180,7 @@ int main(void){
     atexit(IMG_Quit);
     
     SDL_Window *window;
-    window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (HEIGTH*32*ECHELLE), (LENGTH*32*ECHELLE), 0);
+    window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (LENGHT*32*ECHELLE), (HEIGHT*32*ECHELLE), 0);
     if(!window){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la fenetre : %s", SDL_GetError());
         exit(-1);
