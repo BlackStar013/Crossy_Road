@@ -75,7 +75,7 @@ bool a_mob_collide(Liste_Mob* list,Player* player){
     if(list==NULL){
         return false;
     } else {
-        return ((mob_collide(list->mob, player))||(a_death_mob_collide(list->next, player)));
+        return ((mob_collide(list->mob, player))||(a_mob_collide(list->next, player)));
     }
 }
 
@@ -113,8 +113,8 @@ bool death_mob_collide(Mob* mob,Player* player){
     if(!mob->is_death){
         return false;
     }
-    if(((mob->_x)<=player->_x)&&(player->_x <= mob->_x + (mob->length - 1)*32)){ //Dépassement supérieur
-        if(((mob->_y)<=player->_y)&&(player->_y <= mob->_y + (mob->heigth - 1))*32) {
+    if(((mob->_x - 16)<=player->_x)&&(player->_x <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
+        if(((mob->_y - 16)<=player->_y)&&(player->_y <= mob->_y + 16 + (mob->heigth - 1))*32) {
          return true;
         }
     }
@@ -122,8 +122,8 @@ bool death_mob_collide(Mob* mob,Player* player){
 }
 
 bool mob_collide(Mob* mob, Player* player){
-    if(((mob->_x)<=player->_x)&&(player->_x <= mob->_x + (mob->length - 1)*32)){ //Dépassement supérieur
-        if(((mob->_y)<=player->_y)&&(player->_y <= mob->_y + (mob->heigth - 1)*32)) {
+    if(((mob->_x-16)<=player->_x)&&(player->_x <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
+        if(((mob->_y -16 )<=player->_y)&&(player->_y <= mob->_y + 16 + (mob->heigth - 1)*32)) {
          return true;
         }
     }

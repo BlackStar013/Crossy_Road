@@ -100,8 +100,8 @@ Tile tile_map(Map *carte, int x, int y){
 Player* initialise_player(int id){
     // intitialise le joueur au milieu en bas de la carte
     Player* joueur = malloc(sizeof(Player));
-    joueur->_x = 0 ;//((LENGTH-1)/2)*32;
-    joueur->_y = 0 ;//2*32;
+    joueur->_x = ((LENGTH-1)/2)*32;
+    joueur->_y = 2*32;
     joueur->offset_x = 0;
     joueur->offset_y = 0;
     joueur->character_id = id;

@@ -199,16 +199,18 @@ void switch_game(Game* game){
 
 
 void move(int x, int y, Game* game){
-    if(game->joueur->_x%32 > 16){
-             game->joueur->_x =  (game->joueur->_x/32+1)*32;
-        } else {
-             game->joueur->_x = (game->joueur->_x/32)*32;
-        }
-        if(game->joueur->_y%32 > 16){
-            game->joueur->_y =  (game->joueur->_y/32+1)*32 ;
-        } else {
-            game->joueur->_y =  (game->joueur->_y/32)*32 ;
-        }
+    if(tile_map(game->carte, game->joueur->_x/32 + x, game->joueur->_y/32 + y).type != water.type){
+         if(game->joueur->_x%32 > 16){
+                  game->joueur->_x =  (game->joueur->_x/32+1)*32;
+             } else {
+                  game->joueur->_x = (game->joueur->_x/32)*32;
+            }
+            if(game->joueur->_y%32 > 16){
+                game->joueur->_y =  (game->joueur->_y/32+1)*32 ;
+            } else {
+                game->joueur->_y =  (game->joueur->_y/32)*32 ;
+            }
+     }
     if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x/32 + x, game->joueur->_y/32 + y))){
             game->joueur->_x +=  x*32;
             game->joueur->_y +=  y*32;
@@ -249,7 +251,9 @@ void update_game(Game* game){
     while(cur!=NULL){
         if(cur->mob->move_x){
             if(mob_collide(cur->mob, game->joueur)){
-                game->joueur->_x += cur->mob->move_x;
+                if(cur->mob->delay==0){
+                    game->joueur->_x += cur->mob->move_x;
+                }
             }
         }
         cur = cur->next;
