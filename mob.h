@@ -8,9 +8,9 @@ typedef struct _Mob {
     int length;
     bool is_death;
     int move_x;
-    int x;
-    int y;
-    int speed;
+    int _x; //new x = ans x/32;
+    int _y; //mismo por y;
+    int speed; // ==Delay_max 
     int delay;
     int id_mob;
     void (*path)(struct _Mob*);
@@ -24,7 +24,6 @@ enum MOB{
     PLANK_RIGHT,
     PLANK_LEFT,
     NB_MOB
-
 };
 
 typedef struct _List_Mob {
@@ -38,14 +37,14 @@ bool mob_collide(Mob*,Player*);
 //On gère la vitesse à l'aide du nombre d'actualisation
 
 bool mob_in_map(Mob*);
-Mob* clone_mob(Mob mob, int x_ini, int y_ini, int speed);
+Mob* clone_mob(Mob,int,int,int);
 
-void path_car_right(Mob*);
+void path_right(Mob*);
 extern const Mob car_right;
 extern const Mob plank_right;
 extern const Mob bus_right;
 
-void path_car_left(Mob*);
+void path_left(Mob*);
 extern const Mob car_left;
 extern const Mob plank_left;
 extern const Mob bus_left;
@@ -62,4 +61,3 @@ bool a_death_mob_collide(Liste_Mob* list,Player* player);
 bool a_mob_collide(Liste_Mob* list,Player* player);
 void destroy_mobs(Liste_Mob *liste);
 void destroy_liste_mob(Liste_Mob *liste);
-
