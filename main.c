@@ -33,7 +33,10 @@ void init_display(Game *game){
                 bool trouve = false;
                 while((!trouve) && (liste!=NULL)){
                     if((HEIGHT-i-1==liste->mob->y) && (j==liste->mob->x)){
-                        printf("%d", liste->mob->id_mob);
+                        // for(int k=0; k<liste->mob->length){
+                        //     printf("%d", liste->mob->id_mob);
+
+                        // }
                         trouve = true;
                     }else{
                         liste=liste->next;
