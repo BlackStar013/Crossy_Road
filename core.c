@@ -98,7 +98,7 @@ void add_plank(Game *game, Mob plank, int pos, int speed){
     for(int i = 0; i < LENGHT; i++){
         int dice = rand()%100+1;
         if(dice<proba_plank){
-            game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, HEIGHT+pos,speed));
+            game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGHT+pos),speed));
             if(plank_lenght<3){
                 proba_plank += 10;
             } else if (plank_lenght<5){
@@ -203,6 +203,7 @@ void move(int x, int y, Game* game){
         game->joueur->_x += x*32;
         game->joueur->_y += y*32;
     }
+    printf("(%d,%d)",game->joueur->_x/32,game->joueur->_y/32);
 }
 
 void move_up(Game* game){
