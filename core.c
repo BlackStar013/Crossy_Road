@@ -190,7 +190,7 @@ Game *initalise_game(void){
 }
 
 void switch_game(Game* game){
-    // quand le joueur avance suffisemment, on avance la map, et les mob, et incrément le score
+    // quand le joueur avance suffisamment, on avance la map, et les mob, et incrément le score
     switch_map(game->carte);
     switch_mob(game->mobs);
     move_down(game);
@@ -200,10 +200,17 @@ void switch_game(Game* game){
 
 void move(int x, int y, Game* game){
     if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x/32 + x, game->joueur->_y/32 + y))){
-        game->joueur->_x += x*32;
-        game->joueur->_y += y*32;
+        if(game->joueur->_x%32 > 16){
+            game->joueur->_x =  (game->joueur->_x/32+1)*32 + x*32;
+        } else {
+             game->joueur->_x = (game->joueur->_x/32)*32 + y*32;
+        }
+        if(game->joueur->_y%32 > 16){
+            game->joueur->_y =  (game->joueur->_y/32+1)*32 + x*32;
+        } else {
+            game->joueur->_y =  (game->joueur->_y/32)*32 + y*32;
+        }
     }
-    printf("(%d,%d)",game->joueur->_x/32,game->joueur->_y/32);
 }
 
 void move_up(Game* game){
