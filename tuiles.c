@@ -23,3 +23,5 @@ void clone(Tile *dest, Tile src){
     dest->is_danger = src.is_danger;
     dest->type = src.type;
 }
+
+//TODO débris,plancher,décombres,plancher ardent,muret,!grotte,!stalagmite
