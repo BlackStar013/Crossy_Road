@@ -234,7 +234,7 @@ bool test_death(Game* game){
 
 void update_game(Game* game){
     // avance les mobs de leur path et génére un obstacle dans le buffer
-    move_all_mob(game->mobs);
+    move_all_mob(game->mobs,game->joueur);
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
         if(cur->mob->move_x){

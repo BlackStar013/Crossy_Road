@@ -24,4 +24,16 @@ void clone(Tile *dest, Tile src){
     dest->type = src.type;
 }
 
-//TODO débris,plancher,décombres,plancher ardent,muret,!grotte,!stalagmite
+const Tile ruins = {true,false,'a','§'};
+
+const Tile brokenplanks = {true,false,'r','#'};
+
+const Tile barrier = {false,false,'r','='};
+
+const Tile burningplanks = {false,false,'r','-'};
+
+const Tile muret = {true,false,'a','|'};
+
+const Tile cave = {false,false,'a','_'};
+
+const Tile stalagmite = {true,false,'a','!'};

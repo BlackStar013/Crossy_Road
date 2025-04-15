@@ -31,3 +31,17 @@ extern const Tile tree;
 extern const Tile danger;
 
 void clone(Tile *dest,Tile src);
+
+extern const Tile ruins;
+
+extern const Tile brokenplanks;
+
+extern const Tile barrier;
+
+extern const Tile burningplanks;
+
+extern const Tile muret;
+
+extern const Tile cave;
+
+extern const Tile stalagmite;

@@ -20,6 +20,7 @@ enum Obstacle {
     FOREST,
     ROAD,
     RIVER,
+    //TODO ID nouveaux obstacles
     NB_OBSTACLE
 };
 
@@ -56,3 +57,5 @@ void move_down(Game*);
 bool test_death(Game*);
 
 void destroy_game(Game *game);
+
+//TODO nouveaux générateurs
