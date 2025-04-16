@@ -24,11 +24,13 @@ void clone(Tile *dest, Tile src){
     dest->type = src.type;
 }
 
-const Tile ruins = {true,false,'a','§'};
+const Tile ruins = {true,false,'a',']'};
 
 const Tile brokenplanks = {true,false,'r','#'};
 
-const Tile barrier = {false,false,'r','='};
+const Tile transition = {false,false,'r','+'};
+
+const Tile planks = {false,false,'r','='};
 
 const Tile burningplanks = {false,false,'r','-'};
 

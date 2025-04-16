@@ -14,9 +14,14 @@ int* initialise_proba(void){
     for(int i = 0; i<NB_OBSTACLE; i++){
         *(proba+i) = 0;
     }
+//    temp modif pour test
+//    *(proba+FOREST) = 20;
+//    *(proba+ROAD) = 60;
+//    *(proba+RIVER) = 20;
     *(proba+FOREST) = 20;
-    *(proba+ROAD) = 60;
-    *(proba+RIVER) = 20;
+    *(proba+ROAD) = 20;
+    *(proba+RIVER) = 0;
+    *(proba+BUSHES) = 60;
     return proba;
 }
 
@@ -172,6 +177,9 @@ void generator_obstacle(Game*game){
         generator_river(game);
         break;
 
+        case BUSHES:
+        generator_bushes(game);
+        break;
     }
 
 }
@@ -257,4 +265,31 @@ void destroy_game(Game *game){
     free(game->joueur);
     free(game->proba);
     free(game);
+}
+
+void generator_bushes(Game *game){
+    //les buissons
+    int proba_change = (rand()%4)*5;
+    if(*((game->proba)+BUSHES) <= proba_change){
+        *((game->proba)+FOREST) += (2*(*((game->proba)+BUSHES)))/3 ;
+        *((game->proba)+RIVER) += (*((game->proba)+BUSHES))/3+1 ;
+        *((game->proba)+BUSHES) = 0 ;
+    } else {
+        *((game->proba)+FOREST) += 2*proba_change/3 ;
+        *((game->proba)+BUSHES) -= proba_change ;
+        *((game->proba)+RIVER) += proba_change/3+1 ;
+    }
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], plain);
+    }
+    int nb_regular = rand()%5;
+    for(int i = 0; i<nb_regular; i++){
+        clone(&line->tiles[rand()%LENGTH], tree);
+    }
+    int nb_aggressive = rand()%3;
+    for(int i = 0; i<nb_aggressive; i++){
+        game->mobs = list_append(game->mobs, clone_mob(bush, (rand()%LENGTH)*32, HEIGHT,1));
+    }
 }

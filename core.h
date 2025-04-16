@@ -20,7 +20,7 @@ enum Obstacle {
     FOREST,
     ROAD,
     RIVER,
-    //TODO ID nouveaux obstacles
+    BUSHES,
     NB_OBSTACLE
 };
 
@@ -58,4 +58,6 @@ bool test_death(Game*);
 
 void destroy_game(Game *game);
 
-//TODO nouveaux générateurs
+void generator_bushes(Game*);
+
+//TODO entree manoir,feu,grotte
