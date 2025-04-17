@@ -56,4 +56,3 @@ void move_down(Game*);
 bool test_death(Game*);
 
 void destroy_game(Game *game);
-
