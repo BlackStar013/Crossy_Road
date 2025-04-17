@@ -20,11 +20,11 @@ void display_map(Map *map, SDL_Renderer *renderer){
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
             SDL_Surface *spriteSurface;
-            if((line->tiles[j].type=='_') && (line->tiles[j].color=='g')){              //charge le sprite a afficher
+            if(line->tiles[j].type==_PLAIN){              //charge le sprite a afficher
                 spriteSurface = IMG_Load("sprites/Plaines.png");
-            }else if(line->tiles[j].type=='_'){
+            }else if(line->tiles[j].type==_ROAD){
                 spriteSurface = IMG_Load("sprites/Routes.png");
-            }else if(line->tiles[j].type=='#'){
+            }else if(line->tiles[j].type==_WALL){
                 spriteSurface = IMG_Load("sprites/Rochers.png");
             }else{   //(line->tiles[j].type=='~')
                 spriteSurface = IMG_Load("sprites/Eaumilieu.png");
@@ -263,7 +263,7 @@ int main(void){
             if(event.key.keysym.sym == SDLK_z){
                 move_up(game);
                 // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
-                if(game->joueur->_y>=3*32){
+                if(game->joueur->_y_dest>=3*32){
                     switch_game(game);
                 }
                 //sert à changement l'image du joueur quand il se déplace
