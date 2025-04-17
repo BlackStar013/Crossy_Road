@@ -88,16 +88,6 @@ int main(void){
     struct termios old_tio = init_terminal();
     Game *game = initalise_game();
     update_game(game);
-    game->carte->head_map->next->next->next->next->next->tiles[5].type='#';
-    game->carte->head_map->next->next->next->next->next->tiles[5].is_block = true;
-    game->carte->head_map->next->next->next->next->next->tiles[7].type='#';
-    game->carte->head_map->next->next->next->next->next->tiles[7].is_block = true;
-    game->carte->head_map->next->next->next->next->next->tiles[9].type='#';
-    game->carte->head_map->next->next->next->next->next->tiles[9].is_block = true;
-    for(int i=0; i<LENGTH; i++){
-        game->carte->head_map->next->next->next->tiles[i].type='~';
-        game->carte->head_map->next->next->next->tiles[i].is_danger=true;
-    }
     game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5, 10));
     //print_liste(game->mobs);
     //sleep(1);

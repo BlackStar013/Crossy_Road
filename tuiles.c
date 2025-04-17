@@ -5,20 +5,19 @@
 #include <stdbool.h>
 
 
-const Tile plain = {false,false,'g','_'};
+const Tile plain = {false,false,_PLAIN};
 
-const Tile road = {false,false,'r','_'};
+const Tile road = {false,false,_ROAD};
 
-const Tile wall = {true,false,'a','#'};
+const Tile wall = {true,false,_WALL};
 
-const Tile water = {false,true,'b','~'};
+const Tile water = {false,true,_WATER};
 
-const Tile tree = {true,false,'g','I'};
+const Tile tree = {true,false,_TREE};
 
-const Tile danger = {false,true,'r','!'};
+const Tile danger = {false,true,_DANGER};
 
 void clone(Tile *dest, Tile src){
-    dest->color = src.color;
     dest->is_block = src.is_block;
     dest->is_danger = src.is_danger;
     dest->type = src.type;

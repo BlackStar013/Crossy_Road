@@ -5,8 +5,7 @@
 typedef struct _Tile {
     bool is_block;
     bool is_danger;
-    char color;
-    char type; //si on voudra en graphique des cases différentes
+    int type; //si on voudra en graphique des cases différentes
                    //Pas que en graphique 
 } Tile;
 //g = green, r = red, b = blue, a = gray 
@@ -17,6 +16,16 @@ typedef struct _Tile {
 
 #define LENGHT 16
 #define HEIGHT 16
+
+
+enum TILE{
+    _PLAIN,
+    _ROAD,
+    _WALL,
+    _WATER,
+    _TREE,
+    _DANGER
+};
 
 extern const Tile plain;
 
