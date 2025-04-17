@@ -110,3 +110,5 @@ void curse(Mob *projectile,Player* player);
 
 extern const Mob mage;
 extern const Mob curse_arrow;
+extern const Mob curse_arrow_bis_1;
+extern const Mob curse_arrow_bis_2;

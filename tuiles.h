@@ -36,12 +36,16 @@ extern const Tile ruins;
 
 extern const Tile brokenplanks;
 
-extern const Tile barrier;
+extern const Tile planks;
 
-extern const Tile burningplanks;
+extern const Tile transition;
 
 extern const Tile muret;
 
 extern const Tile cave;
 
 extern const Tile stalagmite;
+
+extern const Tile canal;
+
+extern const Tile socle;

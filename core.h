@@ -21,6 +21,11 @@ enum Obstacle {
     ROAD,
     RIVER,
     BUSHES,
+    ENTRANCE,
+    FIRE,
+    CAVE,
+    CULTIST,
+    MAGE,
     NB_OBSTACLE
 };
 
@@ -60,4 +65,10 @@ void destroy_game(Game *game);
 
 void generator_bushes(Game*);
 
-//TODO entree manoir,feu,grotte
+void generator_entrance(Game*);
+
+void generator_fire(Game*);
+
+void generator_Cultist(Game*);
+
+void generator_mage(Game*);

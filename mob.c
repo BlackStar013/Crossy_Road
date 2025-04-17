@@ -190,6 +190,7 @@ void destroy_liste_mob(Liste_Mob *liste){
 //////////////////////////////////////////////////////////////////////
 
 void clockwise_cycle_2(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens horaire d'une zone de 2*2 cases
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -227,6 +228,7 @@ void clockwise_cycle_2(Mob *fire,Player* Joueur){
 const Mob fire_2_clock = {1,1,true,0,0,0,0,0,FIRE2CLOCK,clockwise_cycle_2,0,16,0,0};
 
 void counterclock_cycle_2(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens antihoraire d'une zone de 2*2 cases
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -264,6 +266,7 @@ void counterclock_cycle_2(Mob *fire,Player* Joueur){
 const Mob fire_2_counter = {1,1,true,0,0,0,0,0,FIRE2CLOCK,counterclock_cycle_2,0,16,0,0};
 
 void clockwise_cycle_3(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens horaire d'une zone de 3*3 cases
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -301,6 +304,7 @@ void clockwise_cycle_3(Mob *fire,Player* Joueur){
 const Mob fire_3_clock = {1,1,true,0,0,0,0,0,FIRE2CLOCK,clockwise_cycle_3,0,32,0,0};
 
 void counterclock_cycle_3(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens antihoraire d'une zone de 3*3 cases
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -338,6 +342,7 @@ void counterclock_cycle_3(Mob *fire,Player* Joueur){
 const Mob fire_3_counter = {1,1,true,0,0,0,0,0,FIRE2CLOCK,counterclock_cycle_3,0,32,0,0};
 
 void ambush(Mob *bush,Player* player){
+    //embuscade
         if(!bush->delay){
             if (player->_x-bush->_x<32 && player->_x-bush->_x>0 && (player->_y-bush->_y<8 && bush->_y-player->_y<8)){
                 bush->_x+=4;
@@ -366,6 +371,7 @@ void ambush(Mob *bush,Player* player){
 const Mob bush = {1,1,true,0,0,0,0,0,BUSH,ambush,0,8,0,0};
 
 void patrol_clock4x2(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens horaire d'une zone de 4 cases de long et 2 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -412,6 +418,7 @@ void patrol_clock4x2(Mob *fire,Player* Joueur){
 }
 
 void patrol_clock5x2(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens horaire d'une zone de 5 cases de long et 2 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -458,6 +465,7 @@ void patrol_clock5x2(Mob *fire,Player* Joueur){
 }
 
 void patrol_clock4x3(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens horaire d'une zone de 4 cases de long et 3 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -504,6 +512,7 @@ void patrol_clock4x3(Mob *fire,Player* Joueur){
 }
 
 void patrol_counter4x2(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens antihoraire d'une zone de 4 cases de long et 2 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -550,6 +559,7 @@ void patrol_counter4x2(Mob *fire,Player* Joueur){
 }
 
 void patrol_counter5x2(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens antihoraire d'une zone de 5 cases de long et 2 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -596,6 +606,7 @@ void patrol_counter5x2(Mob *fire,Player* Joueur){
 }
 
 void patrol_counter4x3(Mob *fire,Player* Joueur){
+    //fait des tours dans le sens antihoraire d'une zone de 4 cases de long et 3 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
         {
@@ -641,16 +652,18 @@ void patrol_counter4x3(Mob *fire,Player* Joueur){
     }
 }
 
+//mobs allant dans le sens horaire
 const Mob cult_clock1 = {1,1,true,0,0,0,0,0,CULTIST1CLOCK,patrol_clock4x2,0,48,0,0};
 const Mob cult_clock2 = {1,1,true,0,0,0,0,0,CULTIST2CLOCK,patrol_clock5x2,0,64,0,0};
 const Mob cult_clock3 = {1,1,true,0,0,0,0,0,CULTIST3CLOCK,patrol_clock4x3,0,48,0,0};
+//mobs allant dans le sens antihoraire
 const Mob cult_counter1 = {1,1,true,0,0,0,0,0,CULTIST1COUNTER,patrol_counter4x2,0,48,0,0};
 const Mob cult_counter2 = {1,1,true,0,0,0,0,0,CULTIST2COUNTER,patrol_counter5x2,0,64,0,0};
 const Mob cult_counter3 = {1,1,true,0,0,0,0,0,CULTIST3COUNTER,patrol_counter4x3,0,48,0,0};
 
 void still(Mob *mage,Player* player){
         if(!mage->action_delay){
-        mage->action_delay=mage->action_value;
+        mage->action_delay=(mage->action_value)*(mage->speed)*20;
         }
         else {
             mage->action_delay--;
@@ -674,12 +687,13 @@ void follow(Mob *projectile,Player* player){
             }
         }
     if(!projectile->action_delay){
-        projectile->action_delay=projectile->action_value;
         if (mob_in_map(projectile)){
             projectile->_x=99999999;
+            projectile->action_delay=(projectile->speed)*4*(projectile->action_value);
         } else {
             projectile->_x=projectile->memory__x;
             projectile->_y=projectile->memory__y;
+            projectile->action_delay=(projectile->speed)*16*(projectile->action_value); 
         }
     }
     else {
@@ -692,5 +706,7 @@ void follow(Mob *projectile,Player* player){
 }
 
 
-const Mob mage={1,1,true,0,0,0,0,0,HIGHCULTIST,still,0,0,0,0};
-const Mob curse_arrow={1,1,true,0,0,0,0,0,CURSE,follow,0,0,0,0};
+const Mob mage={1,1,true,0,0,0,0,0,HIGHCULTIST,still,10,0,0,0};
+const Mob curse_arrow={1,1,true,0,0,0,0,0,CURSE,follow,10,0,0,0};
+const Mob curse_arrow_bis_1={1,1,true,0,0,0,0,0,CURSE,follow,10,100,0,0};
+const Mob curse_arrow_bis_2={1,1,true,0,0,0,0,0,CURSE,follow,10,200,0,0};

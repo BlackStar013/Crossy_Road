@@ -32,10 +32,12 @@ const Tile transition = {false,false,'r','+'};
 
 const Tile planks = {false,false,'r','='};
 
-const Tile burningplanks = {false,false,'r','-'};
-
 const Tile muret = {true,false,'a','|'};
 
 const Tile cave = {false,false,'a','_'};
 
 const Tile stalagmite = {true,false,'a','!'};
+
+const Tile canal ={false,false,'r','-'};
+
+const Tile socle ={false,false,'r','o'};
