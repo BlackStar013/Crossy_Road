@@ -20,6 +20,7 @@ enum Obstacle {
     FOREST,
     ROAD,
     RIVER,
+    CANON,
     NB_OBSTACLE
 };
 
@@ -30,6 +31,7 @@ int* initialise_proba(void);
 void generator_forest(Game*);
 void generator_road(Game*);
 void generator_river(Game*);
+void generator_canon(Game*);
 void generator_obstacle(Game*);
 
 //Initialise les générateurs
@@ -40,7 +42,7 @@ void (*initialise_generator(void))(Game*);
 Game *initalise_game(void);
 void update_game(Game* game);
 
-void switch_game(Game *game, int defil);
+void switch_game(Game *game);
 
 //Ajoute aléatoirement un obstacle dans le buffer
 void add_obstacle(Game*);
@@ -56,3 +58,4 @@ void move_down(Game*);
 bool test_death(Game*);
 
 void destroy_game(Game *game);
+
