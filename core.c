@@ -14,10 +14,10 @@ int* initialise_proba(void){
     for(int i = 0; i<NB_OBSTACLE; i++){
         *(proba+i) = 0;
     }
-    *(proba+FOREST) = 0;
+    *(proba+FOREST) = 100;
     *(proba+ROAD) = 0;
     *(proba+RIVER) = 0;
-    *(proba+CANON) = 100;
+    *(proba+CANON) = 0;
     return proba;
 }
 
@@ -263,19 +263,20 @@ Game *initalise_game(void){
 
 void switch_game(Game* game, int defil){
     // quand le joueur avance suffisamment, on avance la map, et les mob, et incrément le score
-    if(defil == 0){
+    printf("%d\n",game->score+1);
+    if(defil == 1){
         switch_map(game->carte);
+        game->score++;
     }
 
     switch_mob(game->mobs);
     game->joueur->_y -= 4;
     game->joueur->_y_dest -= 4;
-    game->score++;
 }
 
 
 void move(int x, int y, Game* game){
-    //printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
+    printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
     if(tile_map(game->carte, game->joueur->_x_dest/32 + x, game->joueur->_y_dest/32 + y).type != water.type){
          if(game->joueur->_x_dest%32 > 16){
                   game->joueur->_x_dest =  (game->joueur->_x_dest/32+1)*32;
@@ -322,7 +323,7 @@ bool test_death(Game* game){
     }
 }
 
-void update_game(Game* game){
+void update_game(Game* game,int defil){
     // avance les mobs de leur path et génére un obstacle dans le buffer
     move_all_mob(game->mobs,game->joueur);
     game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
@@ -342,6 +343,9 @@ void update_game(Game* game){
     }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);
+    }
+    if(defil){
+        switch_game(game, (defil)%8);
     }
 }
 

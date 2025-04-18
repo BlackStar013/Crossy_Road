@@ -147,7 +147,7 @@ void path_right(Mob *car, Player*){
             car->_x += 3; 
         }
         car->action_value = 1-car->action_value;
-        if(car->action_value){
+        if(car->action_value&&(car->id_mob!=PLANK_RIGHT)){
             car->offset_x ++;
             car->offset_x %= 2;
         }
@@ -169,7 +169,7 @@ void path_left(Mob *car, Player*){
             car->_x -=3; //À remplacer par move_mob (?)
         }
         car->action_value = 1-car->action_value;
-        if(car->action_value){
+        if(car->action_value&&(car->id_mob!=PLANK_LEFT)){
             car->offset_x ++;
             car->offset_x %= 2;
         }

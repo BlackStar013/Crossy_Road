@@ -40,7 +40,7 @@ void (*initialise_generator(void))(Game*);
 
 //Initialise une partie
 Game *initalise_game(void);
-void update_game(Game* game);
+void update_game(Game* game, int defil);
 
 void switch_game(Game *game, int defil);
 
