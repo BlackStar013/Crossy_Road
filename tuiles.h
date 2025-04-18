@@ -20,9 +20,16 @@ typedef struct _Tile {
 
 enum TILE{
     _PLAIN,
+    _PLAIN_BLOCK,
     _ROAD,
+    _ROAD_UP,
+    _ROAD_DOWN,
+    _ROAD_MIDDLE,
     _WALL,
     _WATER,
+    _WATER_UP,
+    _WATER_DOWN,
+    _WATER_MIDDLE,
     _TREE,
     _DANGER,
     _RUINS,
@@ -39,11 +46,26 @@ enum TILE{
 
 extern const Tile plain;
 
+extern const Tile plain_block;
+
 extern const Tile road;
+
+extern const Tile road_up;
+
+extern const Tile road_down;
+
+extern const Tile road_middle;
 
 extern const Tile  wall;
 
 extern const Tile water;
+
+extern const Tile water_up;
+
+extern const Tile water_down;
+
+extern const Tile water_middle;
+
 
 extern const Tile tree;
 

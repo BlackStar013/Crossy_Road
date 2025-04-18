@@ -142,7 +142,7 @@ void path_right(Mob *car,Player*){
         if(car->_x/32 >= LENGHT){
             car->_x = -car->length*32;
         } else {
-            car->_x += 2; 
+            car->_x += 3; 
         }
         car->delay = car->speed;
     } else {
@@ -151,7 +151,7 @@ void path_right(Mob *car,Player*){
 }
 
 const Mob car_right = {1,2,true,0,0,0,0,0,CAR_RIGHT,path_right,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici
-const Mob plank_right = {1,1,false,2,0,0,0,0,PLANK_RIGHT,path_right,0,0,0,0}; 
+const Mob plank_right = {1,1,false,3,0,0,0,0,PLANK_RIGHT,path_right,0,0,0,0}; 
 const Mob bus_right = {1,4,true,0,0,0,0,0,BUS_RIGHT,path_right,0,0,0,0};
 
 void path_left(Mob *car,Player*){
@@ -159,7 +159,7 @@ void path_left(Mob *car,Player*){
         if(car->_x/32 < -car->length+1){
             car->_x = LENGTH*32;
         } else {
-            car->_x -=2; //À remplacer par move_mob (?)
+            car->_x -=3; //À remplacer par move_mob (?)
         }
         car->delay = car->speed;
     } else {
@@ -168,7 +168,7 @@ void path_left(Mob *car,Player*){
 }
 
 const Mob car_left = {1,2,true,0,0,0,0,0,CAR_LEFT,path_left,0,0,0,0};
-const Mob plank_left = {1,1,false,-2,0,0,0,0,PLANK_LEFT,path_left,0,0,0,0};
+const Mob plank_left = {1,1,false,-3,0,0,0,0,PLANK_LEFT,path_left,0,0,0,0};
 const Mob bus_left = {1,4,true,0,0,0,0,0,BUS_LEFT,path_left,0,0,0,0};
 
 void destroy_mobs(Liste_Mob *liste){

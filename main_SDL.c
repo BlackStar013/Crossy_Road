@@ -24,9 +24,23 @@ void display_map(Map *map, SDL_Renderer *renderer){
                 spriteSurface = IMG_Load("sprites/Plaines.png");
             }else if(line->tiles[j].type==_ROAD){
                 spriteSurface = IMG_Load("sprites/Routes.png");
+            }else if(line->tiles[j].type==_PLAIN_BLOCK){
+                spriteSurface = IMG_Load("sprites/Plaines.png");
+            }else if(line->tiles[j].type==_ROAD_UP){
+                spriteSurface = IMG_Load("sprites/RoutesLimiteHaut.png");
+            }else if(line->tiles[j].type==_ROAD_DOWN){
+                spriteSurface = IMG_Load("sprites/RouteLlimiteBas.png");
+            }else if(line->tiles[j].type==_ROAD_MIDDLE){
+                spriteSurface = IMG_Load("sprites/RouteCentre.png");
             }else if(line->tiles[j].type==_WALL){
                 spriteSurface = IMG_Load("sprites/Rochers.png");
-            }else{   //(line->tiles[j].type=='~')
+            }else if(line->tiles[j].type==_WATER){   //(line->tiles[j].type=='~')
+                spriteSurface = IMG_Load("sprites/Eaudoublebords.png");
+            }else if(line->tiles[j].type==_WATER_UP){   //(line->tiles[j].type=='~')
+                spriteSurface = IMG_Load("sprites/Eaubordhaut.png");
+            }else if(line->tiles[j].type==_WATER_DOWN){   //(line->tiles[j].type=='~')
+                spriteSurface = IMG_Load("sprites/Eaubordbas.png");
+            }else{ //if(line->tiles[j].type==_WATER_MIDDLE){   //(line->tiles[j].type=='~')
                 spriteSurface = IMG_Load("sprites/Eaumilieu.png");
             }
             // creer la surface pour afficher
