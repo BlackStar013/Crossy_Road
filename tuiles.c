@@ -22,3 +22,24 @@ void clone(Tile *dest, Tile src){
     dest->is_danger = src.is_danger;
     dest->type = src.type;
 }
+
+
+
+
+///////////////////////////////////////////////////////////////////
+const Tile ruins = {true,false,_RUINS};
+
+const Tile brokenplanks = {true,false,_BROKENPLANKS};
+
+const Tile transition = {false,false,_TRANSITION};
+
+const Tile planks = {false,false,_PLANKS};
+
+const Tile burningplanks = {false,false,_BURNINGPLANKS};
+
+const Tile low_wall = {true,false,_LOW_WALL};
+
+const Tile cave = {false,false,_CAVE};
+
+const Tile stalagmite = {true,false,_STALAGMITE};
+

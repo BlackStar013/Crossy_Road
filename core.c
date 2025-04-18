@@ -177,9 +177,9 @@ void generator_obstacle(Game*game){
 }
 
 
-
 Game *initalise_game(void){
     // explicite
+    srand( time( NULL ) );
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
     game->joueur = initialise_player(0); //0 for now
@@ -189,31 +189,37 @@ Game *initalise_game(void){
     return game;
 }
 
-void switch_game(Game* game){
+void switch_game(Game* game, int defil){
     // quand le joueur avance suffisamment, on avance la map, et les mob, et incrément le score
-    switch_map(game->carte);
+    if(defil == 0){
+        switch_map(game->carte);
+    }
+
     switch_mob(game->mobs);
-    move_down(game);
+    game->joueur->_y -= 4;
+    game->joueur->_y_dest -= 4;
     game->score++;
 }
 
 
 void move(int x, int y, Game* game){
-    if(tile_map(game->carte, game->joueur->_x/32 + x, game->joueur->_y/32 + y).type != water.type){
-         if(game->joueur->_x%32 > 16){
-                  game->joueur->_x =  (game->joueur->_x/32+1)*32;
+    //printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
+    if(tile_map(game->carte, game->joueur->_x_dest/32 + x, game->joueur->_y_dest/32 + y).type != water.type){
+         if(game->joueur->_x_dest%32 > 16){
+                  game->joueur->_x_dest =  (game->joueur->_x_dest/32+1)*32;
              } else {
-                  game->joueur->_x = (game->joueur->_x/32)*32;
+                  game->joueur->_x_dest = (game->joueur->_x_dest/32)*32;
             }
-            if(game->joueur->_y%32 > 16){
-                game->joueur->_y =  (game->joueur->_y/32+1)*32 ;
+            if(game->joueur->_y_dest%32 > 16){
+                game->joueur->_y_dest =  (game->joueur->_y_dest/32+1)*32 ;
             } else {
-                game->joueur->_y =  (game->joueur->_y/32)*32 ;
+                game->joueur->_y_dest =  (game->joueur->_y_dest/32)*32 ;
             }
      }
-    if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x/32 + x, game->joueur->_y/32 + y))){
-            game->joueur->_x +=  x*32;
-            game->joueur->_y +=  y*32;
+    if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x_dest/32 + x, game->joueur->_y_dest/32 + y))){
+            game->joueur->_x_dest +=  x*32;
+            game->joueur->_y_dest +=  y*32;
+            
     }
 }
 
@@ -240,19 +246,22 @@ bool test_death(Game* game){
     }else if(a_mob_collide(game->mobs, game->joueur)){
         return false;
     }else{
-        return IS_DANGER(tile_map(game->carte, game->joueur->_x/32, game->joueur->_y/32));
+        return IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, game->joueur->_y_dest/32));
     }
 }
 
 void update_game(Game* game){
     // avance les mobs de leur path et génére un obstacle dans le buffer
-    move_all_mob(game->mobs);
+    move_all_mob(game->mobs,game->joueur);
+    game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
+    game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
         if(cur->mob->move_x){
             if(mob_collide(cur->mob, game->joueur)){
                 if(cur->mob->delay==0){
                     game->joueur->_x += cur->mob->move_x;
+                    game->joueur->_x_dest += cur->mob->move_x;
                 }
             }
         }

@@ -24,7 +24,17 @@ enum TILE{
     _WALL,
     _WATER,
     _TREE,
-    _DANGER
+    _DANGER,
+    _RUINS,
+    _BROKENPLANKS,
+    _TRANSITION,
+    _PLANKS,
+    _BURNINGPLANKS,
+    _LOW_WALL,
+    _CAVE,
+    _STALAGMITE,
+    NB_TILE
+
 };
 
 extern const Tile plain;
@@ -40,3 +50,23 @@ extern const Tile tree;
 extern const Tile danger;
 
 void clone(Tile *dest,Tile src);
+
+
+
+//////////////////////////////////////
+extern const Tile ruins;
+
+extern const Tile brokenplanks;
+
+extern const Tile transition;
+
+extern const Tile planks;
+
+extern const Tile burningplanks;
+
+extern const Tile low_wall ;
+
+extern const Tile cave;
+
+extern const Tile stalagmite;
+
