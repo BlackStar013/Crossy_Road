@@ -255,6 +255,7 @@ void update_game(Game* game){
     move_all_mob(game->mobs,game->joueur);
     game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
     game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
+    //SDL_Delay(1000);
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
         if(cur->mob->move_x){

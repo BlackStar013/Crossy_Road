@@ -13,6 +13,8 @@ typedef struct _Mob {
     int speed; // ==Delay_max 
     int delay;
     int id_mob;
+    int offset_x;
+    //int offset_y;             // pour une raison que j'ignore, il refuse d'avoir un autre champ ???
     void (*path)(struct _Mob*,Player*);
     int action_value;
     int action_delay;
