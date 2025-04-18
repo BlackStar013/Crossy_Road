@@ -29,6 +29,11 @@ enum MOB{
     BUS_LEFT,
     PLANK_RIGHT,
     PLANK_LEFT,
+    CANON_RIGHT,
+    CANON_LEFT,
+    CANON_BALL_RIGHT,
+    CANON_BALL_LEFT,
+    ////
     FIRE2CLOCK,
     FIRE2COUNTER,
     FIRE3CLOCK,
@@ -44,6 +49,7 @@ enum MOB{
     CURSE,
     NB_MOB
 };
+
 
 typedef struct _List_Mob {
     Mob* mob;
@@ -67,6 +73,19 @@ void path_left(Mob*,Player*);
 extern const Mob car_left;
 extern const Mob plank_left;
 extern const Mob bus_left;
+
+void canon_idle(Mob*,Player*);
+
+void canon_right_fast(Mob*,Player*);
+extern const Mob canon_right;
+extern const Mob canon_ball_right;
+
+void canon_left_fast(Mob*,Player*);
+extern const Mob canon_left;
+extern const Mob canon_ball_left;
+
+
+
 
 //Fonction liés à List_Mob
 Liste_Mob* list_create(Mob* mob);
