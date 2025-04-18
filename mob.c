@@ -186,7 +186,7 @@ const Mob bus_left = {1,4,true,0,0,0,0,0,BUS_LEFT,0,path_left,0,0,0,0};
 void canon_idle(Mob* mob, Player *){
     switch (mob->action_value) {
         case 0:
-            if(mob->delay <15){
+            if(mob->delay < 32){
                 mob->action_value = 1;
                 mob->offset_x ++;
                 mob->offset_x %= 3;
@@ -206,7 +206,7 @@ void canon_idle(Mob* mob, Player *){
 
         case 2:
             if(mob->action_delay==0){
-                mob->action_delay = (LENGTH*32)/16;
+                mob->action_delay = (LENGTH*32)/32;
                 mob->delay = mob->speed;
                 mob->action_value = 0;
                 mob->offset_x ++;
@@ -219,8 +219,8 @@ void canon_idle(Mob* mob, Player *){
         } 
 }
 
-const Mob canon_right = {1,1,false,0,0,0,0,0,CANON_RIGHT,canon_idle,0,(LENGTH*32-32)/32,0,0};
-const Mob canon_left = {1,1,false,0,0,0,0,0,CANON_LEFT,canon_idle,0,(LENGTH*32-32)/32,0,0};
+const Mob canon_right = {1,1,false,0,0,0,0,0,CANON_RIGHT,0,canon_idle,0,(LENGTH*32-32)/32,0,0};
+const Mob canon_left = {1,1,false,0,0,0,0,0,CANON_LEFT,0,canon_idle,0,(LENGTH*32-32)/32,0,0};
 
 void canon_right_fast(Mob* mob, Player *){
     switch (mob->action_value) {
@@ -272,8 +272,8 @@ void canon_left_fast(Mob* mob, Player *){
         } 
 }
 
-const Mob canon_ball_right = {1,1,true,0,0,0,0,0,CANON_BALL_RIGHT,canon_right_fast,0,(LENGTH*32-32)/32,0,0};
-const Mob canon_ball_left = {1,1,true,0,0,0,0,0,CANON_BALL_LEFT,canon_left_fast,0,(LENGTH*32-32)/32,0,0};
+const Mob canon_ball_right = {1,1,true,0,0,0,0,0,CANON_BALL_RIGHT,0,canon_right_fast,0,(LENGTH*32)/32,0,0};
+const Mob canon_ball_left = {1,1,true,0,0,0,0,0,CANON_BALL_LEFT,0,canon_left_fast,0,(LENGTH*32)/32,0,0};
 
 
 void destroy_mobs(Liste_Mob *liste){

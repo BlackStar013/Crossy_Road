@@ -112,7 +112,7 @@ int main(void){
         }else if(ch == 'z'){
             move_up(game);
             if(game->joueur->_y>=3*32){
-                switch_game(game);
+                switch_game(game,0);
             }
             //joueur->y--;
             //update_display(place, joueur);

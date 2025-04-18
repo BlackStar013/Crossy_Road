@@ -185,15 +185,20 @@ void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int wher
             clone(&line->tiles[i], plain);
         }
     }
-    game->mobs = list_append(game->mobs, clone_mob(canon, where_can, HEIGHT+pos,speed));
-    game->mobs = list_append(game->mobs, clone_mob(canon_ball,-64,HEIGHT+pos,speed));
+    int delay = (rand()%100 * speed)/100;
+    Mob* canon_ = clone_mob(canon, where_can, HEIGHT+pos,speed);
+    Mob* ball = clone_mob(canon_ball,-64,HEIGHT+pos,speed);
+    canon_->delay = delay;
+    ball->delay = delay;
+    game->mobs = list_append(game->mobs, canon_);
+    game->mobs = list_append(game->mobs, ball);
 }
 
 void generator_canon(Game *game){
     // explicite
     int nb_line = 1;//rand()%(4)+1;
     for(int i = 0 ; i < nb_line ; i++){
-        int speed = rand()%60+30;
+        int speed = rand()%240+64;
         int direction = rand()%2;
         if(direction == 0){
             add_canon(game, canon_left,canon_ball_left,i, speed,LENGTH-1);

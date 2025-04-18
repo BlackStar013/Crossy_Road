@@ -42,7 +42,7 @@ void (*initialise_generator(void))(Game*);
 Game *initalise_game(void);
 void update_game(Game* game);
 
-void switch_game(Game *game);
+void switch_game(Game *game, int defil);
 
 //Ajoute aléatoirement un obstacle dans le buffer
 void add_obstacle(Game*);
