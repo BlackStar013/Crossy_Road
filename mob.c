@@ -144,7 +144,7 @@ void path_right(Mob *car, Player*){
         if(car->_x/32 >= LENGHT){
             car->_x = -car->length*32;
         } else {
-            car->_x += 2; 
+            car->_x += 3; 
         }
         car->action_value = 1-car->action_value;
         if(car->action_value){
@@ -158,7 +158,7 @@ void path_right(Mob *car, Player*){
 }
 
 const Mob car_right = {1,2,true,0,0,0,0,0,CAR_RIGHT,0,path_right,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici
-const Mob plank_right = {1,1,false,2,0,0,0,0,PLANK_RIGHT,0,path_right,0,0,0,0}; 
+const Mob plank_right = {1,1,false,3,0,0,0,0,PLANK_RIGHT,0,path_right,0,0,0,0}; 
 const Mob bus_right = {1,4,true,0,0,0,0,0,BUS_RIGHT,0,path_right,0,0,0,0};
 
 void path_left(Mob *car, Player*){
@@ -166,7 +166,7 @@ void path_left(Mob *car, Player*){
         if(car->_x/32 < -car->length+1){
             car->_x = LENGTH*32;
         } else {
-            car->_x -=2; //À remplacer par move_mob (?)
+            car->_x -=3; //À remplacer par move_mob (?)
         }
         car->action_value = 1-car->action_value;
         if(car->action_value){
@@ -180,8 +180,101 @@ void path_left(Mob *car, Player*){
 }
 
 const Mob car_left = {1,2,true,0,0,0,0,0,CAR_LEFT,0,path_left,0,0,0,0};
-const Mob plank_left = {1,1,false,-2,0,0,0,0,PLANK_LEFT,0,path_left,0,0,0,0};
+const Mob plank_left = {1,1,false,-3,0,0,0,0,PLANK_LEFT,0,path_left,0,0,0,0};
 const Mob bus_left = {1,4,true,0,0,0,0,0,BUS_LEFT,0,path_left,0,0,0,0};
+
+void canon_idle(Mob* mob, Player *){
+    switch (mob->action_value) {
+        case 0:
+            if(mob->delay <15){
+                mob->action_value = 1;
+                mob->offset_x ++;
+                mob->offset_x %= 3;
+            } 
+            mob->delay--;
+            break;
+
+        case 1:
+            if(mob->delay==0){
+                mob->action_value = 2;
+                mob->offset_x ++;
+                mob->offset_x %= 3;
+            } else {
+                mob->delay--;
+            }
+            break;
+
+        case 2:
+            if(mob->action_delay==0){
+                mob->action_delay = (LENGTH*32)/16;
+                mob->delay = mob->speed;
+                mob->action_value = 0;
+                mob->offset_x ++;
+                mob->offset_x %= 3;
+            } else {
+                mob->action_delay--;
+            }
+            break;
+
+        } 
+}
+
+const Mob canon_right = {1,1,false,0,0,0,0,0,CANON_RIGHT,canon_idle,0,(LENGTH*32-32)/32,0,0};
+const Mob canon_left = {1,1,false,0,0,0,0,0,CANON_LEFT,canon_idle,0,(LENGTH*32-32)/32,0,0};
+
+void canon_right_fast(Mob* mob, Player *){
+    switch (mob->action_value) {
+        case 0:
+            if(mob->delay==0){
+                mob->action_value = 1;
+                mob->_x = 32;
+            } else {
+                mob->delay--;
+            }
+            break;
+
+        case 1:
+            if(mob->action_delay==0){
+                mob->action_delay = (LENGTH*32)/32;
+                mob->delay = mob->speed;
+                mob->action_value = 0;
+            } else {
+                mob->action_delay--;
+                mob->_x += 32;
+            }
+            break;
+
+        } 
+}
+
+void canon_left_fast(Mob* mob, Player *){
+    switch (mob->action_value) {
+        case 0:
+            if(mob->delay==0){
+                mob->action_value = 1;
+                mob->_x = LENGTH*32-64;
+            } else {
+                mob->delay--;
+            }
+            break;
+
+        case 1:
+            if(mob->action_delay==0){
+                mob->action_delay = (LENGTH*32)/32;
+                mob->delay = mob->speed;
+                mob->action_value = 0;
+            } else {
+                mob->action_delay--;
+                mob->_x -= 32;
+            }
+            break;
+
+        } 
+}
+
+const Mob canon_ball_right = {1,1,true,0,0,0,0,0,CANON_BALL_RIGHT,canon_right_fast,0,(LENGTH*32-32)/32,0,0};
+const Mob canon_ball_left = {1,1,true,0,0,0,0,0,CANON_BALL_LEFT,canon_left_fast,0,(LENGTH*32-32)/32,0,0};
+
 
 void destroy_mobs(Liste_Mob *liste){
     free(liste->mob);
