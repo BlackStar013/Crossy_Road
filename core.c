@@ -14,9 +14,10 @@ int* initialise_proba(void){
     for(int i = 0; i<NB_OBSTACLE; i++){
         *(proba+i) = 0;
     }
-    *(proba+FOREST) = 20;
-    *(proba+ROAD) = 60;
-    *(proba+RIVER) = 20;
+    *(proba+FOREST) = 0;
+    *(proba+ROAD) = 0;
+    *(proba+RIVER) = 0;
+    *(proba+CANON) = 100;
     return proba;
 }
 
@@ -174,6 +175,45 @@ void generator_river(Game *game){
     
 }
 
+void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int where_can){
+    add_buffer_line(game->carte);
+    Line *line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        if(i==where_can){
+            clone(&line->tiles[i], plain_block);
+        } else {
+            clone(&line->tiles[i], plain);
+        }
+    }
+    game->mobs = list_append(game->mobs, clone_mob(canon, where_can, HEIGHT+pos,speed));
+    game->mobs = list_append(game->mobs, clone_mob(canon_ball,-64,HEIGHT+pos,speed));
+}
+
+void generator_canon(Game *game){
+    // explicite
+    int nb_line = 1;//rand()%(4)+1;
+    for(int i = 0 ; i < nb_line ; i++){
+        int speed = rand()%60+30;
+        int direction = rand()%2;
+        if(direction == 0){
+            add_canon(game, canon_left,canon_ball_left,i, speed,LENGTH-1);
+        } else {
+            add_canon(game, canon_right,canon_ball_right,i, speed,0);
+        }
+    }
+    int proba_change = 5 + (nb_line-1)*(rand()%6+5);
+    if(*((game->proba)+CANON) <= proba_change){
+        *((game->proba)+FOREST) += (2*(*((game->proba)+ROAD)))/3 ;
+        *((game->proba)+ROAD) += (*((game->proba)+ROAD))/3+1 ;
+        *((game->proba)+CANON) = 0 ;
+    } else {
+        *((game->proba)+CANON) -= proba_change ;
+        *((game->proba)+FOREST) += 2*proba_change/3 ;
+        *((game->proba)+ROAD) += proba_change/3+1 ;
+    }
+    
+}
+
 
 void generator_obstacle(Game*game){
     // calcule l'obstacle a généré selon les probas
@@ -194,6 +234,10 @@ void generator_obstacle(Game*game){
 
         case RIVER:
         generator_river(game);
+        break;
+
+        case CANON:
+        generator_canon(game);
         break;
 
     }

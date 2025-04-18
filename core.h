@@ -20,6 +20,7 @@ enum Obstacle {
     FOREST,
     ROAD,
     RIVER,
+    CANON,
     NB_OBSTACLE
 };
 
@@ -30,6 +31,7 @@ int* initialise_proba(void);
 void generator_forest(Game*);
 void generator_road(Game*);
 void generator_river(Game*);
+void generator_canon(Game*);
 void generator_obstacle(Game*);
 
 //Initialise les générateurs
