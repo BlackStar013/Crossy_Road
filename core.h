@@ -13,7 +13,6 @@ typedef struct _Game {
     Liste_Mob* mobs;
     int score;
     int* proba;
-    int defil;
     void (*generator)(struct _Game*);
 } Game;
 

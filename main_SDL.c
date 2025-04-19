@@ -15,7 +15,7 @@
 
 #define ECHELLE 2
 
-void display_map(Map *map, SDL_Renderer *renderer, int defil){
+void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
     //parcours toute la map ligne par ligne et charge le sprite correspondant
     Line *line = map->head_map;
     for (int i = 0; i<HEIGTH;i++){
@@ -67,7 +67,7 @@ void display_map(Map *map, SDL_Renderer *renderer, int defil){
             // recupère dans le fichier la position depuis en haut à gauche (d'ou le (0, 0)pour x et y) et la taille calculée au dessus
             SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
             // x et y correspondent à la position où on va l'afficher, et w et h sa taille
-            SDL_Rect destRect = {.x = 32*j*ECHELLE, .y = (32*(i)+defil*4 -32*(!!defil))*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = 32*j*ECHELLE, .y = (32*(i)-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE}; //
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -80,7 +80,7 @@ void display_map(Map *map, SDL_Renderer *renderer, int defil){
     }
 }
 
-void display_joueur(Player *joueur, SDL_Renderer *renderer, int defil){
+void display_joueur(Player *joueur, SDL_Renderer *renderer,int pix_defil){
     // affiche le joueur selon le même principe que ci-dessus
     SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png");
     if (!spriteSurface) {
@@ -101,7 +101,7 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer, int defil){
     int spriteWidth = (spriteFullWidth / 4 ); //ici pour le joueur, on a 4 lignes et 4 colonnes pour les 4 orientations et 4 "gestes" d'où le /4
     int spriteHeight = (spriteFullHeight / 4 );
     SDL_Rect spriteRect = {.x = joueur->offset_x*spriteWidth, .y = joueur->offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
-    SDL_Rect destRect = {.x = (joueur->_x)*ECHELLE, .y = (HEIGHT*32-joueur->_y-32)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+    SDL_Rect destRect = {.x = (joueur->_x)*ECHELLE, .y = (HEIGHT*32-joueur->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
     if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
     }
@@ -109,7 +109,7 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer, int defil){
     SDL_FreeSurface(spriteSurface);
 }
 
-void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
+void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
     // affiche les mobs un par un selon le même principe que ci-ci-dessus-dessus
     while(liste!=NULL){
         if(liste->mob->id_mob==CAR_RIGHT || liste->mob->id_mob==CAR_LEFT){
@@ -132,7 +132,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
             int spriteWidth = (spriteFullWidth / 2); // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
             int spriteHeight = (spriteFullHeight / 2);
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y = (liste->mob->id_mob-CAR_RIGHT)*spriteHeight, .w = spriteWidth, .h = spriteHeight};
-            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -158,7 +158,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
             int spriteWidth = spriteFullWidth; // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
             int spriteHeight = spriteFullHeight;
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y = 0, .w = spriteWidth, .h = spriteHeight};
-            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -184,7 +184,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
             int spriteWidth = spriteFullWidth/3; // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
             int spriteHeight = spriteFullHeight/2;
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y =  (liste->mob->id_mob-CANON_RIGHT)*spriteHeight, .w = spriteWidth, .h = spriteHeight};
-            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -210,7 +210,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
             int spriteWidth = spriteFullWidth/3; // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
             int spriteHeight = spriteFullHeight/2;
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y =  (liste->mob->id_mob-CANON_BALL_RIGHT)*spriteHeight, .w = spriteWidth, .h = spriteHeight};
-            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -222,14 +222,14 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
 }
 
 
-void display_all(Game *game, SDL_Renderer *renderer){
+void display_all(Game *game, SDL_Renderer *renderer, int pix_defil){
     // affiche toute la carte dans l'ordre, map puis mobs puis joueur
     // if(SDL_RenderClear(renderer)){
     //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
     // }
-    display_map(game->carte, renderer, (8-game->defil%8)%8);
-    display_mob(game->mobs, renderer);
-    display_joueur(game->joueur, renderer, (8-game->defil%8)%8);
+    display_map(game->carte, renderer,pix_defil);
+    display_mob(game->mobs, renderer,pix_defil);
+    display_joueur(game->joueur, renderer,pix_defil);
     SDL_RenderPresent(renderer);
 }
 
@@ -281,6 +281,7 @@ int main(void){
     //     printf("\n");
     //     line=line->next;
     // }
+    int pix_defil = 0;
     update_game(game);
 
     SDL_Event event;
@@ -308,8 +309,8 @@ int main(void){
     while(!quit){
         // printf("score :%d\n", game->score);
         update_game(game);
-        if(game->defil){
-            game->defil--;
+        if(pix_defil){
+            pix_defil -= 4;
         }
         // test la mort, pour le moment juste quitte le jeu
         if(test_death(game)){
@@ -321,7 +322,7 @@ int main(void){
         if(SDL_RenderClear(renderer)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
         }    
-        display_all(game, renderer);
+        display_all(game, renderer,pix_defil);
 
         // une fois l'affichage fait, on regarde si le joueur se déplace
         SDL_PollEvent(&event);
@@ -333,8 +334,9 @@ int main(void){
             // bouge le joueur dans la direction selon la touche pressée, ZQSD, ou quitte avec M
             if(event.key.keysym.sym == SDLK_z){
                 // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
-                if(move_up(game)&&game->joueur->_y_dest-4*game->defil>=3*32){
-                    game->defil+=8;
+                if(move_up(game)&&game->joueur->_y_dest>=3*32){
+                    pix_defil += 32;
+                    switch_game(game);
                 }
                 //sert à changement l'image du joueur quand il se déplace
                 game->joueur->offset_y = 1;

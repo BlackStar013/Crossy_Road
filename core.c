@@ -78,9 +78,9 @@ void generator_road(Game *game){
             nb_car = rand()%4 + 1;
         }
         if(direction == 0){
-            add_road(game, car_right,tile,i+1,speed,nb_car);
+            add_road(game, car_right,tile,i,speed,nb_car);
         } else {
-            add_road(game,car_left,tile,i+1,speed,nb_car);
+            add_road(game,car_left,tile,i,speed,nb_car);
         }
         if(i==nb_line - 2){
             tile = road_up;
@@ -152,9 +152,9 @@ void generator_river(Game *game){
     for(int i = 0 ; i < nb_line ; i++){
         int speed = rand()%3+1;
         if(direction == i%2){
-            add_plank(game, plank_right,tile,i+1,speed);
+            add_plank(game, plank_right,tile,i,speed);
         } else {
-            add_plank(game,plank_left,tile,i+1,speed);
+            add_plank(game,plank_left,tile,i,speed);
         }
         if(i==nb_line-2){
             tile = water_up;
@@ -201,9 +201,9 @@ void generator_canon(Game *game){
         int speed = rand()%240+64;
         int direction = rand()%2;
         if(direction == 0){
-            add_canon(game, canon_left,canon_ball_left,i+1, speed,LENGTH-1);
+            add_canon(game, canon_left,canon_ball_left,i, speed,LENGTH-1);
         } else {
-            add_canon(game, canon_right,canon_ball_right,i+1, speed,0);
+            add_canon(game, canon_right,canon_ball_right,i, speed,0);
         }
     }
     int proba_change = 5 + (nb_line-1)*(rand()%6+5);
@@ -257,7 +257,6 @@ Game *initalise_game(void){
     game->joueur = initialise_player(0); //0 for now
     game->score = -1;
     game->mobs = NULL;
-    game->defil = 0;
     game->proba = initialise_proba();
     return game;
 }
@@ -265,21 +264,18 @@ Game *initalise_game(void){
 void switch_game(Game* game){
     // quand le joueur avance suffisamment, on avance la map, et les mob, et incrément le score
     //printf("%d\n",game->score+1);
-    if((game->defil)%8 == 0){
-        switch_map(game->carte);
-        game->score++;
-    }
-
+    switch_map(game->carte);
+    game->score++;
     switch_mob(game->mobs);
-    game->joueur->_y -= 4;
-    game->joueur->_y_dest -= 4;
+    game->joueur->_y -= 32;
+    game->joueur->_y_dest -= 32;
 }
 
 
 bool move(int x, int y, Game* game){
-    printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
-    printf("%d\n",tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest-4*game->defil)/32 + y).type);
-    if(tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest-4*game->defil)/32 + y).type != water.type){
+    //printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
+    //printf("%d\n",tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type);
+    if(tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type != water.type){
          if(game->joueur->_x_dest%32 > 16){
                   game->joueur->_x_dest =  (game->joueur->_x_dest/32+1)*32;
              } else {
@@ -291,7 +287,7 @@ bool move(int x, int y, Game* game){
                 game->joueur->_y_dest =  (game->joueur->_y_dest/32)*32 ;
             }
      }
-    if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest-4*game->defil)/32 + y))){
+    if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y))){
             game->joueur->_x_dest +=  x*32;
             game->joueur->_y_dest +=  y*32;
             return true ;
@@ -347,9 +343,6 @@ void update_game(Game* game){
     }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);
-    }
-    if(game->defil){
-        switch_game(game);
     }
 }
 
