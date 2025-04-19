@@ -349,7 +349,6 @@ void update_game(Game* game){
 void destroy_game(Game *game){
     // Kaboum
     destroy_map(game->carte);
-    free(game->carte);
     destroy_liste_mob(game->mobs);
     free(game->joueur);
     free(game->proba);

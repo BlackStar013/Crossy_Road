@@ -18,7 +18,7 @@
 void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
     //parcours toute la map ligne par ligne et charge le sprite correspondant
     Line *line = map->head_map;
-    for (int i = 0; i<HEIGTH;i++){
+    for (int i = 0; i<HEIGTH+map->tail_buffer_lenght;i++){
         for (int j = 0; j<LENGTH; j++){
             SDL_Surface *spriteSurface;
             if(line->tiles[j].type==_PLAIN){              //charge le sprite a afficher
@@ -74,7 +74,7 @@ void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
             SDL_DestroyTexture(spriteTexture);
             SDL_FreeSurface(spriteSurface);
         }
-        if(i!=LENGTH){
+        if(line!=NULL){
             line=line->next;
         }
     }
@@ -312,12 +312,17 @@ int main(void){
         if(pix_defil){
             pix_defil -= 4;
         }
+        if(!pix_defil){
+            destroy_tail_buffer(game->carte);
+        }else if(!pix_defil%32){
+            destroy_last_buffer(game->carte);
+        }
         // test la mort, pour le moment juste quitte le jeu
         if(test_death(game)){
             if(SDL_RenderClear(renderer)){
                  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
               }
-           quit = SDL_TRUE;
+           //quit = SDL_TRUE;
          }
         if(SDL_RenderClear(renderer)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
@@ -337,6 +342,7 @@ int main(void){
                 if(move_up(game)&&game->joueur->_y_dest>=3*32){
                     pix_defil += 32;
                     switch_game(game);
+                    game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
                 }
                 //sert à changement l'image du joueur quand il se déplace
                 game->joueur->offset_y = 1;

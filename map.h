@@ -15,6 +15,8 @@ typedef struct _Map{
     Line* head_buffer;
     Line* head_map;
     Line* tail;
+    Line* tail_buffer;
+    int tail_buffer_lenght;
     /* data */
 }Map;
 
@@ -47,4 +49,6 @@ Player* initialise_player(int);
 void add_buffer_line(Map* map);
 void remove_buffer_line(Map* map);
 void destroy_line(Line *line);
+void destroy_tail_buffer(Map* map);
+void destroy_last_buffer(Map* map);
 void destroy_map(Map *map);
