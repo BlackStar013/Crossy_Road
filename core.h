@@ -48,13 +48,14 @@ void switch_game(Game *game);
 void add_obstacle(Game*);
 
 //Fait déplacer le joueur de x case à droite (positif) et y cases en haut.
-void move(int x, int y,Game*);
-void move_up(Game*);
-void move_left(Game*);
-void move_right(Game*);
-void move_down(Game*);
+bool move(int x, int y,Game*);
+bool move_up(Game*);
+bool move_left(Game*);
+bool move_right(Game*);
+bool move_down(Game*);
 
 //Fait déplacer la giga mab et les mobs dedans et les joueurs dedans.
 bool test_death(Game*);
 
 void destroy_game(Game *game);
+

@@ -14,10 +14,10 @@ int* initialise_proba(void){
     for(int i = 0; i<NB_OBSTACLE; i++){
         *(proba+i) = 0;
     }
-    *(proba+FOREST) = 0;
+    *(proba+FOREST) = 100;
     *(proba+ROAD) = 0;
     *(proba+RIVER) = 0;
-    *(proba+CANON) = 100;
+    *(proba+CANON) = 0;
     return proba;
 }
 
@@ -185,15 +185,20 @@ void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int wher
             clone(&line->tiles[i], plain);
         }
     }
-    game->mobs = list_append(game->mobs, clone_mob(canon, where_can, HEIGHT+pos,speed));
-    game->mobs = list_append(game->mobs, clone_mob(canon_ball,-64,HEIGHT+pos,speed));
+    int delay = (rand()%100 * speed)/100;
+    Mob* canon_ = clone_mob(canon, where_can, HEIGHT+pos,speed);
+    Mob* ball = clone_mob(canon_ball,-64,HEIGHT+pos,speed);
+    canon_->delay = delay;
+    ball->delay = delay;
+    game->mobs = list_append(game->mobs, canon_);
+    game->mobs = list_append(game->mobs, ball);
 }
 
 void generator_canon(Game *game){
     // explicite
     int nb_line = 1;//rand()%(4)+1;
     for(int i = 0 ; i < nb_line ; i++){
-        int speed = rand()%60+30;
+        int speed = rand()%240+64;
         int direction = rand()%2;
         if(direction == 0){
             add_canon(game, canon_left,canon_ball_left,i, speed,LENGTH-1);
@@ -244,8 +249,6 @@ void generator_obstacle(Game*game){
 
 }
 
-
-
 Game *initalise_game(void){
     // explicite
     srand( time( NULL ) );
@@ -260,17 +263,19 @@ Game *initalise_game(void){
 
 void switch_game(Game* game){
     // quand le joueur avance suffisamment, on avance la map, et les mob, et incrément le score
+    //printf("%d\n",game->score+1);
     switch_map(game->carte);
+    game->score++;
     switch_mob(game->mobs);
     game->joueur->_y -= 32;
     game->joueur->_y_dest -= 32;
-    game->score++;
 }
 
 
-void move(int x, int y, Game* game){
+bool move(int x, int y, Game* game){
     //printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
-    if(tile_map(game->carte, game->joueur->_x_dest/32 + x, game->joueur->_y_dest/32 + y).type != water.type){
+    //printf("%d\n",tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type);
+    if(tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type != water.type){
          if(game->joueur->_x_dest%32 > 16){
                   game->joueur->_x_dest =  (game->joueur->_x_dest/32+1)*32;
              } else {
@@ -282,27 +287,29 @@ void move(int x, int y, Game* game){
                 game->joueur->_y_dest =  (game->joueur->_y_dest/32)*32 ;
             }
      }
-    if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x_dest/32 + x, game->joueur->_y_dest/32 + y))){
+    if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y))){
             game->joueur->_x_dest +=  x*32;
             game->joueur->_y_dest +=  y*32;
-            
+            return true ;
+    } else {
+        return false ;
     }
 }
 
-void move_up(Game* game){
-    move(0,1,game);
+bool move_up(Game* game){
+    return move(0,1,game);
 }
 
-void move_right(Game* game){
-    move(1,0,game);
+bool move_right(Game* game){
+    return move(1,0,game);
 }
 
-void move_left(Game* game){
-    move(-1,0,game);
+bool move_left(Game* game){
+    return move(-1,0,game);
 }
 
-void move_down(Game* game){
-    move(0,-1,game);
+bool move_down(Game* game){
+    return move(0,-1,game);
 }
 
 bool test_death(Game* game){
@@ -321,6 +328,7 @@ void update_game(Game* game){
     move_all_mob(game->mobs,game->joueur);
     game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
     game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
+    //SDL_Delay(1000);
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
         if(cur->mob->move_x){

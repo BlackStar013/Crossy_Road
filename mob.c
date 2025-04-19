@@ -46,11 +46,11 @@ void print_liste(Liste_Mob *list){
     }
 }
 
-void move_all_mob(Liste_Mob* list,Player* player){
+void move_all_mob(Liste_Mob* list, Player* player){
     // bouge tous les mobs selon leur path
     if(list!=NULL){
         (list->mob->path)(list->mob,player);
-        move_all_mob(list->next,player);
+        move_all_mob(list->next, player);
     }
 }
 
@@ -106,6 +106,8 @@ Mob* clone_mob(Mob mob, int x_ini, int y_ini, int speed){
     new_mob->speed = speed;
     new_mob->delay = speed;
     new_mob->id_mob = mob.id_mob;
+    new_mob->offset_x = mob.offset_x;
+    //new_mob->offset_y = mob.offset_y;
     new_mob->path = mob.path;
     new_mob->action_delay=mob.action_delay;
     new_mob->action_value=mob.action_value;
@@ -114,7 +116,7 @@ Mob* clone_mob(Mob mob, int x_ini, int y_ini, int speed){
     return new_mob;
 }
 
-bool death_mob_collide(Mob* mob,Player* player){
+bool death_mob_collide(Mob* mob, Player* player){
     if(!mob->is_death){
         return false;
     }
@@ -137,29 +139,17 @@ bool mob_collide(Mob* mob, Player* player){
 
 ///Création de mobs et pathfinding
 
-void path_right(Mob *car,Player*){
+void path_right(Mob *car, Player*){
     if(!car->delay){
         if(car->_x/32 >= LENGHT){
             car->_x = -car->length*32;
         } else {
             car->_x += 3; 
         }
-        car->delay = car->speed;
-    } else {
-        car->delay--;
-    }
-}
-
-const Mob car_right = {1,2,true,0,0,0,0,0,CAR_RIGHT,path_right,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici
-const Mob plank_right = {1,1,false,3,0,0,0,0,PLANK_RIGHT,path_right,0,0,0,0}; 
-const Mob bus_right = {1,4,true,0,0,0,0,0,BUS_RIGHT,path_right,0,0,0,0};
-
-void path_left(Mob *car,Player*){
-    if(!car->delay){
-        if(car->_x/32 < -car->length+1){
-            car->_x = LENGTH*32;
-        } else {
-            car->_x -=3; //À remplacer par move_mob (?)
+        car->action_value = 1-car->action_value;
+        if(car->action_value&&(car->id_mob!=PLANK_RIGHT)){
+            car->offset_x ++;
+            car->offset_x %= 2;
         }
         car->delay = car->speed;
     } else {
@@ -167,15 +157,39 @@ void path_left(Mob *car,Player*){
     }
 }
 
-const Mob car_left = {1,2,true,0,0,0,0,0,CAR_LEFT,path_left,0,0,0,0};
-const Mob plank_left = {1,1,false,-3,0,0,0,0,PLANK_LEFT,path_left,0,0,0,0};
-const Mob bus_left = {1,4,true,0,0,0,0,0,BUS_LEFT,path_left,0,0,0,0};
+const Mob car_right = {1,2,true,0,0,0,0,0,CAR_RIGHT,0,path_right,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici
+const Mob plank_right = {1,1,false,3,0,0,0,0,PLANK_RIGHT,0,path_right,0,0,0,0}; 
+const Mob bus_right = {1,4,true,0,0,0,0,0,BUS_RIGHT,0,path_right,0,0,0,0};
+
+void path_left(Mob *car, Player*){
+    if(!car->delay){
+        if(car->_x/32 < -car->length+1){
+            car->_x = LENGTH*32;
+        } else {
+            car->_x -=3; //À remplacer par move_mob (?)
+        }
+        car->action_value = 1-car->action_value;
+        if(car->action_value&&(car->id_mob!=PLANK_LEFT)){
+            car->offset_x ++;
+            car->offset_x %= 2;
+        }
+        car->delay = car->speed;
+    } else {
+        car->delay--;
+    }
+}
+
+const Mob car_left = {1,2,true,0,0,0,0,0,CAR_LEFT,0,path_left,0,0,0,0};
+const Mob plank_left = {1,1,false,-3,0,0,0,0,PLANK_LEFT,0,path_left,0,0,0,0};
+const Mob bus_left = {1,4,true,0,0,0,0,0,BUS_LEFT,0,path_left,0,0,0,0};
 
 void canon_idle(Mob* mob, Player *){
     switch (mob->action_value) {
         case 0:
-            if(mob->delay <15){
+            if(mob->delay < 32){
                 mob->action_value = 1;
+                mob->offset_x ++;
+                mob->offset_x %= 3;
             } 
             mob->delay--;
             break;
@@ -183,6 +197,8 @@ void canon_idle(Mob* mob, Player *){
         case 1:
             if(mob->delay==0){
                 mob->action_value = 2;
+                mob->offset_x ++;
+                mob->offset_x %= 3;
             } else {
                 mob->delay--;
             }
@@ -190,9 +206,11 @@ void canon_idle(Mob* mob, Player *){
 
         case 2:
             if(mob->action_delay==0){
-                mob->action_delay = (LENGTH*32)/16;
+                mob->action_delay = (LENGTH*32)/32;
                 mob->delay = mob->speed;
                 mob->action_value = 0;
+                mob->offset_x ++;
+                mob->offset_x %= 3;
             } else {
                 mob->action_delay--;
             }
@@ -201,8 +219,8 @@ void canon_idle(Mob* mob, Player *){
         } 
 }
 
-const Mob canon_right = {1,1,false,0,0,0,0,0,CANON_RIGHT,canon_idle,0,(LENGTH*32-32)/32,0,0};
-const Mob canon_left = {1,1,false,0,0,0,0,0,CANON_LEFT,canon_idle,0,(LENGTH*32-32)/32,0,0};
+const Mob canon_right = {1,1,false,0,0,0,0,0,CANON_RIGHT,0,canon_idle,0,(LENGTH*32-32)/32,0,0};
+const Mob canon_left = {1,1,false,0,0,0,0,0,CANON_LEFT,0,canon_idle,0,(LENGTH*32-32)/32,0,0};
 
 void canon_right_fast(Mob* mob, Player *){
     switch (mob->action_value) {
@@ -254,10 +272,8 @@ void canon_left_fast(Mob* mob, Player *){
         } 
 }
 
-const Mob canon_ball_right = {1,1,true,0,0,0,0,0,CANON_BALL_RIGHT,canon_right_fast,0,(LENGTH*32-32)/32,0,0};
-const Mob canon_ball_left = {1,1,true,0,0,0,0,0,CANON_BALL_LEFT,canon_left_fast,0,(LENGTH*32-32)/32,0,0};
-
-
+const Mob canon_ball_right = {1,1,true,0,0,0,0,0,CANON_BALL_RIGHT,0,canon_right_fast,0,(LENGTH*32)/32,0,0};
+const Mob canon_ball_left = {1,1,true,0,0,0,0,0,CANON_BALL_LEFT,0,canon_left_fast,0,(LENGTH*32)/32,0,0};
 
 
 void destroy_mobs(Liste_Mob *liste){
