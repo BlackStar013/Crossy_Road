@@ -101,8 +101,8 @@ Mob* clone_mob(Mob mob, int x_ini, int y_ini, int speed){
     new_mob->length = mob.length;
     new_mob->is_death = mob.is_death;
     new_mob->move_x = mob.move_x;
-    new_mob->_x = x_ini*32;
-    new_mob->_y = y_ini*32;
+    new_mob->_x = x_ini*32-4;
+    new_mob->_y = y_ini*32-4;
     new_mob->speed = speed;
     new_mob->delay = speed;
     new_mob->id_mob = mob.id_mob;

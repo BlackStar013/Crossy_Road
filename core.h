@@ -13,6 +13,7 @@ typedef struct _Game {
     Liste_Mob* mobs;
     int score;
     int* proba;
+    int defil;
     void (*generator)(struct _Game*);
 } Game;
 
@@ -40,19 +41,19 @@ void (*initialise_generator(void))(Game*);
 
 //Initialise une partie
 Game *initalise_game(void);
-void update_game(Game* game, int defil);
+void update_game(Game* game);
 
-void switch_game(Game *game, int defil);
+void switch_game(Game *game);
 
 //Ajoute aléatoirement un obstacle dans le buffer
 void add_obstacle(Game*);
 
 //Fait déplacer le joueur de x case à droite (positif) et y cases en haut.
-void move(int x, int y,Game*);
-void move_up(Game*);
-void move_left(Game*);
-void move_right(Game*);
-void move_down(Game*);
+bool move(int x, int y,Game*);
+bool move_up(Game*);
+bool move_left(Game*);
+bool move_right(Game*);
+bool move_down(Game*);
 
 //Fait déplacer la giga mab et les mobs dedans et les joueurs dedans.
 bool test_death(Game*);

@@ -67,7 +67,7 @@ void display_map(Map *map, SDL_Renderer *renderer, int defil){
             // recupère dans le fichier la position depuis en haut à gauche (d'ou le (0, 0)pour x et y) et la taille calculée au dessus
             SDL_Rect spriteRect = {.x = 0, .y = 0, .w = spriteWidth, .h = spriteHeight};
             // x et y correspondent à la position où on va l'afficher, et w et h sa taille
-            SDL_Rect destRect = {.x = 32*j*ECHELLE, .y = (32*(i)+defil*4)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = 32*j*ECHELLE, .y = (32*(i)+defil*4 -32*(!!defil))*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -101,7 +101,7 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer, int defil){
     int spriteWidth = (spriteFullWidth / 4 ); //ici pour le joueur, on a 4 lignes et 4 colonnes pour les 4 orientations et 4 "gestes" d'où le /4
     int spriteHeight = (spriteFullHeight / 4 );
     SDL_Rect spriteRect = {.x = joueur->offset_x*spriteWidth, .y = joueur->offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
-    SDL_Rect destRect = {.x = (joueur->_x)*ECHELLE, .y = (HEIGHT*32-joueur->_y-32-defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+    SDL_Rect destRect = {.x = (joueur->_x)*ECHELLE, .y = (HEIGHT*32-joueur->_y-32)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
     if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
     }
@@ -222,14 +222,14 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer){
 }
 
 
-void display_all(Game *game, SDL_Renderer *renderer, int defil){
+void display_all(Game *game, SDL_Renderer *renderer){
     // affiche toute la carte dans l'ordre, map puis mobs puis joueur
     // if(SDL_RenderClear(renderer)){
     //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
     // }
-    display_map(game->carte, renderer, (8-defil%8)%8);
+    display_map(game->carte, renderer, (8-game->defil%8)%8);
     display_mob(game->mobs, renderer);
-    display_joueur(game->joueur, renderer, (8-defil%8)%8);
+    display_joueur(game->joueur, renderer, (8-game->defil%8)%8);
     SDL_RenderPresent(renderer);
 }
 
@@ -281,11 +281,10 @@ int main(void){
     //     printf("\n");
     //     line=line->next;
     // }
-    update_game(game,0);
+    update_game(game);
 
     SDL_Event event;
     SDL_bool quit = SDL_FALSE;
-    int defil = 0;
     //pour tester le chargement des diffrentes tuiles
     // for(int i=0; i<LENGTH; i++){
     //     game->carte->head_map->next->next->next->tiles[i].type='~';
@@ -308,21 +307,21 @@ int main(void){
     // printf("\n");
     while(!quit){
         // printf("score :%d\n", game->score);
-        update_game(game,defil);
-        if(defil){
-            defil--;
+        update_game(game);
+        if(game->defil){
+            game->defil--;
         }
         // test la mort, pour le moment juste quitte le jeu
         if(test_death(game)){
             if(SDL_RenderClear(renderer)){
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-            }
-            quit = SDL_TRUE;
-        }
+                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
+              }
+           quit = SDL_TRUE;
+         }
         if(SDL_RenderClear(renderer)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
         }    
-        display_all(game, renderer, defil);
+        display_all(game, renderer);
 
         // une fois l'affichage fait, on regarde si le joueur se déplace
         SDL_PollEvent(&event);
@@ -333,10 +332,9 @@ int main(void){
         }else if(event.type == SDL_KEYUP){
             // bouge le joueur dans la direction selon la touche pressée, ZQSD, ou quitte avec M
             if(event.key.keysym.sym == SDLK_z){
-                move_up(game);
                 // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
-                if(game->joueur->_y_dest>=3*32){
-                    defil+=8;
+                if(move_up(game)&&game->joueur->_y_dest-4*game->defil>=3*32){
+                    game->defil+=8;
                 }
                 //sert à changement l'image du joueur quand il se déplace
                 game->joueur->offset_y = 1;

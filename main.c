@@ -87,7 +87,7 @@ void update_display(Game *game){
 int main(void){
     struct termios old_tio = init_terminal();
     Game *game = initalise_game();
-    update_game(game,0);
+    update_game(game);
     game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5, 10));
     //print_liste(game->mobs);
     //sleep(1);
@@ -100,7 +100,7 @@ int main(void){
     char ch;
     bool quit = false;
     while(!quit){
-        update_game(game,0);
+        update_game(game);
         if(test_death(game)){
             quit = true;
         }
@@ -112,7 +112,7 @@ int main(void){
         }else if(ch == 'z'){
             move_up(game);
             if(game->joueur->_y>=3*32){
-                switch_game(game,0);
+                switch_game(game);
             }
             //joueur->y--;
             //update_display(place, joueur);

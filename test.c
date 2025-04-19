@@ -9,6 +9,6 @@
 int main(void){
     printf("les tests sont lancés\n");
     assert(1==1);
-    printf("les tests sont passés\n");
+    printf("%d\n",!!0);
     return 0;
 }
