@@ -322,7 +322,7 @@ int main(void){
             if(SDL_RenderClear(renderer)){
                  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
               }
-           //quit = SDL_TRUE;
+           quit = SDL_TRUE;
          }
         if(SDL_RenderClear(renderer)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
