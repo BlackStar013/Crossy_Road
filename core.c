@@ -22,11 +22,11 @@ int* initialise_proba(void){
     *(proba+ROAD) = 0;
     *(proba+RIVER) = 0;
     *(proba+BUSHES) = 0;
-    *(proba+ENTRANCE) = 100;
+    *(proba+ENTRANCE) = 0;
     *(proba+FIRE) = 0;
     *(proba+CAVE) = 0;
     *(proba+CULTIST) = 0;
-    *(proba+MAGE) = 0;
+    *(proba+MAGE) = 100;
     return proba;
 }
 
@@ -203,7 +203,7 @@ void generator_obstacle(Game*game){
         break;
                 
         case MAGE:
-        generator_Cultist(game);
+        generator_mage(game);
         break;
     }
 
@@ -301,13 +301,13 @@ void generator_bushes(Game *game){
     //les buissons
     int proba_change = (rand()%4)*5;
     if(*((game->proba)+BUSHES) <= proba_change){
-        // *((game->proba)+FOREST) += (2*(*((game->proba)+BUSHES)))/3 ;
-        // *((game->proba)+RIVER) += (*((game->proba)+BUSHES))/3+1 ;
-        // *((game->proba)+BUSHES) = 0 ;
+        *((game->proba)+FOREST) += (2*(*((game->proba)+BUSHES)))/3 ;
+        *((game->proba)+RIVER) += (*((game->proba)+BUSHES))/3+1 ;
+        *((game->proba)+BUSHES) = 0 ;
     } else {
-        // *((game->proba)+FOREST) += 2*proba_change/3 ;
-        // *((game->proba)+BUSHES) -= proba_change ;
-        // *((game->proba)+RIVER) += proba_change/3+1 ;
+        *((game->proba)+FOREST) += 2*proba_change/3 ;
+        *((game->proba)+BUSHES) -= proba_change ;
+        *((game->proba)+RIVER) += proba_change/3+1 ;
     }
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
@@ -325,13 +325,12 @@ void generator_bushes(Game *game){
 }
 
 void generator_entrance(Game *game){
-    //les buissons
     *((game->proba)+FIRE) += (*((game->proba)+ENTRANCE));
     *((game->proba)+ENTRANCE) = 0 ;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        if (i==LENGTH/2 || i==((LENGTH/2)+1)) {
+        if (i==LENGTH/2 || i==((LENGTH/2)-1)) {
             clone(&line->tiles[i],transition);
         }
         else {
@@ -353,13 +352,13 @@ void generator_entrance(Game *game){
 void generator_fire(Game *game){
     //feu
     int proba_change = (rand()%4)*2;
-    if(*((game->proba)+FIRE) <= proba_change){
-        *((game->proba)+CAVE) += (*((game->proba)+FIRE)) ;
-        *((game->proba)+FIRE) = 0 ;
-    } else {
-        *((game->proba)+CAVE) += proba_change ;
-        *((game->proba)+FIRE) -= proba_change ;
-    }
+     if(*((game->proba)+FIRE) <= proba_change){
+         *((game->proba)+CAVE) += (*((game->proba)+FIRE)) ;
+         *((game->proba)+FIRE) = 0 ;
+     } else {
+         *((game->proba)+CAVE) += proba_change ;
+         *((game->proba)+FIRE) -= proba_change ;
+     }
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -376,19 +375,19 @@ void generator_fire(Game *game){
         switch (pattern){
         case 0:
             pos=rand()%(LENGTH-2);
-            game->mobs = list_append(game->mobs, clone_mob(fire_2_clock, pos*32, HEIGHT,(rand()%3)+1));
+            game->mobs = list_append(game->mobs, clone_mob(fire_2_clock, pos, HEIGHT,(rand()%3)+1));
             break;
         case 1:
             pos=rand()%(LENGTH-3);
-            game->mobs = list_append(game->mobs, clone_mob(fire_3_clock, pos*32, HEIGHT,(rand()%3)+1));
+            game->mobs = list_append(game->mobs, clone_mob(fire_3_clock, pos, HEIGHT,(rand()%3)+1));
             break;
         case 2:
             pos=rand()%(LENGTH-2);
-            game->mobs = list_append(game->mobs, clone_mob(fire_2_counter, pos*32, HEIGHT,(rand()%3)+1));
+            game->mobs = list_append(game->mobs, clone_mob(fire_2_counter, pos, HEIGHT,(rand()%3)+1));
             break;
         case 3:
             pos=rand()%(LENGTH-3);
-            game->mobs = list_append(game->mobs, clone_mob(fire_3_counter, pos*32, HEIGHT,(rand()%3)+1));
+            game->mobs = list_append(game->mobs, clone_mob(fire_3_counter, pos, HEIGHT,(rand()%3)+1));
             break;
         default:
             break;
@@ -453,19 +452,19 @@ void generator_Cultist(Game *game){
                 {
                 case 0:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 1:
                     pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 2:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 3:
                     pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos, HEIGHT,(rand()%3)+1));
                     break;
                 default:
                     break;
@@ -481,27 +480,27 @@ void generator_Cultist(Game *game){
                 {
                 case 0:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 1:
                     pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 2:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 3:
                     pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 4:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 5:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos, HEIGHT,(rand()%3)+1));
                     break;
                 default:
                     break;
@@ -516,27 +515,27 @@ void generator_Cultist(Game *game){
                 {
                 case 0:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 1:
                     pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 2:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 3:
                     pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 4:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos, HEIGHT,(rand()%3)+1));
                     break;
                 case 5:
                     pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos*32, HEIGHT,(rand()%3)+1));
+                    game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos, HEIGHT,(rand()%3)+1));
                     break;
                 default:
                     break;
@@ -571,14 +570,14 @@ void generator_mage(Game *game){
     int level =rand()%2;
     if (level==0){
         int speed=rand()%3+1;
-        game->mobs = list_append(game->mobs, clone_mob(mage, pos_x*32, HEIGHT,speed));
-        game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x*32, HEIGHT,speed));
+        game->mobs = list_append(game->mobs, clone_mob(mage, pos_x, HEIGHT,speed));
+        game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGHT,speed));
     }
     else{
         int speed=(rand()%2+1)*2;
-        game->mobs = list_append(game->mobs, clone_mob(mage, pos_x*32, HEIGHT,speed));
-        game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x*32, HEIGHT,speed));
-        if (speed==2) {game->mobs = list_append(game->mobs, clone_mob(curse_arrow_bis_1, pos_x*32, HEIGHT,speed));}
-        else {game->mobs = list_append(game->mobs, clone_mob(curse_arrow_bis_2, pos_x*32, HEIGHT,speed));}
+        game->mobs = list_append(game->mobs, clone_mob(mage, pos_x, HEIGHT,speed));
+        game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGHT,speed));
+        if (speed==2) {game->mobs = list_append(game->mobs, clone_mob(curse_arrow_bis_1, pos_x, HEIGHT,speed));}
+        else {game->mobs = list_append(game->mobs, clone_mob(curse_arrow_bis_2, pos_x, HEIGHT,speed));}
     }
 }

@@ -344,16 +344,16 @@ const Mob fire_3_counter = {1,1,true,0,0,0,0,0,FIRE2CLOCK,counterclock_cycle_3,0
 void ambush(Mob *bush,Player* player){
     //embuscade
         if(!bush->delay){
-            if (player->_x-bush->_x<32 && player->_x-bush->_x>0 && (player->_y-bush->_y<8 && bush->_y-player->_y<8)){
+            if (player->_x-bush->_x<=32 && player->_x-bush->_x>=0 && (player->_y-bush->_y<=8 && bush->_y-player->_y<=8)){
                 bush->_x+=4;
             }
-            if (bush->_x-player->_x<32 && bush->_x-player->_x>0 &&(player->_y-bush->_y<8 && bush->_y-player->_y<8)){
+            if (bush->_x-player->_x<=32 && bush->_x-player->_x>=0 &&(player->_y-bush->_y<=8 && bush->_y-player->_y<=8)){
                 bush->_x-=4;
             }
-            if (player->_y-bush->_y<32 && player->_y-bush->_y>0 && (player->_x-bush->_x<8 && bush->_x-player->_x<8)){
+            if (player->_y-bush->_y<=32 && player->_y-bush->_y>=0 && (player->_x-bush->_x<=8 && bush->_x-player->_x<=8)){
                 bush->_y+=4;
             }
-            if (bush->_y-player->_y<32 && bush->_y-player->_y>0 && (player->_x-bush->_x<8 && bush->_x-player->_x<8)){
+            if (bush->_y-player->_y<=32 && bush->_y-player->_y>=0 && (player->_x-bush->_x<=8 && bush->_x-player->_x<=8)){
                 bush->_y-=4;
             }
         if(!bush->action_delay){
