@@ -21,18 +21,25 @@ int* initialise_proba(void){
     return proba;
 }
 
-void generator_forest(Game *game){
-    // explicite
+void proba_change_forest(Game* game){
     int proba_change = (rand()%4)*5 + 10;
     if(*((game->proba)+FOREST) <= proba_change){
-        *((game->proba)+ROAD) += (2*(*((game->proba)+FOREST)))/3 ;
-        *((game->proba)+RIVER) += (*((game->proba)+FOREST))/3+1 ;
+        *((game->proba)+ROAD) += ((*((game->proba)+FOREST)))/2 ;
+        *((game->proba)+CANON) += ((*((game->proba)+FOREST)))/4 ;
+        *((game->proba)+RIVER) += (*((game->proba)+FOREST))/4+1 ;
         *((game->proba)+FOREST) = 0 ;
     } else {
-        *((game->proba)+ROAD) += 2*proba_change/3 ;
+        *((game->proba)+ROAD) += proba_change/2 ;
         *((game->proba)+FOREST) -= proba_change ;
-        *((game->proba)+RIVER) += proba_change/3+1 ;
+        *((game->proba)+RIVER) += proba_change/4+1 ;
+        *((game->proba+CANON)) += proba_change/4;
     }
+
+}
+
+void generator_forest(Game *game){
+    // explicite
+    proba_change_forest(game);
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -54,6 +61,21 @@ void add_road(Game *game, Mob car, Tile road_, int pos, int speed, int nb_car){
     int init_x = -car.length+(rand()%3+1)*pos;
     for(int i = 0; i < nb_car; i++){
         game->mobs = list_append(game->mobs, clone_mob(car, init_x+(HEIGHT/nb_car)*i, HEIGHT+pos,speed));
+    }
+}
+
+void proba_change_road(Game *game, int nb_line){
+    int proba_change = 6 + (nb_line-1)*(rand()%8+6);
+    if(*((game->proba)+ROAD) <= proba_change){
+        *((game->proba)+FOREST) += ((*((game->proba)+ROAD)))/3+1 ;
+        *((game->proba)+CANON) += ((*((game->proba)+ROAD)))/3 ;
+        *((game->proba)+RIVER) += (*((game->proba)+ROAD))/3 ;
+        *((game->proba)+ROAD) = 0 ;
+    } else {
+        *((game->proba)+ROAD) -= proba_change ;
+        *((game->proba)+FOREST) += proba_change/3+1 ;
+        *((game->proba+CANON)) += proba_change/3;
+        *((game->proba)+RIVER) += proba_change/3 ;
     }
 }
 
@@ -88,16 +110,7 @@ void generator_road(Game *game){
             tile = road_middle;
         }
     }
-    int proba_change = 5 + (nb_line-1)*(rand()%6+5);
-    if(*((game->proba)+ROAD) <= proba_change){
-        *((game->proba)+FOREST) += (2*(*((game->proba)+ROAD)))/3 ;
-        *((game->proba)+RIVER) += (*((game->proba)+ROAD))/3+1 ;
-        *((game->proba)+ROAD) = 0 ;
-    } else {
-        *((game->proba)+ROAD) -= proba_change ;
-        *((game->proba)+FOREST) += 2*proba_change/3 ;
-        *((game->proba)+RIVER) += proba_change/3+1 ;
-    }
+    proba_change_road(game, nb_line);
     
 }
 
@@ -139,6 +152,22 @@ void add_plank(Game *game, Mob plank,Tile tile, int pos, int speed){
     }
 }
 
+void proba_change_river(Game* game,int nb_line){
+    int proba_change = 10 + (nb_line-1)*(rand()%20+10);
+    if(*((game->proba)+RIVER) <= proba_change){
+        *((game->proba)+FOREST) += ((*((game->proba)+RIVER)))/2 ;
+        *((game->proba)+ROAD) += (*((game->proba)+RIVER))/4+1 ;
+        *((game->proba)+CANON) += (*((game->proba)+RIVER))/4+1 ;
+        *((game->proba)+RIVER) = 0 ;
+    } else {
+        *((game->proba)+RIVER) -= proba_change ;
+        *((game->proba)+FOREST) += proba_change/4 ;
+        *((game->proba)+ROAD) += proba_change/3+1 ;
+        *((game->proba)+CANON) += proba_change/4 ;
+    }
+
+}
+
 void generator_river(Game *game){
     // explicite
     int nb_line = rand()%(4)+1;
@@ -162,16 +191,7 @@ void generator_river(Game *game){
             tile = water_middle;
         }
     }
-    int proba_change = 5 + (nb_line-1)*(rand()%6+5);
-    if(*((game->proba)+RIVER) <= proba_change){
-        *((game->proba)+FOREST) += (2*(*((game->proba)+ROAD)))/3 ;
-        *((game->proba)+ROAD) += (*((game->proba)+ROAD))/3+1 ;
-        *((game->proba)+RIVER) = 0 ;
-    } else {
-        *((game->proba)+RIVER) -= proba_change ;
-        *((game->proba)+FOREST) += 2*proba_change/3 ;
-        *((game->proba)+ROAD) += proba_change/3+1 ;
-    }
+    proba_change_river(game,nb_line);
     
 }
 
@@ -194,9 +214,24 @@ void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int wher
     game->mobs = list_append(game->mobs, ball);
 }
 
+void proba_change_canon(Game* game, int nb_line){
+    int proba_change = 5 + (nb_line-1)*(rand()%10+10);
+    if(*((game->proba)+CANON) <= proba_change){
+        *((game->proba)+FOREST) += ((*((game->proba)+CANON)))/3 ;
+        *((game->proba)+ROAD) += (*((game->proba)+CANON))/3+1 ;
+        *((game->proba)+RIVER) += (*((game->proba)+CANON))/3 ;
+        *((game->proba)+CANON) = 0 ;
+    } else {
+        *((game->proba)+CANON) -= proba_change ;
+        *((game->proba)+FOREST) += proba_change/3+1 ;
+        *((game->proba)+ROAD) += proba_change/3 ;
+        *((game->proba)+RIVER) += proba_change/3 ;   
+    }
+}
+
 void generator_canon(Game *game){
     // explicite
-    int nb_line = 1;//rand()%(4)+1;
+    int nb_line = 1;//zzzrand()%(4)+1;
     for(int i = 0 ; i < nb_line ; i++){
         int speed = rand()%240+64;
         int direction = rand()%2;
@@ -206,16 +241,7 @@ void generator_canon(Game *game){
             add_canon(game, canon_right,canon_ball_right,i, speed,0);
         }
     }
-    int proba_change = 5 + (nb_line-1)*(rand()%6+5);
-    if(*((game->proba)+CANON) <= proba_change){
-        *((game->proba)+FOREST) += (2*(*((game->proba)+ROAD)))/3 ;
-        *((game->proba)+ROAD) += (*((game->proba)+ROAD))/3+1 ;
-        *((game->proba)+CANON) = 0 ;
-    } else {
-        *((game->proba)+CANON) -= proba_change ;
-        *((game->proba)+FOREST) += 2*proba_change/3 ;
-        *((game->proba)+ROAD) += proba_change/3+1 ;
-    }
+    proba_change_canon(game, nb_line);
     
 }
 
@@ -249,7 +275,16 @@ void generator_obstacle(Game*game){
 
 }
 
-Game *initalise_game(void){
+void initialise_map(Game* game){
+    for(int i=0;i<8;i++){
+        update_game(game);
+        move_up(game);
+        switch_game(game);
+        game->score--;
+    }
+}
+
+Game *initialise_game(void){
     // explicite
     srand( time( NULL ) );
     Game* game = malloc(sizeof(Game));
@@ -258,6 +293,7 @@ Game *initalise_game(void){
     game->score = -1;
     game->mobs = NULL;
     game->proba = initialise_proba();
+    initialise_map(game);
     return game;
 }
 

@@ -272,7 +272,7 @@ int main(void){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
     }
 
-    Game *game = initalise_game();
+    Game *game = initialise_game();
     // Line *line = game->carte->head_map;
     // while(line!=NULL){
     //     for(int i=0; i<HEIGHT; i++){
@@ -282,7 +282,8 @@ int main(void){
     //     line=line->next;
     // }
     int pix_defil = 0;
-    update_game(game);
+    int counter = 0;
+    //update_game(game);
 
     SDL_Event event;
     SDL_bool quit = SDL_FALSE;
@@ -310,7 +311,17 @@ int main(void){
         // printf("score :%d\n", game->score);
         update_game(game);
         if(pix_defil){
-            pix_defil -= 4;
+            if(pix_defil>13*32){
+                pix_defil -= 32;
+            }else if(pix_defil>10*32){
+                pix_defil -= 16;
+            }else if(pix_defil>5*32){
+                pix_defil -= 8;
+            }else{
+                pix_defil -= 4;
+            }
+        }else{
+            counter += 1;
         }
         if(!pix_defil){
             destroy_tail_buffer(game->carte);
@@ -318,7 +329,7 @@ int main(void){
             destroy_last_buffer(game->carte);
         }
         // test la mort, pour le moment juste quitte le jeu
-        if(test_death(game)){
+        if(counter>128||test_death(game)){
             if(SDL_RenderClear(renderer)){
                  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
               }
@@ -341,6 +352,7 @@ int main(void){
                 // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
                 if(move_up(game)&&game->joueur->_y_dest>=3*32){
                     pix_defil += 32;
+                    counter = 0;
                     switch_game(game);
                     game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
                 }

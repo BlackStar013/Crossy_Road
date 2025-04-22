@@ -86,7 +86,7 @@ void update_display(Game *game){
 
 int main(void){
     struct termios old_tio = init_terminal();
-    Game *game = initalise_game();
+    Game *game = initialise_game();
     update_game(game);
     game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5, 10));
     //print_liste(game->mobs);

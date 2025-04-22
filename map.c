@@ -107,7 +107,7 @@ Player* initialise_player(int id){
     joueur->_x_dest = ((LENGTH-1)/2)*32;
     joueur->_y_dest = 2*32;
     joueur->offset_x = 0;
-    joueur->offset_y = 0;
+    joueur->offset_y = 1;
     joueur->character_id = id;
     return joueur;
 }

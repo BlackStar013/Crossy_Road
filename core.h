@@ -39,7 +39,7 @@ void (*initialise_generator(void))(Game*);
 
 
 //Initialise une partie
-Game *initalise_game(void);
+Game *initialise_game(void);
 void update_game(Game* game);
 
 void switch_game(Game *game);
