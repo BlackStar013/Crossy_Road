@@ -18,11 +18,11 @@ int* initialise_proba(void){
 //    *(proba+FOREST) = 20;
 //    *(proba+ROAD) = 60;
 //    *(proba+RIVER) = 20;
-    *(proba+FOREST) = 20;
-    *(proba+ROAD) = 20;
+    *(proba+FOREST) = 0;
+    *(proba+ROAD) = 0;
     *(proba+RIVER) = 0;
-    *(proba+BUSHES) = 60;
-    *(proba+ENTRANCE) = 0;
+    *(proba+BUSHES) = 0;
+    *(proba+ENTRANCE) = 100;
     *(proba+FIRE) = 0;
     *(proba+CAVE) = 0;
     *(proba+CULTIST) = 0;
@@ -301,13 +301,13 @@ void generator_bushes(Game *game){
     //les buissons
     int proba_change = (rand()%4)*5;
     if(*((game->proba)+BUSHES) <= proba_change){
-        *((game->proba)+FOREST) += (2*(*((game->proba)+BUSHES)))/3 ;
-        *((game->proba)+RIVER) += (*((game->proba)+BUSHES))/3+1 ;
-        *((game->proba)+BUSHES) = 0 ;
+        // *((game->proba)+FOREST) += (2*(*((game->proba)+BUSHES)))/3 ;
+        // *((game->proba)+RIVER) += (*((game->proba)+BUSHES))/3+1 ;
+        // *((game->proba)+BUSHES) = 0 ;
     } else {
-        *((game->proba)+FOREST) += 2*proba_change/3 ;
-        *((game->proba)+BUSHES) -= proba_change ;
-        *((game->proba)+RIVER) += proba_change/3+1 ;
+        // *((game->proba)+FOREST) += 2*proba_change/3 ;
+        // *((game->proba)+BUSHES) -= proba_change ;
+        // *((game->proba)+RIVER) += proba_change/3+1 ;
     }
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
@@ -339,12 +339,12 @@ void generator_entrance(Game *game){
         }
     }
     add_buffer_line(game->carte);
-    Line* line = game->carte->head_buffer;
+    line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i],planks);
     }
     add_buffer_line(game->carte);
-    Line* line = game->carte->head_buffer;
+    line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i],planks);
     }
@@ -372,22 +372,22 @@ void generator_fire(Game *game){
     int nb_flames = rand()%3;
     for(int i = 0; i<nb_flames; i++){
         int pattern=rand()%4;
-        switch (pattern)
-        {
+        int pos;
+        switch (pattern){
         case 0:
-            int pos=rand()%(LENGTH-2);
+            pos=rand()%(LENGTH-2);
             game->mobs = list_append(game->mobs, clone_mob(fire_2_clock, pos*32, HEIGHT,(rand()%3)+1));
             break;
         case 1:
-            int pos=rand()%(LENGTH-3);
+            pos=rand()%(LENGTH-3);
             game->mobs = list_append(game->mobs, clone_mob(fire_3_clock, pos*32, HEIGHT,(rand()%3)+1));
             break;
         case 2:
-            int pos=rand()%(LENGTH-2);
+            pos=rand()%(LENGTH-2);
             game->mobs = list_append(game->mobs, clone_mob(fire_2_counter, pos*32, HEIGHT,(rand()%3)+1));
             break;
         case 3:
-            int pos=rand()%(LENGTH-3);
+            pos=rand()%(LENGTH-3);
             game->mobs = list_append(game->mobs, clone_mob(fire_3_counter, pos*32, HEIGHT,(rand()%3)+1));
             break;
         default:
@@ -448,22 +448,23 @@ void generator_Cultist(Game *game){
             nb_used+=nb_here;
             for(int i = 0; i<nb_here; i++){
                 int pattern=rand()%4;
+                int pos;
                 switch (pattern)
                 {
                 case 0:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 1:
-                    int pos=rand()%(LENGTH-5);
+                    pos=rand()%(LENGTH-5);
                     game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 2:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 3:
-                    int pos=rand()%(LENGTH-5);
+                    pos=rand()%(LENGTH-5);
                     game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 default:
@@ -475,30 +476,31 @@ void generator_Cultist(Game *game){
             nb_used+=nb_here;
             for(int i = 0; i<nb_here; i++){
                 int pattern=rand()%6;
+                int pos;
                 switch (pattern)
                 {
                 case 0:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 1:
-                    int pos=rand()%(LENGTH-5);
+                    pos=rand()%(LENGTH-5);
                     game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 2:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 3:
-                    int pos=rand()%(LENGTH-5);
+                    pos=rand()%(LENGTH-5);
                     game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 4:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 5:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 default:
@@ -509,30 +511,31 @@ void generator_Cultist(Game *game){
             int nb_here = nb_cultists-nb_used;
             for(int i = 0; i<nb_here; i++){
                 int pattern=rand()%6;
+                int pos;
                 switch (pattern)
                 {
                 case 0:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 1:
-                    int pos=rand()%(LENGTH-5);
+                    pos=rand()%(LENGTH-5);
                     game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 2:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 3:
-                    int pos=rand()%(LENGTH-5);
+                    pos=rand()%(LENGTH-5);
                     game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 4:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 case 5:
-                    int pos=rand()%(LENGTH-4);
+                    pos=rand()%(LENGTH-4);
                     game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos*32, HEIGHT,(rand()%3)+1));
                     break;
                 default:
@@ -545,7 +548,6 @@ void generator_Cultist(Game *game){
 }
 
 void generator_mage(Game *game){
-    //les buissons
     int proba_change = (rand()%4)*5+10;
     if(*((game->proba)+MAGE) <= proba_change){
         *((game->proba)+CULTIST) += (2*(*((game->proba)+MAGE)))/2 ;

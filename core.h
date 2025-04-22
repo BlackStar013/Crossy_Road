@@ -69,6 +69,8 @@ void generator_entrance(Game*);
 
 void generator_fire(Game*);
 
+void generator_cave(Game*);
+
 void generator_Cultist(Game*);
 
 void generator_mage(Game*);
