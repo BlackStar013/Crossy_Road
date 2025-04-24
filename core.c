@@ -293,7 +293,7 @@ void generator_obstacle(Game*game){
 }
 
 void initialise_map(Game* game){
-    for(int i=0;i<8;i++){
+    for(int i=0;i<HEIGTH-4;i++){
         update_game(game);
         move_up(game);
         switch_game(game);

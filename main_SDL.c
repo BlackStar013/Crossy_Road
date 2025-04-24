@@ -82,7 +82,7 @@ void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
 
 void display_joueur(Player *joueur, SDL_Renderer *renderer,int pix_defil){
     // affiche le joueur selon le même principe que ci-dessus
-    SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png");
+    SDL_Surface *spriteSurface = IMG_Load("sprites/Kabi.png");
     if (!spriteSurface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
         exit(-1);
