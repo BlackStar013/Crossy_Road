@@ -265,6 +265,14 @@ bool test_death(Game* game){
     }
 }
 
+void print_percent(Game* game){
+    int tot = 0;
+    for(int i = 0; i<NB_OBSTACLE; i++){
+        tot += game->proba[i];
+    }
+    printf("SOMME DES PROBAS = %d\n",tot);
+}
+
 void update_game(Game* game){
     // avance les mobs de leur path et génére un obstacle dans le buffer
     move_all_mob(game->mobs,game->joueur);
@@ -279,6 +287,7 @@ void update_game(Game* game){
     }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);
+        print_percent(game);
     }
 }
 
