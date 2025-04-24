@@ -141,7 +141,7 @@ bool mob_collide(Mob* mob, Player* player){
 
 void path_right(Mob *car, Player*){
     if(!car->delay){
-        if(car->_x/32 >= LENGHT){
+        if(car->_x/32 >= LENGTH){
             car->_x = -car->length*32;
         } else {
             car->_x += 3; 

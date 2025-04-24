@@ -101,7 +101,7 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer,int pix_defil){
     int spriteWidth = (spriteFullWidth / 4 ); //ici pour le joueur, on a 4 lignes et 4 colonnes pour les 4 orientations et 4 "gestes" d'où le /4
     int spriteHeight = (spriteFullHeight / 4 );
     SDL_Rect spriteRect = {.x = joueur->offset_x*spriteWidth, .y = joueur->offset_y*spriteWidth, .w = spriteWidth, .h = spriteHeight};
-    SDL_Rect destRect = {.x = (joueur->_x)*ECHELLE, .y = (HEIGHT*32-joueur->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+    SDL_Rect destRect = {.x = (joueur->_x)*ECHELLE, .y = (HEIGTH*32-joueur->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
     if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
     }
@@ -132,7 +132,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
             int spriteWidth = (spriteFullWidth / 2); // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
             int spriteHeight = (spriteFullHeight / 2);
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y = (liste->mob->id_mob-CAR_RIGHT)*spriteHeight, .w = spriteWidth, .h = spriteHeight};
-            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGTH*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -158,7 +158,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
             int spriteWidth = spriteFullWidth; // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
             int spriteHeight = spriteFullHeight;
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y = 0, .w = spriteWidth, .h = spriteHeight};
-            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGTH*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -184,7 +184,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
             int spriteWidth = spriteFullWidth/3; // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
             int spriteHeight = spriteFullHeight/2;
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y =  (liste->mob->id_mob-CANON_RIGHT)*spriteHeight, .w = spriteWidth, .h = spriteHeight};
-            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGTH*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -210,7 +210,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
             int spriteWidth = spriteFullWidth/3; // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
             int spriteHeight = spriteFullHeight/2;
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y =  (liste->mob->id_mob-CANON_BALL_RIGHT)*spriteHeight, .w = spriteWidth, .h = spriteHeight};
-            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGHT*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGTH*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
@@ -248,7 +248,7 @@ int main(void){
     atexit(IMG_Quit);
     
     SDL_Window *window;
-    window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (LENGHT*32*ECHELLE), (HEIGHT*32*ECHELLE), 0);
+    window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), 0);
     if(!window){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la fenetre : %s", SDL_GetError());
         exit(-1);
@@ -329,7 +329,7 @@ int main(void){
             destroy_last_buffer(game->carte);
         }
         // test la mort, pour le moment juste quitte le jeu
-        if(counter>128||test_death(game)){
+        if(test_death(game)){
             if(SDL_RenderClear(renderer)){
                  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
               }

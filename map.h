@@ -30,9 +30,6 @@ typedef struct _Player{
     int character_id;
 }Player;
 
-#define HEIGTH 16
-#define LENGTH 16
-
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done
 void ajout_tile(Map *carte,int x,int y,Tile tuile); //Done

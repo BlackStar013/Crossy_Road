@@ -21,19 +21,29 @@ int* initialise_proba(void){
     return proba;
 }
 
+int check_percent(Game* game, int init, int finish ){
+    // /!\ <= à finish !!
+    int tot = 0;
+    for(int i = init;i<=finish;i++){
+        tot += game->proba[i];
+    }
+    return 100 - tot;
+}
+
 void proba_change_forest(Game* game){
     int proba_change = (rand()%4)*5 + 10;
     if(*((game->proba)+FOREST) <= proba_change){
         *((game->proba)+ROAD) += ((*((game->proba)+FOREST)))/2 ;
         *((game->proba)+CANON) += ((*((game->proba)+FOREST)))/4 ;
-        *((game->proba)+RIVER) += (*((game->proba)+FOREST))/4+1 ;
+        *((game->proba)+RIVER) += (*((game->proba)+FOREST))/4 ;
         *((game->proba)+FOREST) = 0 ;
     } else {
         *((game->proba)+ROAD) += proba_change/2 ;
         *((game->proba)+FOREST) -= proba_change ;
-        *((game->proba)+RIVER) += proba_change/4+1 ;
+        *((game->proba)+RIVER) += proba_change/4 ;
         *((game->proba+CANON)) += proba_change/4;
     }
+    *((game->proba)+RIVER) += check_percent(game, FOREST, CANON);
 
 }
 
@@ -60,23 +70,24 @@ void add_road(Game *game, Mob car, Tile road_, int pos, int speed, int nb_car){
     }
     int init_x = -car.length+(rand()%3+1)*pos;
     for(int i = 0; i < nb_car; i++){
-        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(HEIGHT/nb_car)*i, HEIGHT+pos,speed));
+        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(HEIGTH/nb_car)*i, HEIGTH+pos,speed));
     }
 }
 
 void proba_change_road(Game *game, int nb_line){
     int proba_change = 6 + (nb_line-1)*(rand()%8+6);
     if(*((game->proba)+ROAD) <= proba_change){
-        *((game->proba)+FOREST) += ((*((game->proba)+ROAD)))/3+1 ;
+        *((game->proba)+FOREST) += ((*((game->proba)+ROAD)))/3 ;
         *((game->proba)+CANON) += ((*((game->proba)+ROAD)))/3 ;
         *((game->proba)+RIVER) += (*((game->proba)+ROAD))/3 ;
         *((game->proba)+ROAD) = 0 ;
     } else {
         *((game->proba)+ROAD) -= proba_change ;
-        *((game->proba)+FOREST) += proba_change/3+1 ;
+        *((game->proba)+FOREST) += proba_change/3 ;
         *((game->proba+CANON)) += proba_change/3;
         *((game->proba)+RIVER) += proba_change/3 ;
     }
+    *((game->proba)+CANON) += check_percent(game, FOREST, CANON);
 }
 
 void generator_road(Game *game){
@@ -123,10 +134,10 @@ void add_plank(Game *game, Mob plank,Tile tile, int pos, int speed){
     int proba_plank = 50;
     int plank_lenght = 0;
     int cons = 0;
-    for(int i = 0; i < LENGHT; i++){
+    for(int i = 0; i < LENGTH; i++){
         int dice = rand()%100+1;
         if(dice<proba_plank){
-            game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGHT+pos),speed));
+            game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed));
             if(plank_lenght<3){
                 proba_plank += 10;
             } else if (plank_lenght<5){
@@ -156,15 +167,16 @@ void proba_change_river(Game* game,int nb_line){
     int proba_change = 10 + (nb_line-1)*(rand()%20+10);
     if(*((game->proba)+RIVER) <= proba_change){
         *((game->proba)+FOREST) += ((*((game->proba)+RIVER)))/2 ;
-        *((game->proba)+ROAD) += (*((game->proba)+RIVER))/4+1 ;
-        *((game->proba)+CANON) += (*((game->proba)+RIVER))/4+1 ;
+        *((game->proba)+ROAD) += (*((game->proba)+RIVER))/4 ;
+        *((game->proba)+CANON) += (*((game->proba)+RIVER))/4 ;
         *((game->proba)+RIVER) = 0 ;
     } else {
         *((game->proba)+RIVER) -= proba_change ;
         *((game->proba)+FOREST) += proba_change/4 ;
-        *((game->proba)+ROAD) += proba_change/3+1 ;
+        *((game->proba)+ROAD) += proba_change/2 ;
         *((game->proba)+CANON) += proba_change/4 ;
     }
+    *((game->proba)+ROAD) += check_percent(game, FOREST, CANON);
 
 }
 
@@ -206,8 +218,8 @@ void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int wher
         }
     }
     int delay = (rand()%100 * speed)/100;
-    Mob* canon_ = clone_mob(canon, where_can, HEIGHT+pos,speed);
-    Mob* ball = clone_mob(canon_ball,-64,HEIGHT+pos,speed);
+    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed);
+    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed);
     canon_->delay = delay;
     ball->delay = delay;
     game->mobs = list_append(game->mobs, canon_);
@@ -218,15 +230,17 @@ void proba_change_canon(Game* game, int nb_line){
     int proba_change = 5 + (nb_line-1)*(rand()%10+10);
     if(*((game->proba)+CANON) <= proba_change){
         *((game->proba)+FOREST) += ((*((game->proba)+CANON)))/3 ;
-        *((game->proba)+ROAD) += (*((game->proba)+CANON))/3+1 ;
+        *((game->proba)+ROAD) += (*((game->proba)+CANON))/3 ;
         *((game->proba)+RIVER) += (*((game->proba)+CANON))/3 ;
         *((game->proba)+CANON) = 0 ;
     } else {
         *((game->proba)+CANON) -= proba_change ;
-        *((game->proba)+FOREST) += proba_change/3+1 ;
+        *((game->proba)+FOREST) += proba_change/3 ;
         *((game->proba)+ROAD) += proba_change/3 ;
         *((game->proba)+RIVER) += proba_change/3 ;   
     }
+    *((game->proba)+ROAD) += check_percent(game, FOREST, CANON);
+
 }
 
 void generator_canon(Game *game){
@@ -271,6 +285,9 @@ void generator_obstacle(Game*game){
         generator_canon(game);
         break;
 
+        default:
+        generator_forest(game);
+
     }
 
 }
@@ -293,7 +310,7 @@ Game *initialise_game(void){
     game->score = -1;
     game->mobs = NULL;
     game->proba = initialise_proba();
-    initialise_map(game);
+    //initialise_map(game);
     return game;
 }
 
@@ -359,6 +376,14 @@ bool test_death(Game* game){
     }
 }
 
+void print_percent(Game* game){
+    int tot = 0;
+    for(int i = 0;i<NB_OBSTACLE;i++){
+        tot += game->proba[i];
+    }
+    printf("%d\n",tot);
+}
+
 void update_game(Game* game){
     // avance les mobs de leur path et génére un obstacle dans le buffer
     move_all_mob(game->mobs,game->joueur);
@@ -379,8 +404,10 @@ void update_game(Game* game){
     }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);
+        //print_percent(game);
     }
 }
+
 
 void destroy_game(Game *game){
     // Kaboum

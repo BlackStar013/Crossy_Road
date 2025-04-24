@@ -26,13 +26,13 @@ void init_display(Game *game){
     Line *line = game->carte->head_map;
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGHT-i-1==game->joueur->_y*32) && (j==game->joueur->_x*32)){
+            if((HEIGTH-i-1==game->joueur->_y*32) && (j==game->joueur->_x*32)){
                 printf(" ");
             }else{
                 Liste_Mob *liste = game->mobs;
                 bool trouve = false;
                 while((!trouve) && (liste!=NULL)){
-                    if(((HEIGHT-i-1)*32==liste->mob->_y) && (j*32==liste->mob->_x)){
+                    if(((HEIGTH-i-1)*32==liste->mob->_y) && (j*32==liste->mob->_x)){
                         printf("%d", liste->mob->id_mob);
                         trouve = true;
                     }else{
@@ -57,13 +57,13 @@ void update_display(Game *game){
     printf("\033[%dA\r", HEIGTH);
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGHT-i-1==game->joueur->_y*32) && (j==game->joueur->_x*32)){
+            if((HEIGTH-i-1==game->joueur->_y*32) && (j==game->joueur->_x*32)){
                 printf(" ");
             }else{
                 Liste_Mob *liste = game->mobs;
                 bool trouve = false;
                 while((!trouve) && (liste!=NULL)){
-                    if(((HEIGHT-i-1)*32==liste->mob->_y) && (j*32==liste->mob->_x)){
+                    if(((HEIGTH-i-1)*32==liste->mob->_y) && (j*32==liste->mob->_x)){
                         printf("%d", liste->mob->id_mob);
                         trouve = true;
                     }else{
