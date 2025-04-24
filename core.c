@@ -310,7 +310,7 @@ Game *initialise_game(void){
     game->score = -1;
     game->mobs = NULL;
     game->proba = initialise_proba();
-    //initialise_map(game);
+    initialise_map(game);
     return game;
 }
 
