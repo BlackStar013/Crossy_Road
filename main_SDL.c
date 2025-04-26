@@ -344,7 +344,7 @@ int main(void){
         
         //si le joueur est une IA
         if(IA){
-            if(!game->joueur->delai){
+            if(game->joueur->delai){
                 game->joueur->delai--;
             }else{
                 eval(game);
@@ -352,7 +352,7 @@ int main(void){
                     printf("directive :%d; score : %d\n", i, *(game->joueur->score+i));
                 }
                 printf("\n");
-                SDL_Delay(1000);
+                SDL_Delay(100);
                 int directive = max_score(game->joueur->score);
                 if(directive == 0){
                     if(move_up(game)&&game->joueur->_y_dest>=3*32){
@@ -381,7 +381,7 @@ int main(void){
                     game->joueur->offset_x += 1;
                     game->joueur->offset_x %= 4;
                 }
-                game->joueur->delai = 1000;
+                game->joueur->delai = 25;
             }
         }
 

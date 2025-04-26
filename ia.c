@@ -14,6 +14,19 @@ void eval(Game *game){
     //}else{
         free(game->joueur->score);
         game->joueur->score = calloc(5, sizeof(int));
+        if(IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, (game->joueur->_y_dest)/32 + 1))){
+            *(game->joueur->score) -= 999;
+        }
+        if(IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32 + 1, (game->joueur->_y_dest)/32))){
+            *(game->joueur->score+1) -= 999;
+        }
+        if(IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32 - 1, (game->joueur->_y_dest)/32))){
+            *(game->joueur->score+2) -= 999;
+        }
+        if(IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32 - 1, (game->joueur->_y_dest)/32))){
+            *(game->joueur->score+3) -= 999;
+        }
+
         if(!IS_BLOCK(tile_map(game->carte, game->joueur->_x_dest/32, (game->joueur->_y_dest)/32 + 1))){
             *(game->joueur->score) += 5;
         }
@@ -35,13 +48,13 @@ void eval(Game *game){
             if(liste->mob->is_death){
                 coef = 1;
             }else{
-                coef = -1;
+                coef = -500;
             }
             if((liste->mob->_y == game->joueur->_y) && (liste->mob->_x <= game->joueur->_x+1  || liste->mob->_x >= game->joueur->_x-1)){
-                *(game->joueur->score+4) -= coef*5;
-            }else if((liste->mob->_y == game->joueur->_y+1) && (liste->mob->_x <= game->joueur->_x+1  || liste->mob->_x >= game->joueur->_x-1)){
-                *(game->joueur->score+0) -= coef*5;
-            }else if((liste->mob->_y == game->joueur->_y-1) && (liste->mob->_x <= game->joueur->_x+1  || liste->mob->_x >= game->joueur->_x-1)){
+                *(game->joueur->score+4) -= coef*10;
+            }else if((liste->mob->_y/32 == game->joueur->_y+2) && (liste->mob->_x <= game->joueur->_x+1 && liste->mob->_x >= game->joueur->_x-1)){
+                *(game->joueur->score+0) -= coef*3;
+            }else if((liste->mob->_y/32 == game->joueur->_y) && (liste->mob->_x <= game->joueur->_x+1 && liste->mob->_x >= game->joueur->_x-1)){
                 *(game->joueur->score+2) -= coef*5;
             }
             liste = liste->next;
