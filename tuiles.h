@@ -14,8 +14,8 @@ typedef struct _Tile {
 #define TYPE(tile) (tile.type)
 #define COLOR(tile) (tile.color)
 
-#define LENGHT 16
-#define HEIGHT 16
+#define LENGTH 16
+#define HEIGTH 16
 
 
 enum TILE{
@@ -91,4 +91,3 @@ extern const Tile low_wall ;
 extern const Tile cave;
 
 extern const Tile stalagmite;
-

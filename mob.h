@@ -99,6 +99,7 @@ bool a_death_mob_collide(Liste_Mob* list,Player* player);
 bool a_mob_collide(Liste_Mob* list,Player* player);
 void destroy_mobs(Liste_Mob *liste);
 void destroy_liste_mob(Liste_Mob *liste);
+Liste_Mob* destroy_liste_mob_from(int y, Liste_Mob *liste);
 
 
 ///////
@@ -133,3 +134,4 @@ void curse(Mob *projectile,Player* player);
 
 extern const Mob mage;
 extern const Mob curse_arrow;
+

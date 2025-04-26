@@ -141,7 +141,7 @@ bool mob_collide(Mob* mob, Player* player){
 
 void path_right(Mob *car, Player*){
     if(!car->delay){
-        if(car->_x/32 >= LENGHT){
+        if(car->_x/32 >= LENGTH){
             car->_x = -car->length*32;
         } else {
             car->_x += 3; 
@@ -289,3 +289,27 @@ void destroy_liste_mob(Liste_Mob *liste){
         liste_mob = mem;
     }
 }
+
+Liste_Mob* destroy_liste_mob_from(int y, Liste_Mob *list){
+    Liste_Mob *liste_mob = list;
+    Liste_Mob *prev_not_free = NULL;
+    while(liste_mob!=NULL){
+        Liste_Mob *mem = liste_mob->next;
+        if(liste_mob->mob->memory__y < y*32){
+            destroy_mobs(liste_mob);
+        }else{
+            if(prev_not_free==NULL){
+                 list = liste_mob;
+            } else {
+                prev_not_free->next = liste_mob;
+            }
+            prev_not_free = liste_mob;
+        }
+        liste_mob = mem;
+    }
+    if(prev_not_free!=NULL){
+        prev_not_free->next=NULL;
+    }
+    return list;
+}
+

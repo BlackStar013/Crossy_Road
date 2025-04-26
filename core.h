@@ -6,7 +6,6 @@
 #include "map.h"
 
 
-
 typedef struct _Game {
     Map* carte;
     Player* joueur;
@@ -39,7 +38,7 @@ void (*initialise_generator(void))(Game*);
 
 
 //Initialise une partie
-Game *initalise_game(void);
+Game *initialise_game(void);
 void update_game(Game* game);
 
 void switch_game(Game *game);
@@ -58,4 +57,3 @@ bool move_down(Game*);
 bool test_death(Game*);
 
 void destroy_game(Game *game);
-
