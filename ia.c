@@ -50,11 +50,14 @@ void eval(Game *game){
             }else{
                 coef = -500;
             }
-            if((liste->mob->_y == game->joueur->_y) && (liste->mob->_x <= game->joueur->_x+1  || liste->mob->_x >= game->joueur->_x-1)){
+            if((liste->mob->_y/32 == game->joueur->_y/32) && (liste->mob->_x <= game->joueur->_x+1  || liste->mob->_x >= game->joueur->_x-1)){
+                printf("cas 1\n");
                 *(game->joueur->score+4) -= coef*10;
-            }else if((liste->mob->_y/32 == game->joueur->_y+2) && (liste->mob->_x <= game->joueur->_x+1 && liste->mob->_x >= game->joueur->_x-1)){
+            }else if((liste->mob->_y/32 == game->joueur->_y/32+32) && (liste->mob->_x <= game->joueur->_x+1 && liste->mob->_x >= game->joueur->_x-1)){
+                printf("cas 2\n");
                 *(game->joueur->score+0) -= coef*3;
-            }else if((liste->mob->_y/32 == game->joueur->_y) && (liste->mob->_x <= game->joueur->_x+1 && liste->mob->_x >= game->joueur->_x-1)){
+            }else if((liste->mob->_y/32 == game->joueur->_y/32 -32) && (liste->mob->_x <= game->joueur->_x+1 && liste->mob->_x >= game->joueur->_x-1)){
+                printf("cas 3\n");
                 *(game->joueur->score+2) -= coef*5;
             }
             liste = liste->next;

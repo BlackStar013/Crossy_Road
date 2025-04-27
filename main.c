@@ -27,13 +27,13 @@ void init_display(Game *game){
     Line *line = game->carte->head_map;
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGTH-i-1==game->joueur->_y*32) && (j==game->joueur->_x*32)){
+            if((HEIGTH-i-1==game->joueur->_y/32) && (j==game->joueur->_x/32)){
                 printf(" ");
             }else{
                 Liste_Mob *liste = game->mobs;
                 bool trouve = false;
                 while((!trouve) && (liste!=NULL)){
-                    if(((HEIGTH-i-1)*32==liste->mob->_y) && (j*32==liste->mob->_x)){
+                    if(((HEIGTH-i-1)==liste->mob->_y/32) && (j==liste->mob->_x/32)){
                         printf("%d", liste->mob->id_mob);
                         trouve = true;
                     }else{
@@ -41,7 +41,17 @@ void init_display(Game *game){
                     }
                 }
                 if(!trouve){
-                    printf("%c", line->tiles[j].type);
+                    if(line->tiles[j].type==_PLAIN){              
+                        printf("_");
+                    }else if(line->tiles[j].type==_ROAD || line->tiles[j].type==_ROAD_UP || line->tiles[j].type==_ROAD_DOWN || line->tiles[j].type==_ROAD_MIDDLE){
+                        printf("=");
+                    }else if(line->tiles[j].type==_PLAIN_BLOCK){
+                        printf("|");
+                    }else if(line->tiles[j].type==_WALL){
+                        printf("#");
+                    }else{  //if(line->tiles[j].type==_WATER || line->tiles[j].type==_WATER_UP || line->tiles[j].type==_WATER_DOWN || line->tiles[j].type==_WATER_MIDDLE){  
+                        printf("~");
+                    }
                 }
             }
         }
@@ -58,13 +68,13 @@ void update_display(Game *game){
     printf("\033[%dA\r", HEIGTH);
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGTH-i-1==game->joueur->_y*32) && (j==game->joueur->_x*32)){
+            if((HEIGTH-i-1==game->joueur->_y/32) && (j==game->joueur->_x/32)){
                 printf(" ");
             }else{
                 Liste_Mob *liste = game->mobs;
                 bool trouve = false;
                 while((!trouve) && (liste!=NULL)){
-                    if(((HEIGTH-i-1)*32==liste->mob->_y) && (j*32==liste->mob->_x)){
+                    if(((HEIGTH-i-1)==liste->mob->_y/32) && (j==liste->mob->_x/32)){
                         printf("%d", liste->mob->id_mob);
                         trouve = true;
                     }else{
@@ -72,7 +82,17 @@ void update_display(Game *game){
                     }
                 }
                 if(!trouve){
-                    printf("%c", line->tiles[j].type);
+                    if(line->tiles[j].type==_PLAIN){              
+                        printf("_");
+                    }else if(line->tiles[j].type==_ROAD || line->tiles[j].type==_ROAD_UP || line->tiles[j].type==_ROAD_DOWN || line->tiles[j].type==_ROAD_MIDDLE){
+                        printf("=");
+                    }else if(line->tiles[j].type==_PLAIN_BLOCK){
+                        printf("|");
+                    }else if(line->tiles[j].type==_WALL){
+                        printf("#");
+                    }else{  //if(line->tiles[j].type==_WATER || line->tiles[j].type==_WATER_UP || line->tiles[j].type==_WATER_DOWN || line->tiles[j].type==_WATER_MIDDLE){  
+                        printf("~");
+                    }
                 }
             }
         }
@@ -89,7 +109,7 @@ int main(void){
     struct termios old_tio = init_terminal();
     Game *game = initialise_game();
     update_game(game);
-    game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5, 10));
+    //game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5, 10));
     //print_liste(game->mobs);
     //sleep(1);
     //Map* place = create_empty_map();
@@ -107,12 +127,13 @@ int main(void){
         }
         update_display(game);
         read(STDIN_FILENO, &ch, 1);
+        //printf("x:%d y:%d\n", game->joueur->_x/32, game->joueur->_y/32);
         //printf("Key pressed: %c\n", ch);
         if(ch == 'm'){
             quit = true;
         }else if(ch == 'z'){
             move_up(game);
-            if(game->joueur->_y>=3*32){
+            if(game->joueur->_y/32>=3){
                 switch_game(game);
             }
             //joueur->y--;
