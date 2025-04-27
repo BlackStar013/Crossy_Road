@@ -384,45 +384,45 @@ int main(void){
                 }
                 game->joueur->delai = 25;
             }
-        }
-
-        // une fois l'affichage fait, on regarde si le joueur se déplace
-        SDL_PollEvent(&event);
-        //regarde si il y a des evenements clavier
-        if(event.type == SDL_QUIT){
-            printf("je rentre ici\n");
-            quit = SDL_TRUE;
-        }else if(event.type == SDL_KEYUP){
-            // bouge le joueur dans la direction selon la touche pressée, ZQSD, ou quitte avec M
-            if(event.key.keysym.sym == SDLK_z){
-                // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
-                if(move_up(game)&&game->joueur->_y_dest>=3*32){
-                    pix_defil += 32;
-                    counter = 0;
-                    switch_game(game);
-                    game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
-                }
-                //sert à changement l'image du joueur quand il se déplace
-                game->joueur->offset_y = 1;
-                game->joueur->offset_x += 1;
-                game->joueur->offset_x %= 4;
-            }else if(event.key.keysym.sym == SDLK_q){
-                move_left(game);
-                game->joueur->offset_y = 3;
-                game->joueur->offset_x += 1;
-                game->joueur->offset_x %= 4;
-            }else if(event.key.keysym.sym == SDLK_s){
-                move_down(game);
-                game->joueur->offset_y = 0;
-                game->joueur->offset_x += 1;
-                game->joueur->offset_x %= 4;
-            }else if(event.key.keysym.sym == SDLK_d){
-                move_right(game);
-                game->joueur->offset_y = 2;
-                game->joueur->offset_x += 1;
-                game->joueur->offset_x %= 4;
-            }else if(event.key.keysym.sym == SDLK_m){
+        }else{
+            // une fois l'affichage fait, on regarde si le joueur se déplace
+            SDL_PollEvent(&event);
+            //regarde si il y a des evenements clavier
+            if(event.type == SDL_QUIT){
+                printf("je rentre ici\n");
                 quit = SDL_TRUE;
+            }else if(event.type == SDL_KEYUP){
+                // bouge le joueur dans la direction selon la touche pressée, ZQSD, ou quitte avec M
+                if(event.key.keysym.sym == SDLK_z){
+                    // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
+                    if(move_up(game)&&game->joueur->_y_dest>=3*32){
+                        pix_defil += 32;
+                        counter = 0;
+                        switch_game(game);
+                        game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
+                    }
+                    //sert à changement l'image du joueur quand il se déplace
+                    game->joueur->offset_y = 1;
+                    game->joueur->offset_x += 1;
+                    game->joueur->offset_x %= 4;
+                }else if(event.key.keysym.sym == SDLK_q){
+                    move_left(game);
+                    game->joueur->offset_y = 3;
+                    game->joueur->offset_x += 1;
+                    game->joueur->offset_x %= 4;
+                }else if(event.key.keysym.sym == SDLK_s){
+                    move_down(game);
+                    game->joueur->offset_y = 0;
+                    game->joueur->offset_x += 1;
+                    game->joueur->offset_x %= 4;
+                }else if(event.key.keysym.sym == SDLK_d){
+                    move_right(game);
+                    game->joueur->offset_y = 2;
+                    game->joueur->offset_x += 1;
+                    game->joueur->offset_x %= 4;
+                }else if(event.key.keysym.sym == SDLK_m){
+                    quit = SDL_TRUE;
+                }
             }
         }
         // update_game(game);

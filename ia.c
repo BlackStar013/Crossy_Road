@@ -52,13 +52,15 @@ void eval(Game *game){
             }else{
                 coef = -500;
             }
-            if((liste->mob->_y/32 == game->joueur->_y_dest/32) && (liste->mob->_x/32 <= game->joueur->_x_dest/32+1)  && (liste->mob->_x/32 >= game->joueur->_x_dest/32-1)){
+            if((liste->mob->_y/32 == game->joueur->_y_dest/32) && (liste->mob->_x/32 <= game->joueur->_x_dest/32+1)  && (liste->mob->_x/32 >= game->joueur->_x_dest/32-1) 
+            && (!(IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, (game->joueur->_y_dest)/32 + 1)) || (liste->mob->_y/32 == game->joueur->_y_dest/32+1) || !IS_BLOCK(tile_map(game->carte, game->joueur->_x_dest/32, (game->joueur->_y_dest)/32 + 1))))){
                 printf("cas 1\n");
                 *(game->joueur->score+4) -= coef*10;
             }else if((liste->mob->_y/32 == game->joueur->_y_dest/32+1) && (liste->mob->_x/32 <= game->joueur->_x_dest/32+1) && (liste->mob->_x/32 >= game->joueur->_x_dest/32-1)){
                 printf("cas 2\n");
                 *(game->joueur->score+0) -= coef*3;
-            }else if((liste->mob->_y/32 == game->joueur->_y_dest/32-1) && (liste->mob->_x/32 <= game->joueur->_x_dest/32+1) && (liste->mob->_x/32 >= game->joueur->_x_dest/32-1)){
+            }else if((liste->mob->_y/32 == game->joueur->_y_dest/32-1) && (liste->mob->_x/32 <= game->joueur->_x_dest/32+1) && (liste->mob->_x/32 >= game->joueur->_x_dest/32-1)
+            && (!(IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, (game->joueur->_y_dest)/32 + 1)) || (liste->mob->_y/32 == game->joueur->_y_dest/32+1) || !IS_BLOCK(tile_map(game->carte, game->joueur->_x_dest/32, (game->joueur->_y_dest)/32 + 1))))){
                 printf("cas 3\n");
                 *(game->joueur->score+2) -= coef*5;
             }
