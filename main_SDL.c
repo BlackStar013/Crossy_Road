@@ -275,6 +275,7 @@ int main(void){
     }
 
     Game *game = initialise_game();
+    printf("%d %d\n", game->joueur->_x/32, game->joueur->_y/32);
     // Line *line = game->carte->head_map;
     // while(line!=NULL){
     //     for(int i=0; i<HEIGHT; i++){

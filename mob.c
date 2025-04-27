@@ -219,8 +219,8 @@ void canon_idle(Mob* mob, Player *){
         } 
 }
 
-const Mob canon_right = {1,1,false,0,0,0,0,0,CANON_RIGHT,0,canon_idle,0,(LENGTH*32-32)/32,0,0};
-const Mob canon_left = {1,1,false,0,0,0,0,0,CANON_LEFT,0,canon_idle,0,(LENGTH*32-32)/32,0,0};
+const Mob canon_right = {1,1,true,0,0,0,0,0,CANON_RIGHT,0,canon_idle,0,(LENGTH*32-32)/32,0,0};
+const Mob canon_left = {1,1,true,0,0,0,0,0,CANON_LEFT,0,canon_idle,0,(LENGTH*32-32)/32,0,0};
 
 void canon_right_fast(Mob* mob, Player *){
     switch (mob->action_value) {
