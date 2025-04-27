@@ -32,6 +32,8 @@ enum Obstacle {
 //Initialises les probas
 int* initialise_proba(void);
 
+int check_percent(Game* game, int init, int finish );
+
 //Fonctions de genrations d'obastcales
 void generator_forest(Game*);
 void generator_road(Game*);

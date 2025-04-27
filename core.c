@@ -21,14 +21,24 @@ int* initialise_proba(void){
     *(proba+FOREST) = 0;
     *(proba+ROAD) = 0;
     *(proba+RIVER) = 0;
-    *(proba+BUSHES) = 0;
+    *(proba+BUSHES) = 100;
     *(proba+ENTRANCE) = 0;
     *(proba+FIRE) = 0;
     *(proba+CAVE) = 0;
     *(proba+CULTIST) = 0;
-    *(proba+MAGE) = 100;
+    *(proba+MAGE) = 0;
     return proba;
 }
+
+int check_percent(Game* game, int init, int finish ){
+    // /!\ <= à finish !!
+    int tot = 0;
+    for(int i = init;i<=finish;i++){
+        tot += game->proba[i];
+    }
+    return 100 - tot;
+}
+
 
 void generator_forest(Game *game){
     // explicite
@@ -287,7 +297,7 @@ void update_game(Game* game){
     }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);
-        print_percent(game);
+//        print_percent(game);
     }
 }
 
@@ -311,12 +321,15 @@ void generator_bushes(Game *game){
     int proba_change = (rand()%4)*5;
     if(*((game->proba)+BUSHES) <= proba_change){
         *((game->proba)+FOREST) += (2*(*((game->proba)+BUSHES)))/3 ;
-        *((game->proba)+RIVER) += (*((game->proba)+BUSHES))/3+1 ;
+        *((game->proba)+RIVER) += (*((game->proba)+BUSHES))/3 ;
+        *((game->proba)+ENTRANCE)+=1;
         *((game->proba)+BUSHES) = 0 ;
     } else {
         *((game->proba)+FOREST) += 2*proba_change/3 ;
         *((game->proba)+BUSHES) -= proba_change ;
-        *((game->proba)+RIVER) += proba_change/3+1 ;
+        *((game->proba)+RIVER) += proba_change/3 ;
+        *((game->proba)+ENTRANCE)+=1;
+        *((game->proba)+BUSHES) += check_percent(game, FOREST, ENTRANCE);
     }
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
@@ -334,7 +347,11 @@ void generator_bushes(Game *game){
 }
 
 void generator_entrance(Game *game){
-    *((game->proba)+FIRE) += (*((game->proba)+ENTRANCE));
+    *((game->proba)+FOREST)=0;
+    *((game->proba)+ROAD)=0;
+    *((game->proba)+RIVER)=0;
+    *((game->proba)+BUSHES)=0;
+    *((game->proba)+FIRE) += 100;
     *((game->proba)+ENTRANCE) = 0 ;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
@@ -368,6 +385,7 @@ void generator_fire(Game *game){
          *((game->proba)+CAVE) += proba_change ;
          *((game->proba)+FIRE) -= proba_change ;
      }
+     *((game->proba)+FIRE) += check_percent(game, ENTRANCE, MAGE);
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -417,6 +435,7 @@ void generator_cave(Game *game){
         *((game->proba)+CAVE) -= proba_change ;
         *((game->proba)+MAGE) += proba_change/3 ;
     }
+    *((game->proba)+CAVE) += check_percent(game, ENTRANCE, MAGE);
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -441,6 +460,7 @@ void generator_Cultist(Game *game){
         *((game->proba)+CULTIST) = 0 ;
         *((game->proba)+MAGE) += (proba_change/4)+1;
     }
+    *((game->proba)+CULTIST) += check_percent(game, ENTRANCE, MAGE);
     int nb_lines=rand()%3+2;
     int nb_cultists=rand()%3+2+(nb_lines/2);
     int nb_used=0;
@@ -566,6 +586,7 @@ void generator_mage(Game *game){
         *((game->proba)+MAGE) -= proba_change ;
         *((game->proba)+CAVE) += proba_change/2+1 ;
     }
+    *((game->proba)+MAGE) += check_percent(game, ENTRANCE, MAGE);
     add_buffer_line(game->carte);
     int pos_x=rand()%LENGTH;
     Line* line = game->carte->head_buffer;
