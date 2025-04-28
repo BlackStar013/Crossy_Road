@@ -14,10 +14,11 @@ typedef struct _Mob {
     int delay;
     int id_mob;
     int offset_x;
-    //int offset_y;             // pour une raison que j'ignore, il refuse d'avoir un autre champ ???
+    int offset_y;             // pour une raison que j'ignore, il refuse d'avoir un autre champ ???
     void (*path)(struct _Mob*,Player*);
     int action_value;
     int action_delay;
+    int max_action_delay;
     int memory__x;
     int memory__y;
 } Mob;
@@ -34,17 +35,10 @@ enum MOB{
     CANON_BALL_RIGHT,
     CANON_BALL_LEFT,
     ////
-    FIRE2CLOCK,
-    FIRE2COUNTER,
-    FIRE3CLOCK,
-    FIRE3COUNTER,
+    FIRECLOCK,
+    FIRECOUNTER,
     BUSH,
-    CULTIST1CLOCK,
-    CULTIST2CLOCK,
-    CULTIST3CLOCK,
-    CULTIST1COUNTER,
-    CULTIST2COUNTER,
-    CULTIST3COUNTER,
+    MOB_CULTIST,
     HIGHCULTIST,
     CURSE,
     NB_MOB
@@ -62,7 +56,7 @@ bool mob_collide(Mob*,Player*);
 //On gère la vitesse à l'aide du nombre d'actualisation
 
 bool mob_in_map(Mob*);
-Mob* clone_mob(Mob,int,int,int);
+Mob* clone_mob(Mob,int,int,int,int);
 
 void path_right(Mob*,Player*);
 extern const Mob car_right;
@@ -103,14 +97,14 @@ Liste_Mob* destroy_liste_mob_from(int y, Liste_Mob *liste);
 
 
 ///////
-void clockwise_cycle_2(Mob *fire,Player* player);
-extern const Mob fire_2_clock;
-void counterclock_cycle_2(Mob *fire,Player* player);
-extern const Mob fire_2_counter;
-void clockwise_cycle_3(Mob *fire,Player* player);
-extern const Mob fire_3_clock;
-void counterclock_cycle_3(Mob *fire,Player* player);
-extern const Mob fire_3_counter;
+void clockwise_cycle(Mob *fire,Player* player);
+extern const Mob fire_clock;
+void counterclock_cycle(Mob *fire,Player* player);
+extern const Mob fire_counter;
+// void clockwise_cycle_3(Mob *fire,Player* player);
+// extern const Mob fire_3_clock;
+// void counterclock_cycle_3(Mob *fire,Player* player);
+// extern const Mob fire_3_counter;
 
 void ambush(Mob *bush,Player* player);
 extern const Mob bush;
@@ -130,7 +124,9 @@ extern const Mob cult_counter2;
 extern const Mob cult_counter3;
 
 void still(Mob *mage,Player* player);
-void curse(Mob *projectile,Player* player);
+void follow(Mob *projectile,Player* player);
 
 extern const Mob mage;
 extern const Mob curse_arrow;
+//extern const Mob curse_arrow_bis_1;
+//extern const Mob curse_arrow_bis_2;

@@ -21,6 +21,13 @@ enum Obstacle {
     ROAD,
     RIVER,
     CANON,
+    BUSHES,
+    ENTRANCE,
+    FIRE,
+    CAVE,
+    CULTIST,
+    MAGE,
+    //CAVE_CANON,
     NB_OBSTACLE
 };
 
@@ -32,6 +39,12 @@ void generator_forest(Game*);
 void generator_road(Game*);
 void generator_river(Game*);
 void generator_canon(Game*);
+void generator_bushes(Game*);
+void generator_entrance(Game*);
+void generator_fire(Game*);
+void generator_cave(Game*);
+void generator_cultist(Game*);
+void generator_mage(Game*);
 void generator_obstacle(Game*);
 
 //Initialise les générateurs
