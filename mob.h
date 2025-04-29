@@ -24,16 +24,11 @@ typedef struct _Mob {
 } Mob;
 
 enum MOB{
-    CAR_RIGHT,
-    CAR_LEFT,
-    BUS_RIGHT,
-    BUS_LEFT,
-    PLANK_RIGHT,
-    PLANK_LEFT,
-    CANON_RIGHT,
-    CANON_LEFT,
-    CANON_BALL_RIGHT,
-    CANON_BALL_LEFT,
+    CAR,
+    BUS,
+    PLANK,
+    CANON_MOB,
+    CANON_BALL,
     ////
     FIRECLOCK,
     FIRECOUNTER,

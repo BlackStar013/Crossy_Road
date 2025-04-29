@@ -82,7 +82,7 @@ void add_road(Game *game, Mob car, Tile road_, int pos, int speed, int nb_car){
     }
     int init_x = -car.length+(rand()%3+1)*pos;
     for(int i = 0; i < nb_car; i++){
-        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(HEIGTH/nb_car)*i, HEIGTH+pos,speed,0));
+        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(LENGTH/nb_car)*i, HEIGTH+pos,speed,0));
     }
 }
 
@@ -112,29 +112,51 @@ void generator_road(Game *game){
         tile = road_down;
     }
     for(int i = 0 ; i < nb_line ; i++){
-        int direction = rand()%2;
-        int speed = rand()%5 +1;
-        int nb_car;
-        if(speed==6){
-            nb_car = rand()%4 + 2;
-        } else if(speed==1){
-            nb_car = rand()%3 +1;
+        if(rand()%4){
+            int direction = rand()%2;
+            int speed = rand()%5 +1;
+            int nb_car;
+            if(speed==6){
+                nb_car = rand()%4 + 2;
+            } else if(speed==1){
+                nb_car = rand()%3 +1;
+            } else {
+                nb_car = rand()%4 + 1;
+            }
+            if(direction == 0){
+                add_road(game, car_right,tile,i,speed,nb_car);
+            } else {
+                add_road(game,car_left,tile,i,speed,nb_car);
+            }
+            if(i==nb_line - 2){
+                tile = road_up;
+            } else {
+                tile = road_middle;
+            }
         } else {
-            nb_car = rand()%4 + 1;
-        }
-        if(direction == 0){
-            add_road(game, car_right,tile,i,speed,nb_car);
-        } else {
-            add_road(game,car_left,tile,i,speed,nb_car);
-        }
-        if(i==nb_line - 2){
-            tile = road_up;
-        } else {
-            tile = road_middle;
-        }
+            int direction = rand()%2;
+            int speed = rand()%6 +2;
+            int nb_bus;
+            if(speed==7){
+                nb_bus = rand()%3 + 1;
+            } else if(speed==2){
+                nb_bus = 1;
+            } else {
+                nb_bus = rand()%2 + 1;
+            }
+            if(direction == 0){
+                add_road(game, bus_right,tile,i,speed,nb_bus);
+            } else {
+                add_road(game,bus_left,tile,i,speed,nb_bus);
+            }
+            if(i==nb_line - 2){
+                tile = road_up;
+            } else {
+                tile = road_middle;
+            }
+        }   
     }
     proba_change_road(game, nb_line);
-    
 }
 
 void add_plank(Game *game, Mob plank,Tile tile, int pos, int speed){
@@ -494,9 +516,9 @@ void generator_transition_cave(Game * game){
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], stalagmite);
         }
-        clone(&line->tiles[LENGTH/2+1], cave);
+        clone(&line->tiles[LENGTH/2], cave);
         if(!LENGTH%2){
-            clone(&line->tiles[LENGTH/2], cave);
+            clone(&line->tiles[LENGTH/2+1], cave);
         }
     }
     proba_change_transition_cave(game);

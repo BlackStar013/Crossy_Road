@@ -148,7 +148,7 @@ void path_right(Mob *car, Player*p){
             car->_x += 3; 
         }
         car->action_value = 1-car->action_value;
-        if(car->action_value&&(car->id_mob!=PLANK_RIGHT)){
+        if(car->action_value&&(car->id_mob!=PLANK)){
             car->offset_x ++;
             car->offset_x %= 2;
         }
@@ -158,9 +158,9 @@ void path_right(Mob *car, Player*p){
     }
 }
 
-const Mob car_right = {1,2,true,0,0,0,0,0,CAR_RIGHT,0,0,path_right,0,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici
-const Mob plank_right = {1,1,false,3,0,0,0,0,PLANK_RIGHT,0,0,path_right,0,0,0,0,0}; 
-const Mob bus_right = {1,4,true,0,0,0,0,0,BUS_RIGHT,0,0,path_right,0,0,0,0,0};
+const Mob car_right = {1,2,true,0,0,0,0,0,CAR,0,0,path_right,0,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici
+const Mob plank_right = {1,1,false,3,0,0,0,0,PLANK,0,0,path_right,0,0,0,0,0}; 
+const Mob bus_right = {1,4,true,0,0,0,0,0,BUS,0,0,path_right,0,0,0,0,0};
 
 void path_left(Mob *car, Player*p){
     if(!car->delay){
@@ -170,7 +170,7 @@ void path_left(Mob *car, Player*p){
             car->_x -=3; //À remplacer par move_mob (?)
         }
         car->action_value = 1-car->action_value;
-        if(car->action_value&&(car->id_mob!=PLANK_LEFT)){
+        if(car->action_value&&(car->id_mob!=PLANK)){
             car->offset_x ++;
             car->offset_x %= 2;
         }
@@ -180,9 +180,9 @@ void path_left(Mob *car, Player*p){
     }
 }
 
-const Mob car_left = {1,2,true,0,0,0,0,0,CAR_LEFT,0,1,path_left,0,0,0,0,0};
-const Mob plank_left = {1,1,false,-3,0,0,0,0,PLANK_LEFT,0,1,path_left,0,0,0,0,0};
-const Mob bus_left = {1,4,true,0,0,0,0,0,BUS_LEFT,0,1,path_left,0,0,0,0,0};
+const Mob car_left = {1,2,true,0,0,0,0,0,CAR,0,1,path_left,0,0,0,0,0};
+const Mob plank_left = {1,1,false,-3,0,0,0,0,PLANK,0,1,path_left,0,0,0,0,0};
+const Mob bus_left = {1,4,true,0,0,0,0,0,BUS,0,1,path_left,0,0,0,0,0};
 
 void canon_idle(Mob* mob, Player *p){
     switch (mob->action_value) {
@@ -220,8 +220,8 @@ void canon_idle(Mob* mob, Player *p){
         } 
 }
 
-const Mob canon_right = {1,1,false,0,0,0,0,0,CANON_RIGHT,0,0,canon_idle,0,0,0,0,0};
-const Mob canon_left = {1,1,false,0,0,0,0,0,CANON_LEFT,0,1,canon_idle,0,0,0,0,0};
+const Mob canon_right = {1,1,false,0,0,0,0,0,CANON_MOB,0,0,canon_idle,0,0,0,0,0};
+const Mob canon_left = {1,1,false,0,0,0,0,0,CANON_MOB,0,1,canon_idle,0,0,0,0,0};
 
 void canon_right_fast(Mob* mob, Player *p){
     switch (mob->action_value) {
@@ -273,8 +273,8 @@ void canon_left_fast(Mob* mob, Player *p){
         } 
 }
 
-const Mob canon_ball_right = {1,1,true,0,0,0,0,0,CANON_BALL_RIGHT,0,0,canon_right_fast,0,0,0,0,0};
-const Mob canon_ball_left = {1,1,true,0,0,0,0,0,CANON_BALL_LEFT,0,1,canon_left_fast,0,0,0,0,0};
+const Mob canon_ball_right = {1,1,true,0,0,0,0,0,CANON_BALL,0,0,canon_right_fast,0,0,0,0,0};
+const Mob canon_ball_left = {1,1,true,0,0,0,0,0,CANON_BALL,0,1,canon_left_fast,0,0,0,0,0};
 
 
 void destroy_mobs(Liste_Mob *liste){
@@ -952,7 +952,7 @@ void still(Mob *mage,Player* player){
         else {
             mage->action_delay--;
         }
-        mage->delay = mage->speed;
+        mage->delay = mage->speed; //????
 }
 
 void follow(Mob *projectile,Player* player){
