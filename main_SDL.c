@@ -102,7 +102,7 @@ void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
 
 void display_joueur(Player *joueur, SDL_Renderer *renderer,int pix_defil){
     // affiche le joueur selon le même principe que ci-dessus
-    SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png");
+    SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png"); //A changer avec l'enum dans map.h pour le choix de perso
     if (!spriteSurface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
         exit(-1);
@@ -422,7 +422,7 @@ int main(void){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
     }
 
-    Game *game = initialise_game();
+    Game *game = initialise_game(KAIRON);
     // Line *line = game->carte->head_map;
     // while(line!=NULL){
     //     for(int i=0; i<HEIGHT; i++){

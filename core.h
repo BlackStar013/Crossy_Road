@@ -68,7 +68,7 @@ void (*initialise_generator(void))(Game*);
 
 
 //Initialise une partie
-Game *initialise_game(void);
+Game *initialise_game(int character_id);
 void update_game(Game* game);
 
 void switch_game(Game *game);

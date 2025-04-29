@@ -743,12 +743,12 @@ void initialise_map(Game* game){
     }
 }
 
-Game *initialise_game(void){
+Game *initialise_game(int character_id){
     // explicite
     srand( time( NULL ) );
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
-    game->joueur = initialise_player(0); //0 for now
+    game->joueur = initialise_player(character_id); //0 for now
     game->score = 1;
     game->mobs = NULL;
     game->proba = initialise_proba();
