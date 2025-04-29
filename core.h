@@ -14,16 +14,31 @@ typedef struct _Game {
     int score;
     int* proba;
     void (*generator)(struct _Game*);
+    int biome;
+    int until_next;
 } Game;
 
+
+
+enum Biome {
+    CROSSY_ROAD,
+    FLAMING_MANOR,
+    CULTIST_CAVE,
+    NB_BIOME
+};
+//Les séparateurs correspondent aux Biomes.
 enum Obstacle {
     FOREST,
     ROAD,
     RIVER,
     CANON,
+    /////////
     BUSHES,
+    ////////
     ENTRANCE,
     FIRE,
+    ////////
+    TRANSITION_CAVE,
     CAVE,
     CULTIST,
     MAGE,
@@ -42,6 +57,7 @@ void generator_canon(Game*);
 void generator_bushes(Game*);
 void generator_entrance(Game*);
 void generator_fire(Game*);
+void generator_transition_cave(Game * game);
 void generator_cave(Game*);
 void generator_cultist(Game*);
 void generator_mage(Game*);

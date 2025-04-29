@@ -332,7 +332,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 exit(-1);
             }
             int spriteWidth = spriteFullWidth/4; // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
-            int spriteHeight = spriteFullHeight/4;
+            int spriteHeight = spriteFullHeight/8;
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y =  (liste->mob->offset_y)*spriteHeight, .w = spriteWidth, .h = spriteHeight};
             SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGTH*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
@@ -478,7 +478,7 @@ int main(void){
                     pix_defil += 32;
                     counter = 0;
                     switch_game(game);
-                    game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
+                    game->mobs = destroy_liste_mob_from(-pix_defil/32-HEIGTH, game->mobs);
                 }
                 //sert à changement l'image du joueur quand il se déplace
                 game->joueur->offset_y = 1;

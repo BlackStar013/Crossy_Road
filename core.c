@@ -8,13 +8,21 @@
 
 ////Partie Création d'obstacles !///
 
+
+void proba_change_game(Game* game, int obstacle){
+    for(int i = 0; i<NB_OBSTACLE; i++){
+        *(game->proba+i) = 0;
+    }
+    *(game->proba+obstacle) = 100;
+}
+
 int* initialise_proba(void){
     // explicite 
     int* proba = malloc((NB_OBSTACLE)*sizeof(int));
     for(int i = 0; i<NB_OBSTACLE; i++){
         *(proba+i) = 0;
     }
-    *(proba+BUSHES) = 100;
+    *(proba+FOREST) = 100;
     *(proba+ROAD) = 0;
     *(proba+RIVER) = 0;
     *(proba+CANON) = 0;
@@ -55,9 +63,13 @@ void generator_forest(Game *game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], plain);
     }
-    int nb_wall = rand()%6;
+    int nb_wall = rand()%(LENGTH/2 - 2);
     for(int i = 0; i<nb_wall; i++){
-        clone(&line->tiles[rand()%LENGTH], wall);
+        if(!rand()%3){
+            clone(&line->tiles[rand()%LENGTH], tree);
+        } else {
+            clone(&line->tiles[rand()%LENGTH], wall);
+        }
     }
 
 }
@@ -285,10 +297,7 @@ void generator_obstacle(Game*game){
         generator_canon(game);
         break;
 
-        default:
-        generator_forest(game);
-
-                case BUSHES:
+        case BUSHES:
         generator_bushes(game);
         break;
                 
@@ -310,6 +319,10 @@ void generator_obstacle(Game*game){
                 
         case MAGE:
         generator_mage(game);
+        break;
+
+        case TRANSITION_CAVE:
+        generator_transition_cave(game);
         break;
 
 
@@ -354,13 +367,15 @@ void generator_bushes(Game *game){
     }
 }
 
+void proba_change_entrance(Game* game){
+    for(int i = 0; i<NB_OBSTACLE; i++){
+        *(game->proba+i) = 0;
+    }
+    *((game->proba)+FIRE) = 100;
+
+}
+
 void generator_entrance(Game *game){
-    *((game->proba)+FOREST)=0;
-    *((game->proba)+ROAD)=0;
-    *((game->proba)+RIVER)=0;
-    *((game->proba)+BUSHES)=0;
-    *((game->proba)+FIRE) += 100;
-    *((game->proba)+ENTRANCE) = 0 ;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -381,19 +396,15 @@ void generator_entrance(Game *game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i],planks);
     }
+    proba_change_entrance(game);
+}
+
+void proba_change_fire(Game* game){
+    //Pour l'instant fire ne donne que fire
 }
 
 void generator_fire(Game *game){
     //feu
-    int proba_change = (rand()%4)*2;
-     if(*((game->proba)+FIRE) <= proba_change){
-         *((game->proba)+CAVE) += (*((game->proba)+FIRE)) ;
-         *((game->proba)+FIRE) = 0 ;
-     } else {
-         *((game->proba)+CAVE) += proba_change ;
-         *((game->proba)+FIRE) -= proba_change ;
-     }
-     *((game->proba)+FIRE) += check_percent(game, ENTRANCE, MAGE);
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -427,12 +438,75 @@ void generator_fire(Game *game){
         default:
             break;
         }
+    proba_change_fire(game);
         
     }
 }
 
-void generator_cave(Game *game){
-    // explicite
+void proba_change_transition_cave(Game* game){
+        for(int i = 0; i<NB_OBSTACLE; i++){
+        *(game->proba+i) = 0;
+    }
+    *((game->proba)+CULTIST) = 100;
+}
+
+
+void generator_transition_cave(Game * game){
+    Line* line;
+
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    add_buffer_line(game->carte);
+    for(int i = 0; i < 2; i++){
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], planks);
+        }
+        int nb_Block = rand()%3;
+        for(int i = 0; i<nb_Block; i++){
+            clone(&line->tiles[rand()%LENGTH], brokenplanks);
+        }
+    }
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], planks);
+    }
+    int nb_Block = rand()%3;
+    for(int i = 0; i<nb_Block; i++){
+        clone(&line->tiles[rand()%LENGTH], brokenplanks);
+    }
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    for(int i = 0;i<3;i++){
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], stalagmite);
+        }
+        clone(&line->tiles[LENGTH/2+1], cave);
+        if(!LENGTH%2){
+            clone(&line->tiles[LENGTH/2], cave);
+        }
+    }
+    proba_change_transition_cave(game);
+
+
+
+}
+
+
+void proba_change_cave(Game* game){
     int proba_change = (rand()%4)*5 + 10;
     if(*((game->proba)+CAVE) <= proba_change){
         *((game->proba)+CULTIST) += (2*(*((game->proba)+FOREST)))/3+1 ;
@@ -443,7 +517,11 @@ void generator_cave(Game *game){
         *((game->proba)+CAVE) -= proba_change ;
         *((game->proba)+MAGE) += proba_change/3 ;
     }
-    *((game->proba)+CAVE) += check_percent(game, ENTRANCE, MAGE);
+    *((game->proba)+CAVE) += check_percent(game, CAVE, MAGE);
+}
+
+
+void generator_cave(Game *game){
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -453,11 +531,10 @@ void generator_cave(Game *game){
     for(int i = 0; i<nb_wall; i++){
         clone(&line->tiles[rand()%LENGTH], stalagmite);
     }
-
+    proba_change_cave(game);
 }
 
-void generator_cultist(Game *game){
-    //les cultistes avec des dagues
+void proba_change_cultist(Game* game){
     int proba_change = (rand()%4)*5+5;
     if(*((game->proba)+CULTIST) <= proba_change){
         *((game->proba)+CAVE) += (3*(*((game->proba)+FIRE))/4) ;
@@ -468,7 +545,13 @@ void generator_cultist(Game *game){
         *((game->proba)+CULTIST) = 0 ;
         *((game->proba)+MAGE) += (proba_change/4)+1;
     }
-    *((game->proba)+CULTIST) += check_percent(game, ENTRANCE, MAGE);
+    *((game->proba)+CULTIST) += check_percent(game, CAVE, MAGE);
+}
+
+
+
+void generator_cultist(Game *game){
+    //les cultistes avec des dagues
     int nb_lines=rand()%3+2;
     int nb_cultists=rand()%3+2+(nb_lines/2);
     int nb_used=0;
@@ -581,9 +664,10 @@ void generator_cultist(Game *game){
         }
         
     }
+    proba_change_cultist(game);
 }
 
-void generator_mage(Game *game){
+void proba_change_mage(Game* game){
     int proba_change = (rand()%4)*5+10;
     if(*((game->proba)+MAGE) <= proba_change){
         *((game->proba)+CULTIST) += (2*(*((game->proba)+MAGE)))/2 ;
@@ -594,7 +678,10 @@ void generator_mage(Game *game){
         *((game->proba)+MAGE) -= proba_change ;
         *((game->proba)+CAVE) += proba_change/2+1 ;
     }
-    *((game->proba)+MAGE) += check_percent(game, ENTRANCE, MAGE);
+    *((game->proba)+MAGE) += check_percent(game, CAVE, MAGE);
+}
+
+void generator_mage(Game *game){
     add_buffer_line(game->carte);
     int pos_x=rand()%LENGTH;
     Line* line = game->carte->head_buffer;
@@ -618,6 +705,7 @@ void generator_mage(Game *game){
         if (speed==2) {game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,100));}
         else {game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,200));}
     }
+    proba_change_mage(game);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -628,6 +716,7 @@ void initialise_map(Game* game){
         update_game(game);
         move_up(game);
         switch_game(game);
+        update_game(game);
         game->score--;
     }
 }
@@ -638,9 +727,11 @@ Game *initialise_game(void){
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
     game->joueur = initialise_player(0); //0 for now
-    game->score = -1;
+    game->score = 1;
     game->mobs = NULL;
     game->proba = initialise_proba();
+    game->biome = CROSSY_ROAD;
+    game->until_next = 20;
     initialise_map(game);
     return game;
 }
@@ -717,6 +808,7 @@ void print_percent(Game* game){
 
 void update_game(Game* game){
     // avance les mobs de leur path et génére un obstacle dans le buffer
+    //printf("%d\n",game->score);
     move_all_mob(game->mobs,game->joueur);
     game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
     game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
@@ -732,6 +824,31 @@ void update_game(Game* game){
             }
         }
         cur = cur->next;
+    }
+    if(game->score%(game->until_next) == 0){
+        game->score++;
+        game->biome++;
+        switch(game->biome){
+            case CROSSY_ROAD:
+            proba_change_game(game,FOREST);
+            game->until_next = 20;
+            break;
+
+            case FLAMING_MANOR:
+            proba_change_game(game, ENTRANCE);
+            game->until_next = 40;
+            break;
+
+            case CULTIST_CAVE:
+            proba_change_game(game, TRANSITION_CAVE);
+            game->until_next = 45;
+            break;
+
+            default:
+            //game->biome = CROSSY_ROAD;
+            //game->until_next = 20;
+            break;
+        }
     }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);

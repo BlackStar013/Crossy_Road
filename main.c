@@ -88,7 +88,7 @@ int main(void){
     struct termios old_tio = init_terminal();
     Game *game = initialise_game();
     update_game(game);
-    game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5, 10));
+    game->mobs = list_append(game->mobs, clone_mob(car_right, 3, 5, 10,12));
     //print_liste(game->mobs);
     //sleep(1);
     //Map* place = create_empty_map();

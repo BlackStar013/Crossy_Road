@@ -569,22 +569,22 @@ void patrol_clock4x2(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 2;
+                    fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 0;
+                    fire->offset_y = 3;
                     break;
                 case 2:
                     fire->action_delay=fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 3;
+                    fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 1;
+                    fire->offset_y = 2;
                     break;
             }
         }
@@ -637,22 +637,22 @@ void patrol_clock5x2(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 2;
+                    fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=4*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 0;
+                    fire->offset_y = 3;
                     break;
                 case 2:
                     fire->action_delay=fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 3;
+                    fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=4*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 1;
+                    fire->offset_y = 2;
                     break;
             }
         }
@@ -705,22 +705,22 @@ void patrol_clock4x3(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 2;
+                    fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 0;
+                    fire->offset_y = 3;
                     break;
                 case 2:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 3;
+                    fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 1;
+                    fire->offset_y = 2;
                     break;
             }
         }
@@ -773,22 +773,22 @@ void patrol_counter4x2(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 3;
+                    fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 1;
+                    fire->offset_y = 2;
                     break;
                 case 2:
                     fire->action_delay=fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 2;
+                    fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 0;
+                    fire->offset_y = 3;
                     break;
             }
         }
@@ -841,22 +841,22 @@ void patrol_counter5x2(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 3;
+                    fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=4*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 1;
+                    fire->offset_y = 2;
                     break;
                 case 2:
                     fire->action_delay=fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 2;
+                    fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=4*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 0;
+                    fire->offset_y = 3;
                     break;
             }
         }
@@ -909,22 +909,22 @@ void patrol_counter4x3(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 3;
+                    fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 1;
+                    fire->offset_y = 2;
                     break;
                 case 2:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 2;
+                    fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 0;
+                    fire->offset_y = 3;
                     break;
             }
         }
@@ -937,7 +937,7 @@ void patrol_counter4x3(Mob *fire,Player* Joueur){
 //mobs allant dans le sens horaire
 const Mob cult_clock1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x2,0,16,0,0,0};
 const Mob cult_clock2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock5x2,0,16,0,0,0};
-const Mob cult_clock3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x3,0,16,0,0};
+const Mob cult_clock3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x3,0,16,0,0,0};
 //mobs allant dans le sens antihoraire
 const Mob cult_counter1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x2,0,16,0,0,0};
 const Mob cult_counter2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter5x2,0,16,0,0,0};
@@ -956,21 +956,22 @@ void still(Mob *mage,Player* player){
 }
 
 void follow(Mob *projectile,Player* player){
+    int test_horiz=player->_x-projectile->_x;
+    int test_vert=player->_y-projectile->_y;
     if(!projectile->delay){
-        if (mob_in_map(projectile)){
             if (player->_x>projectile->_x){
                 projectile->_x+=2;
-            }
+            } 
             if (player->_x<projectile->_x){
                 projectile->_x-=2;
+                
             }
             if (player->_y>projectile->_y){
                 projectile->_y+=2;
-            }
+            } 
             if (player->_y<projectile->_y){
                 projectile->_y-=2;
             }
-        }
     if(!projectile->action_delay){
         if (mob_in_map(projectile)){
             projectile->_x=99999999;
@@ -987,6 +988,27 @@ void follow(Mob *projectile,Player* player){
     projectile->delay = projectile->speed;
     projectile->offset_x++;
     projectile->offset_x %= 4;
+    if (test_horiz<-2){
+        projectile->offset_y=4;
+        if (test_vert>2) {
+            projectile->offset_y=5;
+        }else if (test_vert<-2) {
+            projectile->offset_y=3;
+        } 
+    }else if (test_horiz>2){
+        projectile->offset_y=0;
+        if (test_vert>2) {
+            projectile->offset_y=7;
+        }else if (test_vert<-2) {
+            projectile->offset_y=1;
+        } 
+    }else {
+        if (test_vert>0) {
+            projectile->offset_y=6;
+        }else if (test_vert<0) {
+            projectile->offset_y=2;
+        }
+    }
     } else {
         projectile->delay--;
     }
@@ -994,7 +1016,7 @@ void follow(Mob *projectile,Player* player){
 
 
 const Mob mage={1,1,true,0,0,0,0,0,HIGHCULTIST,0,0,still,10,0,0,0,0};
-const Mob curse_arrow={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,0,0,0};
+const Mob curse_arrow={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,0,0,0,0};
 //const Mob curse_arrow_bis_1={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,100,0,0,0};
 //const Mob curse_arrow_bis_2={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,200,0,0,0};
 
