@@ -23,6 +23,8 @@ void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
             SDL_Surface *spriteSurface;
             if(line->tiles[j].type==_PLAIN){              //charge le sprite a afficher
                 spriteSurface = IMG_Load("sprites/Plaines.png");
+            }else if(line->tiles[j].type==_TREE){   //(line->tiles[j].type=='~')
+                spriteSurface = IMG_Load("sprites/Buisson.png");
             }else if(line->tiles[j].type==_ROAD){
                 spriteSurface = IMG_Load("sprites/Routes.png");
             }else if(line->tiles[j].type==_PLAIN_BLOCK){
@@ -102,7 +104,7 @@ void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
 
 void display_joueur(Player *joueur, SDL_Renderer *renderer,int pix_defil){
     // affiche le joueur selon le même principe que ci-dessus
-    SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png"); //A changer avec l'enum dans map.h pour le choix de perso
+    SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png"); //A changer avec l'enum dans map.h pour le choix de persoz
     if (!spriteSurface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
         exit(-1);

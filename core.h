@@ -26,6 +26,7 @@ enum Biome {
     CULTIST_CAVE,
     NB_BIOME
 };
+
 //Les séparateurs correspondent aux Biomes.
 enum Obstacle {
     FOREST,

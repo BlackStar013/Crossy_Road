@@ -65,10 +65,10 @@ void generator_forest(Game *game){
     }
     int nb_wall = rand()%(LENGTH/2 - 2);
     for(int i = 0; i<nb_wall; i++){
-        if(!rand()%3){
-            clone(&line->tiles[rand()%LENGTH], tree);
-        } else {
+        if(rand()%3){
             clone(&line->tiles[rand()%LENGTH], wall);
+        } else {
+            clone(&line->tiles[rand()%LENGTH], tree);
         }
     }
 
