@@ -6,66 +6,22 @@
 #include "tuiles.h"
 #include "core.h"
 #include "mob.h"
+#include "display.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
-
 #define ECHELLE 2
 
-void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
+void display_map(Map *map, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMap){
     //parcours toute la map ligne par ligne et charge le sprite correspondant
     Line *line = map->head_map;
     for (int i = 0; i<HEIGTH+map->tail_buffer_lenght;i++){
         for (int j = 0; j<LENGTH; j++){
-            SDL_Surface *spriteSurface;
-            if(line->tiles[j].type==_PLAIN){              //charge le sprite a afficher
-                spriteSurface = IMG_Load("sprites/Plaines.png");
-            }else if(line->tiles[j].type==_TREE){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Buisson.png");
-            }else if(line->tiles[j].type==_ROAD){
-                spriteSurface = IMG_Load("sprites/Routes.png");
-            }else if(line->tiles[j].type==_PLAIN_BLOCK){
-                spriteSurface = IMG_Load("sprites/Plaines.png");
-            }else if(line->tiles[j].type==_ROAD_UP){
-                spriteSurface = IMG_Load("sprites/RoutesLimiteHaut.png");
-            }else if(line->tiles[j].type==_ROAD_DOWN){
-                spriteSurface = IMG_Load("sprites/RouteLlimiteBas.png");
-            }else if(line->tiles[j].type==_ROAD_MIDDLE){
-                spriteSurface = IMG_Load("sprites/RouteCentre.png");
-            }else if(line->tiles[j].type==_WALL){
-                spriteSurface = IMG_Load("sprites/Rochers.png");
-            }else if(line->tiles[j].type==_WATER){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Eaudoublebords.png");
-            }else if(line->tiles[j].type==_WATER_UP){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Eaubordhaut.png");
-            }else if(line->tiles[j].type==_WATER_DOWN){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Eaubordbas.png");
-            }else if(line->tiles[j].type==_TREE){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Buisson.png");
-            }else if(line->tiles[j].type==_RUINS){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/DebrisRuines.png");
-            }else if(line->tiles[j].type==_BROKENPLANKS){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Decombres.png");
-            }else if(line->tiles[j].type==_TRANSITION){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/TransitionManoir.png");
-            }else if(line->tiles[j].type==_PLANKS){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Plancher.png");
-            }else if(line->tiles[j].type==_CHANNEL){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Canal.png");
-            }else if(line->tiles[j].type==_BASE){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Socle.png");
-            }else if(line->tiles[j].type==_LOW_WALL){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Muret.png");
-            }else if(line->tiles[j].type==_CAVE){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Grotte.png");
-            }else if(line->tiles[j].type==_STALAGMITE){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Stalagmite.png");
-            }else{ //if(line->tiles[j].type==_WATER_MIDDLE){   //(line->tiles[j].type=='~')
-                spriteSurface = IMG_Load("sprites/Eaumilieu.png");
-            }
+            SDL_Surface* spriteSurface;
+            spriteSurface = surfaceArrayMap[line->tiles[j].type];
             // creer la surface pour afficher
             if (!spriteSurface) {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
@@ -94,7 +50,6 @@ void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         }
         if(line!=NULL){
             line=line->next;
@@ -102,9 +57,9 @@ void display_map(Map *map, SDL_Renderer *renderer,int pix_defil){
     }
 }
 
-void display_joueur(Player *joueur, SDL_Renderer *renderer,int pix_defil){
+void display_joueur(Player *joueur, SDL_Renderer *renderer,int pix_defil, SDL_Surface** surfaceArrayPlayer){
     // affiche le joueur selon le même principe que ci-dessus
-    SDL_Surface *spriteSurface = IMG_Load("sprites/Kairon.png"); //A changer avec l'enum dans map.h pour le choix de persoz
+    SDL_Surface *spriteSurface = surfaceArrayPlayer[joueur->character_id];
     if (!spriteSurface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
         exit(-1);
@@ -128,14 +83,13 @@ void display_joueur(Player *joueur, SDL_Renderer *renderer,int pix_defil){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
     }
     SDL_DestroyTexture(spriteTexture);
-    SDL_FreeSurface(spriteSurface);
 }
 
-void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
+void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMob){
     // affiche les mobs un par un selon le même principe que ci-ci-dessus-dessus
     while(liste!=NULL){
+        SDL_Surface *spriteSurface = surfaceArrayMob[liste->mob->id_mob];
         if(liste->mob->id_mob==CAR){
-            SDL_Surface *spriteSurface = IMG_Load("sprites/Chariot.png");
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -159,9 +113,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         }else if(liste->mob->id_mob==PLANK){
-            SDL_Surface *spriteSurface = IMG_Load("sprites/Planche.png");
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -185,9 +137,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         } else if(liste->mob->id_mob==CANON_MOB){
-            SDL_Surface *spriteSurface = IMG_Load("sprites/Canon.png");
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -211,9 +161,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         } else if(liste->mob->id_mob==CANON_BALL){
-            SDL_Surface *spriteSurface = IMG_Load("sprites/Boulet.png");
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -237,9 +185,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         } else if(liste->mob->id_mob==BUS){
-            SDL_Surface *spriteSurface = IMG_Load("sprites/Patrouille.png");
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -263,9 +209,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         } else if(liste->mob->id_mob==FIRECLOCK || liste->mob->id_mob==FIRECOUNTER){
-            SDL_Surface *spriteSurface = IMG_Load("sprites/FEU.png");
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -289,9 +233,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         } else if(liste->mob->id_mob==MOB_CULTIST){
-            SDL_Surface *spriteSurface = IMG_Load("sprites/Cultiste.png");
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -315,9 +257,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         } else if(liste->mob->id_mob==HIGHCULTIST){
-            SDL_Surface *spriteSurface = IMG_Load("sprites/HautCultiste.png");
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -341,9 +281,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         } else if(liste->mob->id_mob==CURSE){
-            SDL_Surface *spriteSurface = IMG_Load("sprites/ProjectileMaudit.png");
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -367,21 +305,20 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-            SDL_FreeSurface(spriteSurface);
         }
         liste = liste->next;
     }
 }
 
 
-void display_all(Game *game, SDL_Renderer *renderer, int pix_defil){
+void display_all(Game *game, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer){
     // affiche toute la carte dans l'ordre, map puis mobs puis joueur
     // if(SDL_RenderClear(renderer)){
     //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
     // }
-    display_map(game->carte, renderer,pix_defil);
-    display_mob(game->mobs, renderer,pix_defil);
-    display_joueur(game->joueur, renderer,pix_defil);
+    display_map(game->carte, renderer,pix_defil, surfaceArrayMap);
+    display_mob(game->mobs, renderer,pix_defil, surfaceArrayMob);
+    display_joueur(game->joueur, renderer,pix_defil, surfaceArrayPlayer);
     SDL_RenderPresent(renderer);
 }
 
@@ -424,7 +361,11 @@ int main(void){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
     }
 
-    Game *game = initialise_game(KAIRON);
+    SDL_Surface** surfaceArrayMap = initSurfaceArrayMap();
+    SDL_Surface** surfaceArrayMob = initSurfaceArrayMob();
+    SDL_Surface** surfaceArrayPlayer = initSurfaceArrayPlayer();
+
+    Game *game = initialise_game(AESIR);
     // Line *line = game->carte->head_map;
     // while(line!=NULL){
     //     for(int i=0; i<HEIGHT; i++){
@@ -439,6 +380,7 @@ int main(void){
 
     SDL_Event event;
     SDL_bool quit = SDL_FALSE;
+    SDL_bool pause = SDL_FALSE;
     //pour tester le chargement des diffrentes tuiles
     // for(int i=0; i<LENGTH; i++){
     //     game->carte->head_map->next->next->next->tiles[i].type='~';
@@ -489,8 +431,8 @@ int main(void){
          }
         if(SDL_RenderClear(renderer)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-        }    
-        display_all(game, renderer,pix_defil);
+        }
+        display_all(game, renderer,pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer);
 
         // une fois l'affichage fait, on regarde si le joueur se déplace
         SDL_PollEvent(&event);
@@ -557,6 +499,9 @@ int main(void){
     destroy_game(game);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    freeSurfaceArrayMap(surfaceArrayMap);
+    freeSurfaceArrayMob(surfaceArrayMob);
+    freeSurfaceArrayPlayer(surfaceArrayPlayer);
     SDL_Quit();
     return 0;
 }
