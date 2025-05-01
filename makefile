@@ -32,8 +32,11 @@ core.o: core.c
 test.o: test.c tuiles.h mob.h
 	clang -c $(CFLAGS) test.c
 
-test: test.o tuiles.o mob.o map.o core.o
+create_test: test.o tuiles.o mob.o map.o core.o
 	clang -o test $(CFLAGS) test.o tuiles.o mob.o map.o core.o
+
+test:create_test
+	./test
 
 clean: 
 	rm -f main sdl_main test *.o

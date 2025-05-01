@@ -51,7 +51,7 @@ bool mob_collide(Mob*,Player*);
 //On gère la vitesse à l'aide du nombre d'actualisation
 
 bool mob_in_map(Mob*);
-Mob* clone_mob(Mob,int,int,int,int);
+Mob* clone_mob(Mob,int x_ini, int y_ini, int speed, int max_action_delay);
 
 void path_right(Mob*,Player*);
 extern const Mob car_right;

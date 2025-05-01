@@ -42,11 +42,11 @@ enum Personnages {
 
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done
-void ajout_tile(Map *carte,int x,int y,Tile tuile); //Done
-void suppression_tile(Map *carte,int x,int y); //? A quoi sert cette fonction vu qu'on a pas malloc les tiles individuellement
-bool coord_remplie(Map *carte,int x,int y); //Done
+// void ajout_tile(Map *carte,int x,int y,Tile tuile); //Done
+// void suppression_tile(Map *carte,int x,int y); //? A quoi sert cette fonction vu qu'on a pas malloc les tiles individuellement
+// bool coord_remplie(Map *carte,int x,int y); //Done
 bool carte_vide(Map *map); //Done
-int nb_tiles_remplies(Map *carte); //return LENGHT*HEIGHT?
+// int nb_tiles_remplies(Map *carte); //return LENGHT*HEIGHT?
 Tile tile_map(Map *carte,int x,int y); //Elle renvoie qu'elle est la tile (x,y) , done
 void switch_map(Map *carte);
 
