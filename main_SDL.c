@@ -401,7 +401,22 @@ int main(void){
     //     line=line->next;
     // }
     // printf("\n");
+    int fps = 0;
+    Uint32 startTime = SDL_GetTicks();
+    Uint32 currentTime;
+    Uint32 elapsedTime;
     while(!quit){
+        currentTime = SDL_GetTicks();
+        elapsedTime = currentTime-startTime;
+        //printf("elapsedTime = %d", elapsedTime);
+        if(elapsedTime < 1000){
+            fps+=1;
+        }
+        else{
+            printf("fps: %d\n", fps);
+            fps = 0;
+            startTime = SDL_GetTicks();
+        }
         // printf("score :%d\n", game->score);
         update_game(game);
         if(pix_defil){
@@ -426,9 +441,9 @@ int main(void){
         if(test_death(game)){
             if(SDL_RenderClear(renderer)){
                  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-              }
-           quit = SDL_TRUE;
-         }
+            }
+            quit = SDL_TRUE;
+        }
         if(SDL_RenderClear(renderer)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
         }
