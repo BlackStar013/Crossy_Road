@@ -106,7 +106,7 @@ extern const Mob cult_counter2;
 extern const Mob cult_counter3;
 
 void still(Mob *mage,Player* player);
-void curse(Mob *projectile,Player* player);
+void follow(Mob *projectile,Player* player);
 
 extern const Mob mage;
 extern const Mob curse_arrow;
