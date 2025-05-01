@@ -7,7 +7,7 @@
 
 SDL_Surface** initSurfaceArrayMap(void);
 void freeSurfaceArrayMap(SDL_Surface** surfaceArrayMap);
-SDL_Surface** initSurfaceArrayPlayer(void);
-void freeSurfaceArrayPlayer(SDL_Surface** surfaceArrayPlayer);
 SDL_Surface** initSurfaceArrayMob(void);
 void freeSurfaceArrayMob(SDL_Surface** surfaceArrayMob);
+SDL_Surface** initSurfaceArrayPlayer(void);
+void freeSurfaceArrayPlayer(SDL_Surface** surfaceArrayPlayer);

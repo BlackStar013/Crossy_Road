@@ -401,9 +401,12 @@ int main(void){
     //     line=line->next;
     // }
     // printf("\n");
+    const int desired_fps = 64;
+    const int frameDelay = 1000 / desired_fps;
     int fps = 0;
     Uint32 startTime = SDL_GetTicks();
     Uint32 currentTime;
+    Uint32 endframeTime;
     Uint32 elapsedTime;
     while(!quit){
         currentTime = SDL_GetTicks();
@@ -487,6 +490,10 @@ int main(void){
             }else if(event.key.keysym.sym == SDLK_m){
                 quit = SDL_TRUE;
             }
+        }
+        endframeTime = SDL_GetTicks();
+        if (frameDelay > (endframeTime-currentTime)) {
+            SDL_Delay(frameDelay - (endframeTime-currentTime));
         }
         // update_game(game);
         // // test la mort, pour le moment juste quitte le jeu
