@@ -275,7 +275,6 @@ int main(void){
     }
 
     Game *game = initialise_game();
-    printf("%d %d\n", game->joueur->_x/32, game->joueur->_y/32);
     // Line *line = game->carte->head_map;
     // while(line!=NULL){
     //     for(int i=0; i<HEIGHT; i++){
@@ -331,13 +330,13 @@ int main(void){
         }else if(!pix_defil%32){
             destroy_last_buffer(game->carte);
         }
-        // test la mort, pour le moment juste quitte le jeu
-        //if(test_death(game)){
-        //    if(SDL_RenderClear(renderer)){
-        //         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-        //      }
-        //   quit = SDL_TRUE;
-        // }
+        //test la mort, pour le moment juste quitte le jeu
+        if(test_death(game)){
+            if(SDL_RenderClear(renderer)){
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
+                }
+            quit = SDL_TRUE;
+        }
         //if(SDL_RenderClear(renderer)){
         //    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
         //}    
@@ -349,11 +348,11 @@ int main(void){
                 game->joueur->delai--;
             }else{
                 eval(game);
-                for(int i=0; i<5; i++){
-                    printf("directive :%d; score : %d\n", i, *(game->joueur->score+i));
-                }
-                printf("\n");
-                SDL_Delay(100);
+                // for(int i=0; i<5; i++){
+                //     printf("directive :%d; score : %d\n", i, *(game->joueur->score+i));
+                // }
+                // printf("\n");
+                // SDL_Delay(100);
                 int directive = max_score(game->joueur->score);
                 if(directive == 0){
                     if(move_up(game)&&game->joueur->_y_dest>=3*32){
@@ -382,7 +381,7 @@ int main(void){
                     game->joueur->offset_x += 1;
                     game->joueur->offset_x %= 4;
                 }
-                game->joueur->delai = 25;
+                game->joueur->delai = 0;
             }
         }else{
             // une fois l'affichage fait, on regarde si le joueur se déplace

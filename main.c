@@ -27,14 +27,20 @@ void init_display(Game *game){
     Line *line = game->carte->head_map;
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGTH-i-1==game->joueur->_y/32) && (j==game->joueur->_x/32)){
+            if((HEIGTH-i-1==game->joueur->_y_dest/32) && (j==game->joueur->_x_dest/32)){
                 printf(" ");
             }else{
                 Liste_Mob *liste = game->mobs;
                 bool trouve = false;
                 while((!trouve) && (liste!=NULL)){
                     if(((HEIGTH-i-1)==liste->mob->_y/32) && (j==liste->mob->_x/32)){
-                        printf("%d", liste->mob->id_mob);
+                        for(int k=0; k<liste->mob->length; k++){
+                            if(!((HEIGTH-i-1==game->joueur->_y_dest/32) && (j==game->joueur->_x_dest/32)) && (j<LENGTH)){
+                                printf("%d", liste->mob->id_mob);
+                            }
+                            j++;
+                        }
+                        j--;
                         trouve = true;
                     }else{
                         liste=liste->next;
@@ -68,14 +74,19 @@ void update_display(Game *game){
     printf("\033[%dA\r", HEIGTH);
     for (int i = 0; i<HEIGTH;i++){
         for (int j = 0; j<LENGTH; j++){
-            if((HEIGTH-i-1==game->joueur->_y/32) && (j==game->joueur->_x/32)){
+            if((HEIGTH-i-1==game->joueur->_y_dest/32) && (j==game->joueur->_x_dest/32)){
                 printf(" ");
             }else{
                 Liste_Mob *liste = game->mobs;
                 bool trouve = false;
                 while((!trouve) && (liste!=NULL)){
                     if(((HEIGTH-i-1)==liste->mob->_y/32) && (j==liste->mob->_x/32)){
-                        printf("%d", liste->mob->id_mob);
+                        for(int k=0; k<liste->mob->length; k++){
+                            if(!((HEIGTH-i-1==game->joueur->_y_dest/32) && (j==game->joueur->_x_dest/32))){
+                                printf("%d", liste->mob->id_mob);
+                            }
+                            j++;
+                        }
                         trouve = true;
                     }else{
                         liste=liste->next;

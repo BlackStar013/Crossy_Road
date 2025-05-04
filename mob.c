@@ -131,7 +131,7 @@ bool death_mob_collide(Mob* mob, Player* player){
 bool mob_collide(Mob* mob, Player* player){
     if(((mob->_x-16)<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
         if(((mob->_y -16 )<=player->_y_dest)&&(player->_y_dest <= mob->_y + 16 + (mob->heigth - 1)*32)) {
-         return true;
+            return true;
         }
     }
     return false;
