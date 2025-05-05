@@ -354,6 +354,7 @@ int main(void){
                 // printf("\n");
                 // SDL_Delay(100);
                 int directive = max_score(game->joueur->score);
+                printf("directive %d\n", directive);
                 if(directive == 0){
                     if(move_up(game)&&game->joueur->_y_dest>=3*32){
                         pix_defil += 32;
@@ -381,7 +382,7 @@ int main(void){
                     game->joueur->offset_x += 1;
                     game->joueur->offset_x %= 4;
                 }
-                game->joueur->delai = 0;
+                game->joueur->delai = 15;
             }
         }else{
             // une fois l'affichage fait, on regarde si le joueur se déplace
