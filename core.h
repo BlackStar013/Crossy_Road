@@ -10,8 +10,11 @@
 typedef struct _Game {
     Map* carte;
     Player* joueur;
+    Liste_Mob* exp; //Est display *avant* mobs
     Liste_Mob* mobs;
+    Liste_Mob* projectile; //Est display *après* mobs
     int score;
+    int nb_exp;
     int* proba;
     void (*generator)(struct _Game*);
     int biome;

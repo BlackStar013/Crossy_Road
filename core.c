@@ -718,14 +718,14 @@ void generator_mage(Game *game){
     if (level==0){
         int speed=rand()%3+1;
         game->mobs = list_append(game->mobs, clone_mob(mage, pos_x, HEIGTH,speed,0));
-        game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
+        game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
     }
     else{
         int speed=(rand()%2+1)*2;
         game->mobs = list_append(game->mobs, clone_mob(mage, pos_x, HEIGTH,speed,0));
-        game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
-        if (speed==2) {game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,100));}
-        else {game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,200));}
+        game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
+        if (speed==2) {game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,100));}
+        else {game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,200));}
     }
     proba_change_mage(game);
 }
@@ -750,10 +750,13 @@ Game *initialise_game(int character_id){
     game->carte = create_empty_map();
     game->joueur = initialise_player(character_id); //0 for now
     game->score = 1;
+    game->nb_exp = 0;
+    game->exp = NULL;
     game->mobs = NULL;
+    game->projectile = NULL;
     game->proba = initialise_proba();
     game->biome = CROSSY_ROAD;
-    game->until_next = 20;
+    game->until_next = 10;
     initialise_map(game);
     return game;
 }
@@ -763,7 +766,9 @@ void switch_game(Game* game){
     //printf("%d\n",game->score+1);
     switch_map(game->carte);
     game->score++;
+    switch_mob(game->exp);
     switch_mob(game->mobs);
+    switch_mob(game->projectile);
     game->joueur->_y -= 32;
     game->joueur->_y_dest -= 32;
 }
@@ -815,6 +820,8 @@ bool test_death(Game* game){
         return true;
     }else if(a_mob_collide(game->mobs, game->joueur)){
         return false;
+    }else if(a_mob_collide(game->projectile, game->joueur)){
+        return true;
     }else{
         return IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, game->joueur->_y_dest/32));
     }
@@ -832,6 +839,7 @@ void update_game(Game* game){
     // avance les mobs de leur path et génére un obstacle dans le buffer
     //printf("%d\n",game->score);
     move_all_mob(game->mobs,game->joueur);
+    move_all_mob(game->projectile,game->joueur);
     game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
     game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
     //SDL_Delay(1000);
@@ -853,12 +861,12 @@ void update_game(Game* game){
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 20;
+            game->until_next = 10;
             break;
 
             case FLAMING_MANOR:
             proba_change_game(game, ENTRANCE);
-            game->until_next = 40;
+            game->until_next = 10;
             break;
 
             case CULTIST_CAVE:
@@ -872,6 +880,10 @@ void update_game(Game* game){
             break;
         }
     }
+    if(a_mob_collide(game->exp, game->joueur)){
+        game->exp = destroy_liste_mob_collide(game->exp, game->joueur);
+        game->nb_exp++;
+    }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);
         //print_percent(game);
@@ -882,7 +894,9 @@ void update_game(Game* game){
 void destroy_game(Game *game){
     // Kaboum
     destroy_map(game->carte);
+    destroy_liste_mob(game->exp);
     destroy_liste_mob(game->mobs);
+    destroy_liste_mob(game->projectile);
     free(game->joueur);
     free(game->proba);
     free(game);

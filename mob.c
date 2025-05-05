@@ -314,6 +314,20 @@ Liste_Mob* destroy_liste_mob_from(int y, Liste_Mob *list){
     return list;
 }
 
+Liste_Mob* destroy_liste_mob_collide(Liste_Mob *liste,Player* player){
+    if(liste==NULL){
+        return NULL;
+    } else if(mob_collide(liste->mob,player)){
+        Liste_Mob* ret = liste->next;
+        destroy_mobs(liste);
+        return destroy_liste_mob_collide(ret, player);
+    } else {
+        liste->next = destroy_liste_mob_collide(liste->next,player);
+        return liste;
+    }
+}
+
+
 //////////////////////////////////////////////////////////////////////
 //Mobs avancés
 //////////////////////////////////////////////////////////////////////
