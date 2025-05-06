@@ -541,7 +541,7 @@ void ambush(Mob *bush,Player* player){
 
 const Mob bush = {1,1,true,0,0,0,0,0,BUSH,0,0,ambush,0,256,0,0,0};
 
-void patrol_clock4x2(Mob *fire,Player* Joueur){
+void patrol_clock4x3(Mob *fire,Player* Joueur){
     //fait des tours dans le sens horaire d'une zone de 4 cases de long et 2 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
@@ -581,7 +581,7 @@ void patrol_clock4x2(Mob *fire,Player* Joueur){
         if (fire->action_delay==0) {
             switch (fire->action_value){
                 case 0:
-                    fire->action_delay=fire->max_action_delay;
+                    fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 0;
                     break;
@@ -591,7 +591,7 @@ void patrol_clock4x2(Mob *fire,Player* Joueur){
                     fire->offset_y = 3;
                     break;
                 case 2:
-                    fire->action_delay=fire->max_action_delay;
+                    fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 1;
                     break;
@@ -609,7 +609,7 @@ void patrol_clock4x2(Mob *fire,Player* Joueur){
     }
 }
 
-void patrol_clock5x2(Mob *fire,Player* Joueur){
+void patrol_clock5x3(Mob *fire,Player* Joueur){
     //fait des tours dans le sens horaire d'une zone de 5 cases de long et 2 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
@@ -649,7 +649,7 @@ void patrol_clock5x2(Mob *fire,Player* Joueur){
         if (fire->action_delay==0) {
             switch (fire->action_value){
                 case 0:
-                    fire->action_delay=fire->max_action_delay;
+                    fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 0;
                     break;
@@ -659,7 +659,7 @@ void patrol_clock5x2(Mob *fire,Player* Joueur){
                     fire->offset_y = 3;
                     break;
                 case 2:
-                    fire->action_delay=fire->max_action_delay;
+                    fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 1;
                     break;
@@ -677,7 +677,7 @@ void patrol_clock5x2(Mob *fire,Player* Joueur){
     }
 }
 
-void patrol_clock4x3(Mob *fire,Player* Joueur){
+void patrol_clock4x4(Mob *fire,Player* Joueur){
     //fait des tours dans le sens horaire d'une zone de 4 cases de long et 3 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
@@ -717,7 +717,7 @@ void patrol_clock4x3(Mob *fire,Player* Joueur){
         if (fire->action_delay==0) {
             switch (fire->action_value){
                 case 0:
-                    fire->action_delay=2*fire->max_action_delay;
+                    fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 0;
                     break;
@@ -727,7 +727,7 @@ void patrol_clock4x3(Mob *fire,Player* Joueur){
                     fire->offset_y = 3;
                     break;
                 case 2:
-                    fire->action_delay=2*fire->max_action_delay;
+                    fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 1;
                     break;
@@ -745,7 +745,7 @@ void patrol_clock4x3(Mob *fire,Player* Joueur){
     }
 }
 
-void patrol_counter4x2(Mob *fire,Player* Joueur){
+void patrol_counter4x3(Mob *fire,Player* Joueur){
     //fait des tours dans le sens antihoraire d'une zone de 4 cases de long et 2 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
@@ -785,7 +785,7 @@ void patrol_counter4x2(Mob *fire,Player* Joueur){
         if (fire->action_delay==0) {
             switch (fire->action_value){
                 case 0:
-                    fire->action_delay=fire->max_action_delay;
+                    fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 0;
                     break;
@@ -795,7 +795,7 @@ void patrol_counter4x2(Mob *fire,Player* Joueur){
                     fire->offset_y = 2;
                     break;
                 case 2:
-                    fire->action_delay=fire->max_action_delay;
+                    fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 1;
                     break;
@@ -813,7 +813,7 @@ void patrol_counter4x2(Mob *fire,Player* Joueur){
     }
 }
 
-void patrol_counter5x2(Mob *fire,Player* Joueur){
+void patrol_counter5x3(Mob *fire,Player* Joueur){
     //fait des tours dans le sens antihoraire d'une zone de 5 cases de long et 2 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
@@ -853,7 +853,7 @@ void patrol_counter5x2(Mob *fire,Player* Joueur){
         if (fire->action_delay==0) {
             switch (fire->action_value){
                 case 0:
-                    fire->action_delay=fire->max_action_delay;
+                    fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 0;
                     break;
@@ -863,7 +863,7 @@ void patrol_counter5x2(Mob *fire,Player* Joueur){
                     fire->offset_y = 2;
                     break;
                 case 2:
-                    fire->action_delay=fire->max_action_delay;
+                    fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 1;
                     break;
@@ -881,7 +881,7 @@ void patrol_counter5x2(Mob *fire,Player* Joueur){
     }
 }
 
-void patrol_counter4x3(Mob *fire,Player* Joueur){
+void patrol_counter4x4(Mob *fire,Player* Joueur){
     //fait des tours dans le sens antihoraire d'une zone de 4 cases de long et 3 cases de haut
     if(!fire->delay){
         switch (fire->action_value)
@@ -921,7 +921,7 @@ void patrol_counter4x3(Mob *fire,Player* Joueur){
         if (fire->action_delay==0) {
             switch (fire->action_value){
                 case 0:
-                    fire->action_delay=2*fire->max_action_delay;
+                    fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 0;
                     break;
@@ -931,7 +931,7 @@ void patrol_counter4x3(Mob *fire,Player* Joueur){
                     fire->offset_y = 2;
                     break;
                 case 2:
-                    fire->action_delay=2*fire->max_action_delay;
+                    fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
                     fire->offset_y = 1;
                     break;
@@ -949,12 +949,12 @@ void patrol_counter4x3(Mob *fire,Player* Joueur){
     }
 }
 //mobs allant dans le sens horaire
-const Mob cult_clock1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x2,0,16,0,0,0};
-const Mob cult_clock2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock5x2,0,16,0,0,0};
-const Mob cult_clock3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x3,0,16,0,0,0};
+const Mob cult_clock1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x3,0,16,0,0,0};
+const Mob cult_clock2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock5x3,0,16,0,0,0};
+const Mob cult_clock3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x4,0,16,0,0,0};
 //mobs allant dans le sens antihoraire
-const Mob cult_counter1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x2,0,16,0,0,0};
-const Mob cult_counter2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter5x2,0,16,0,0,0};
+const Mob cult_counter1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x3,0,16,0,0,0};
+const Mob cult_counter2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter5x3,0,16,0,0,0};
 const Mob cult_counter3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x3,0,16,0,0,0};
 
 void still(Mob *mage,Player* player){
