@@ -311,7 +311,6 @@ int main(void){
     // printf("\n");
     while(!quit){
         // printf("score :%d\n", game->score);
-        update_game(game);
         if(pix_defil){
             if(pix_defil>13*32){
                 pix_defil -= 32;
@@ -330,13 +329,7 @@ int main(void){
         }else if(!pix_defil%32){
             destroy_last_buffer(game->carte);
         }
-        //test la mort, pour le moment juste quitte le jeu
-        if(test_death(game)){
-            if(SDL_RenderClear(renderer)){
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-                }
-            quit = SDL_TRUE;
-        }
+
         //if(SDL_RenderClear(renderer)){
         //    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
         //}    
@@ -425,6 +418,16 @@ int main(void){
                 }
             }
         }
+        //test la mort, pour le moment juste quitte le jeu
+        if(test_death(game)){
+            if(SDL_RenderClear(renderer)){
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
+                }
+            //SDL_Delay(150);
+            printf("aaaarggg\naaaarggg\naaaarggg\n");
+            quit = SDL_TRUE;
+        }
+        update_game(game);
         // update_game(game);
         // // test la mort, pour le moment juste quitte le jeu
         // if(test_death(game)){

@@ -386,10 +386,6 @@ void print_percent(Game* game){
 
 void update_game(Game* game){
     // avance les mobs de leur path et génére un obstacle dans le buffer
-    move_all_mob(game->mobs,game->joueur);
-    game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
-    game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
-    //SDL_Delay(1000);
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
         if(cur->mob->move_x){
@@ -402,6 +398,10 @@ void update_game(Game* game){
         }
         cur = cur->next;
     }
+    move_all_mob(game->mobs,game->joueur);
+    game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
+    game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
+    //SDL_Delay(1000);
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);
         //print_percent(game);

@@ -18,5 +18,7 @@
 //     int character_id;
 // }IA;
 
+bool move_IA(int x, int y, Player *joueur, Map *map);
+bool test_death_IA(Player *joueur, Map *map, Liste_Mob *liste);
 void eval(Game *game);
 int max_score(int *score);
