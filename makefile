@@ -6,7 +6,7 @@ main.o: main.c tuiles.h mob.h
 	clang -c $(CFLAGS) main.c
 
 main: main.o tuiles.o mob.o map.o core.o
-	clang -o main $(CFLAGS) main.o tuiles.o mob.o map.o core.o
+	clang -o main $(CFLAGS) main.o tuiles.o mob.o map.o core.o -lncurses
 
 main_SDL.o: main_SDL.c map.h tuiles.h mob.h display.h
 	clang -c $(CFLAGS) main_SDL.c
@@ -43,6 +43,9 @@ clean:
 
 run: sdl_main
 	./sdl_main
+
+runt : main
+	./main
 
 
 #main.o: main.c fonctions.h tuiles.h mob.h

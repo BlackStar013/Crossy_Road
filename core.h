@@ -81,7 +81,7 @@ void switch_game(Game *game);
 void add_obstacle(Game*);
 
 //Fait déplacer le joueur de x case à droite (positif) et y cases en haut.
-bool move(int x, int y,Game*);
+bool move_player(int x, int y,Game*);
 bool move_up(Game*);
 bool move_left(Game*);
 bool move_right(Game*);

@@ -749,7 +749,7 @@ void switch_game(Game* game){
 }
 
 
-bool move(int x, int y, Game* game){
+bool move_player(int x, int y, Game* game){
     //printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
     //printf("%d\n",tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type);
     if(tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type != water.type){
@@ -774,19 +774,19 @@ bool move(int x, int y, Game* game){
 }
 
 bool move_up(Game* game){
-    return move(0,1,game);
+    return move_player(0,1,game);
 }
 
 bool move_right(Game* game){
-    return move(1,0,game);
+    return move_player(1,0,game);
 }
 
 bool move_left(Game* game){
-    return move(-1,0,game);
+    return move_player(-1,0,game);
 }
 
 bool move_down(Game* game){
-    return move(0,-1,game);
+    return move_player(0,-1,game);
 }
 
 bool test_death(Game* game){
