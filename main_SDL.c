@@ -509,12 +509,12 @@ int main(void){
             destroy_last_buffer(game->carte);
         }
         // test la mort, pour le moment juste quitte le jeu
-        if(test_death(game)){
-            if(SDL_RenderClear(renderer)){
-                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-            }
-            quit = SDL_TRUE;
-        }
+        // if(test_death(game)){
+        //     if(SDL_RenderClear(renderer)){
+        //          SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
+        //     }
+        //     quit = SDL_TRUE;
+        // }
         if(SDL_RenderClear(renderer)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
         }

@@ -955,7 +955,7 @@ const Mob cult_clock3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x4,0,16
 //mobs allant dans le sens antihoraire
 const Mob cult_counter1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x3,0,16,0,0,0};
 const Mob cult_counter2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter5x3,0,16,0,0,0};
-const Mob cult_counter3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x3,0,16,0,0,0};
+const Mob cult_counter3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x4,0,16,0,0,0};
 
 void still(Mob *mage,Player* player){
         if(!mage->action_delay){
