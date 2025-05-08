@@ -285,7 +285,7 @@ int main(void){
     // }
     int pix_defil = 0;
     // n sert pour l'ia, le coup qu'elle va jouer
-    int n = 0;
+    int n = -1;
     int counter = 0;
     //update_game(game);
 
@@ -339,7 +339,7 @@ int main(void){
         
         //si le joueur est une IA
         if(IA){
-            if(n == 0){
+            if(n < 0){
                 n = 2;
                 eval(game);
                 printf("%d %d %d\n", game->joueur->score[0], game->joueur->score[1], game->joueur->score[2]);
@@ -351,7 +351,7 @@ int main(void){
                 //     printf("directive :%d; score : %d\n", i, *(game->joueur->score+i));
                 // }
                 // printf("\n");
-                // SDL_Delay(100);
+                SDL_Delay(1000);
                 int directive = game->joueur->score[2-n];
                 //printf("directive %d\n", directive);
                 if(directive == 0){

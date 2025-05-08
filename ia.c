@@ -1618,9 +1618,15 @@ bool eval(Game *game){
         }
         // desupdategame !!!
     }
+    game->joueur->score[0] = max_score(temp1);
+    game->joueur->score[1] = max_score(temp2);
+    game->joueur->score[2] = max_score(temp3);
+    free(temp1);
+    free(temp2);
+    free(temp3);
     free(p2);
     destroy_liste_mob(liste);
-    return 0;
+    return true;
 }
 
     //test pour avancer 1 fois:
