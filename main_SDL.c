@@ -351,7 +351,7 @@ int main(void){
                 //     printf("directive :%d; score : %d\n", i, *(game->joueur->score+i));
                 // }
                 // printf("\n");
-                SDL_Delay(1000);
+                //SDL_Delay(3000);
                 int directive = game->joueur->score[2-n];
                 //printf("directive %d\n", directive);
                 if(directive == 0){

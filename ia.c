@@ -159,6 +159,24 @@ int move_right_IA(Map *map, Player *p2, Liste_Mob *liste){
     return 0;
 }
 
+int *score_temp(Game *game){
+    int *temp = calloc(5, sizeof(int));
+    temp[0] = 10;
+    temp[2] = 3;
+    if(IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, game->joueur->_y_dest/32))){
+        temp[4] = 6;
+    }else{
+        temp[4] = 1;
+    }
+    if(game->joueur->_x_dest/32 >= LENGTH/2){
+        temp[1] = 4;
+        temp[3] = 5;
+    }else{
+        temp[1] = 5;
+        temp[3] = 4;
+    }
+    return temp;
+}
 
 bool eval(Game *game){
     // score[i]=? => 0=haut; 1=droite; 2=bas; 3=gauche; 4=attendre
@@ -168,36 +186,23 @@ bool eval(Game *game){
     p2->_x_dest = game->joueur->_x_dest;
     p2->_y_dest = game->joueur->_y_dest;
     Liste_Mob *liste = clone_listemob(game->mobs);
-    int *temp1 = calloc(5, sizeof(int));
-    int *temp2 = calloc(5, sizeof(int));
-    int *temp3 = calloc(5, sizeof(int));
-    temp1[0] = 10; temp2[0] = 10; temp3[0] = 10;
-    temp1[2] = 3; temp2[2] = 3; temp3[2] = 3;
-    // pour si il est sur une planche, qu'il ne fasse pas des gauche/droite inutiles
-    if(IS_DANGER(tile_map(game->carte, p2->_x_dest/32, p2->_y_dest/32))){
-        temp1[4] = 6; temp2[4] = 6; temp3[4] = 6;
-    }else{
-        temp1[4] = 1; temp2[4] = 1; temp3[4] = 1;
-    }
-    if(game->joueur->_x_dest/32 >= LENGTH/2){
-        temp1[1] = 4; temp2[1] = 4; temp3[1] = 4;
-        temp1[3] = 5; temp2[3] = 5; temp3[3] = 5;
-    }else{
-        temp1[1] = 5; temp2[3] = 5; temp3[3] = 5;
-        temp1[3] = 4; temp2[1] = 4; temp3[1] = 4;
-    }
-
+    int *temp1 = NULL;
+    int *temp2 = NULL;
+    int *temp3 = NULL;
     int bouge1;
     int bouge2;
     int bouge3;
     //bouge vaut 0 si il a pu bouger sans mourir, 1 si il n'a pas pu bouger, et 2 si il en meurt
     //choix du premier mouvement haut
+    temp1 = score_temp(game);
     bouge1 = move_up_IA(game->carte, p2, liste);
     if(!bouge1){
         //choix du deuxieme mouvement haut
+        temp2 = score_temp(game);
         bouge2 = move_up_IA(game->carte, p2, liste);
         if(!bouge2){
             //choix du troisième mouvement haut
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -276,6 +281,7 @@ bool eval(Game *game){
             }
 
         }else{
+            free(temp3);
             temp2[0] = 0;
             if(bouge2 == 2){
                 move_down_IA(game->carte, p2, liste);
@@ -286,6 +292,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement droite
         bouge2 = move_right_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -362,6 +369,7 @@ bool eval(Game *game){
             }
 
         }else{
+            free(temp3);
             temp2[1] = 0;
             if(bouge2 == 2){
                 move_left_IA(game->carte, p2, liste);
@@ -372,6 +380,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement gauche
         bouge2 = move_left_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -448,6 +457,7 @@ bool eval(Game *game){
             }
         
         }else{
+            free(temp3);
             temp2[3] = 0;
             if(bouge2 == 2){
                 move_right_IA(game->carte, p2, liste);
@@ -458,6 +468,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement bas
         bouge2 = move_down_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -534,6 +545,7 @@ bool eval(Game *game){
             }
         
         }else{
+            free(temp3);
             temp2[2] = 0;
             if(bouge2 == 2){
                 move_up_IA(game->carte, p2, liste);
@@ -541,6 +553,7 @@ bool eval(Game *game){
             // desupdategame !!!
         }
     }else{
+        free(temp2);
         temp1[0] = 0;
         if(bouge1 == 2){
             move_down_IA(game->carte, p2, liste);
@@ -551,9 +564,11 @@ bool eval(Game *game){
     //choix du premier mouvement droite
     bouge1 = move_right_IA(game->carte, p2, liste);
     if(!bouge1){
+        temp2 = score_temp(game);
         //choix du deuxieme mouvement haut
         bouge2 = move_up_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             //choix du troisième mouvement haut
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -633,6 +648,7 @@ bool eval(Game *game){
             }
 
         }else{
+            free(temp3);
             temp2[0] = 0;
             if(bouge2 == 2){
                 move_down_IA(game->carte, p2, liste);
@@ -643,6 +659,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement droite
         bouge2 = move_right_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -719,6 +736,7 @@ bool eval(Game *game){
             }
 
         }else{
+            free(temp3);
             temp2[1] = 0;
             if(bouge2 == 2){
                 move_left_IA(game->carte, p2, liste);
@@ -729,6 +747,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement gauche
         bouge2 = move_left_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -805,6 +824,7 @@ bool eval(Game *game){
             }
         
         }else{
+            free(temp3);
             temp2[3] = 0;
             if(bouge2 == 2){
                 move_right_IA(game->carte, p2, liste);
@@ -815,6 +835,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement bas
         bouge2 = move_down_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -891,6 +912,7 @@ bool eval(Game *game){
             }
         
         }else{
+            free(temp3);
             temp2[2] = 0;
             if(bouge2 == 2){
                 move_up_IA(game->carte, p2, liste);
@@ -898,6 +920,7 @@ bool eval(Game *game){
             // desupdategame !!!
         }
     }else{
+        free(temp2);
         temp1[1] = 0;
         if(bouge1 == 2){
             move_left_IA(game->carte, p2, liste);
@@ -908,9 +931,11 @@ bool eval(Game *game){
     //choix du premier mouvement gauche
     bouge1 = move_left_IA(game->carte, p2, liste);
     if(!bouge1){
+        temp2 = score_temp(game);
         //choix du deuxieme mouvement haut
         bouge2 = move_up_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             //choix du troisième mouvement haut
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -990,6 +1015,7 @@ bool eval(Game *game){
             }
 
         }else{
+            free(temp3);
             temp2[0] = 0;
             if(bouge2 == 2){
                 move_down_IA(game->carte, p2, liste);
@@ -1000,6 +1026,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement droite
         bouge2 = move_right_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -1076,6 +1103,7 @@ bool eval(Game *game){
             }
 
         }else{
+            free(temp3);
             temp2[1] = 0;
             if(bouge2 == 2){
                 move_left_IA(game->carte, p2, liste);
@@ -1086,6 +1114,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement gauche
         bouge2 = move_left_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -1162,6 +1191,7 @@ bool eval(Game *game){
             }
         
         }else{
+            free(temp3);
             temp2[3] = 0;
             if(bouge2 == 2){
                 move_right_IA(game->carte, p2, liste);
@@ -1172,6 +1202,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement bas
         bouge2 = move_down_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -1248,6 +1279,7 @@ bool eval(Game *game){
             }
         
         }else{
+            free(temp3);
             temp2[2] = 0;
             if(bouge2 == 2){
                 move_up_IA(game->carte, p2, liste);
@@ -1255,6 +1287,7 @@ bool eval(Game *game){
             // desupdategame !!!
         }
     }else{
+        free(temp2);
         temp1[3] = 0;
         if(bouge1 == 2){
             move_right_IA(game->carte, p2, liste);
@@ -1265,9 +1298,11 @@ bool eval(Game *game){
     //choix du premier mouvement bas
     bouge1 = move_down_IA(game->carte, p2, liste);
     if(!bouge1){
+        temp2 = score_temp(game);
         //choix du deuxieme mouvement haut
         bouge2 = move_up_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             //choix du troisième mouvement haut
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -1347,6 +1382,7 @@ bool eval(Game *game){
             }
 
         }else{
+            free(temp3);
             temp2[0] = 0;
             if(bouge2 == 2){
                 move_down_IA(game->carte, p2, liste);
@@ -1357,6 +1393,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement droite
         bouge2 = move_right_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -1433,6 +1470,7 @@ bool eval(Game *game){
             }
 
         }else{
+            free(temp3);
             temp2[1] = 0;
             if(bouge2 == 2){
                 move_left_IA(game->carte, p2, liste);
@@ -1443,6 +1481,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement gauche
         bouge2 = move_left_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -1519,6 +1558,7 @@ bool eval(Game *game){
             }
         
         }else{
+            free(temp3);
             temp2[3] = 0;
             if(bouge2 == 2){
                 move_right_IA(game->carte, p2, liste);
@@ -1529,6 +1569,7 @@ bool eval(Game *game){
         //choix du deuxieme mouvement bas
         bouge2 = move_down_IA(game->carte, p2, liste);
         if(!bouge2){
+            temp3 = score_temp(game);
             bouge3 = move_up_IA(game->carte, p2, liste);
             if(!bouge3){
                 game->joueur->score[0] = max_score(temp1);
@@ -1605,6 +1646,7 @@ bool eval(Game *game){
             }
         
         }else{
+            free(temp3);
             temp2[2] = 0;
             if(bouge2 == 2){
                 move_up_IA(game->carte, p2, liste);
@@ -1612,6 +1654,7 @@ bool eval(Game *game){
             // desupdategame !!!
         }
     }else{
+        free(temp2);
         temp1[2] = 0;
         if(bouge1 == 2){
             move_up_IA(game->carte, p2, liste);
@@ -1622,8 +1665,8 @@ bool eval(Game *game){
     game->joueur->score[1] = max_score(temp2);
     game->joueur->score[2] = max_score(temp3);
     free(temp1);
-    free(temp2);
-    free(temp3);
+    // free(temp2);
+    // free(temp3);
     free(p2);
     destroy_liste_mob(liste);
     return true;
@@ -1714,6 +1757,10 @@ bool eval(Game *game){
 // }
 
 int max_score(int *score){
+    if(score == NULL){
+        return 4;
+    }
+    printf("%d %d %d %d %d\n", score[0], score[1], score[2], score[3], score[4]);
     // renvoie la directive donc le score était maximale
     int max = -999999;
     int directive = -1;
