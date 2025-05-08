@@ -284,6 +284,8 @@ int main(void){
     //     line=line->next;
     // }
     int pix_defil = 0;
+    // n sert pour l'ia, le coup qu'elle va jouer
+    int n = 0;
     int counter = 0;
     //update_game(game);
 
@@ -337,17 +339,21 @@ int main(void){
         
         //si le joueur est une IA
         if(IA){
+            if(n == 0){
+                n = 2;
+                eval(game);
+                printf("%d %d %d\n", game->joueur->score[0], game->joueur->score[1], game->joueur->score[2]);
+            }
             if(game->joueur->delai){
                 game->joueur->delai--;
             }else{
-                eval(game);
                 // for(int i=0; i<5; i++){
                 //     printf("directive :%d; score : %d\n", i, *(game->joueur->score+i));
                 // }
                 // printf("\n");
                 // SDL_Delay(100);
-                int directive = max_score(game->joueur->score);
-                printf("directive %d\n", directive);
+                int directive = game->joueur->score[2-n];
+                //printf("directive %d\n", directive);
                 if(directive == 0){
                     if(move_up(game)&&game->joueur->_y_dest>=3*32){
                         pix_defil += 32;
@@ -376,6 +382,7 @@ int main(void){
                     game->joueur->offset_x %= 4;
                 }
                 game->joueur->delai = 15;
+                n --;
             }
         }else{
             // une fois l'affichage fait, on regarde si le joueur se déplace

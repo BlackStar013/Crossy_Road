@@ -109,8 +109,8 @@ Player* initialise_player(int id){
     joueur->offset_x = 0;
     joueur->offset_y = 1;
     joueur->character_id = id;
-    joueur->delai = 50;
-    joueur->score = calloc(5, sizeof(int));
+    joueur->delai = 10;
+    joueur->score = calloc(3, sizeof(int));
     return joueur;
 }
 
