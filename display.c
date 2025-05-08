@@ -100,7 +100,7 @@ void freeSurfaceArrayMob(SDL_Surface** surfaceArrayMob){
 
 SDL_Surface** initSurfaceExp(void){
     SDL_Surface** surfaceExp = malloc(sizeof(SDL_Surface*));
-    *surfaceExp = IMG_Load("sprites/FEU.png");
+    *surfaceExp = IMG_Load("sprites/xp.png");
     return surfaceExp;
 }
 
