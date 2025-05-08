@@ -5,39 +5,58 @@
 #include <stdbool.h>
 
 
-const Tile plain = {false,false,'g','_'};
+const Tile plain = {false,false,_PLAIN};
 
-const Tile road = {false,false,'r','_'};
+const Tile plain_block = {true,false,_PLAIN_BLOCK};
 
-const Tile wall = {true,false,'a','#'};
+const Tile road = {false,false,_ROAD};
 
-const Tile water = {false,true,'b','~'};
+const Tile road_up = {false,false,_ROAD_UP};
 
-const Tile tree = {true,false,'g','I'};
+const Tile road_down = {false,false,_ROAD_DOWN};
 
-const Tile danger = {false,true,'r','!'};
+const Tile road_middle = {false,false,_ROAD_MIDDLE};
+
+
+const Tile wall = {true,false,_WALL};
+
+const Tile water_up = {false,true,_WATER_UP};
+
+const Tile water_down = {false,true,_WATER_DOWN};
+
+const Tile water_middle = {false,true,_WATER_MIDDLE};
+
+
+const Tile water = {false,true,_WATER};
+
+const Tile tree = {true,false,_TREE};
+
+const Tile danger = {true,true,_DANGER};
 
 void clone(Tile *dest, Tile src){
-    dest->color = src.color;
     dest->is_block = src.is_block;
     dest->is_danger = src.is_danger;
     dest->type = src.type;
 }
 
-const Tile ruins = {true,false,'a',']'};
 
-const Tile brokenplanks = {true,false,'r','#'};
 
-const Tile transition = {false,false,'r','+'};
 
-const Tile planks = {false,false,'r','='};
+///////////////////////////////////////////////////////////////////
+const Tile ruins = {true,false,_RUINS};
 
-const Tile muret = {true,false,'a','|'};
+const Tile brokenplanks = {true,false,_BROKENPLANKS};
 
-const Tile cave = {false,false,'a','_'};
+const Tile transition = {false,false,_TRANSITION};
 
-const Tile stalagmite = {true,false,'a','!'};
+const Tile planks = {false,false,_PLANKS};
 
-const Tile canal ={false,false,'r','-'};
+const Tile low_wall = {true,false,_LOW_WALL};
 
-const Tile socle ={false,false,'r','o'};
+const Tile cave = {false,false,_CAVE};
+
+const Tile stalagmite = {true,false,_STALAGMITE};
+
+const Tile channel = {false,false,_CHANNEL};
+
+const Tile base = {false,false,_BASE};

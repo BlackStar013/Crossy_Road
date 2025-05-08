@@ -10,8 +10,7 @@ Line* create_empty_line(Line* prev, Line* next){
     for(int i = 0; i<LENGTH; i++){
         (nl->tiles[i]).is_block = false;
         (nl->tiles[i]).is_danger = false;
-        (nl->tiles[i]).color = 'g';
-        (nl->tiles[i]).type = '_';
+        (nl->tiles[i]).type = _PLAIN;
     }
     if(next == NULL){
         nl->next = NULL;
@@ -54,6 +53,8 @@ Map* create_empty_map(void){
         cur = create_empty_line(cur, NULL);
     }
     map->tail = cur;
+    map->tail_buffer = map->tail;
+    map->tail_buffer_lenght = 0;
     return map;
 }
 
@@ -61,7 +62,7 @@ bool carte_vide(Map* map){
     Line* cur = map->head_map;
     for(int i = 0; i<HEIGTH; i++){
         for(int j = 0; j<LENGTH; j++){
-            if((cur->tiles[j]).type != ' '){
+            if((cur->tiles[j]).type != _PLAIN){
                 return false;
             }
         }
@@ -73,10 +74,11 @@ bool carte_vide(Map* map){
 void switch_map(Map *carte){
     // ajoute la premiere ligne du buffer a la map, et retire la dernière
     carte->head_map = carte->head_map->prev;
-    Line* last = carte->tail;
+    //Line* last = carte->tail;
     carte->tail = carte->tail->prev;
-    carte->tail->next = NULL;
-    destroy_line(last);
+    carte->tail_buffer_lenght++;
+    //carte->tail->next = NULL;
+    //destroy_line(last);
 }
 
 void suppression_tile(Map *carte,int x,int y);
@@ -86,10 +88,10 @@ int nb_tiles_remplies(Map *carte);
 Tile tile_map(Map *carte, int x, int y){
     // renvoie la tuile de la map a ces coordonnées, et empêche de sortir des côtés de la carte
     if((y>=HEIGTH)||(x>=LENGTH)||(y<0)||(x<0)){
-        return wall;
+        return danger;
     }
-    Line* cur = carte->tail;
-    while(y>0){
+    Line* cur = carte->tail_buffer;
+    while(y+carte->tail_buffer_lenght>0){
         cur = cur->prev;
         y--;
     }
@@ -102,8 +104,10 @@ Player* initialise_player(int id){
     Player* joueur = malloc(sizeof(Player));
     joueur->_x = ((LENGTH-1)/2)*32;
     joueur->_y = 2*32;
+    joueur->_x_dest = ((LENGTH-1)/2)*32;
+    joueur->_y_dest = 2*32;
     joueur->offset_x = 0;
-    joueur->offset_y = 0;
+    joueur->offset_y = 1;
     joueur->character_id = id;
     return joueur;
 }
@@ -119,5 +123,28 @@ void destroy_map(Map *map){
         Line *mem = line->next;
         destroy_line(line);
         line = mem;
+    }
+    free(map);
+}
+
+void destroy_tail_buffer(Map *map){
+    Line *line = map->tail->next;
+    while(line != NULL){
+        Line *mem = line->next;
+        destroy_line(line);
+        line = mem;
+    }
+    map->tail->next = NULL;
+    map->tail_buffer = map->tail;
+    map->tail_buffer_lenght = 0;
+}
+
+void destroy_last_buffer(Map* map){
+    if(map->tail_buffer!=map->tail){
+        Line* line = map->tail_buffer;
+        map->tail_buffer = map->tail_buffer->prev;
+        map->tail_buffer->next = NULL;
+        map->tail_buffer_lenght--;
+        destroy_line(line);
     }
 }

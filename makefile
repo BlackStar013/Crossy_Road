@@ -1,6 +1,6 @@
 CFLAGS = -Wall -Wextra -Wpedantic -std=c99 -g -fsanitize=address
 
-all: main sdl_main test
+all: clean main sdl_main test
 
 main.o: main.c tuiles.h mob.h
 	clang -c $(CFLAGS) main.c
@@ -8,11 +8,11 @@ main.o: main.c tuiles.h mob.h
 main: main.o tuiles.o mob.o map.o core.o
 	clang -o main $(CFLAGS) main.o tuiles.o mob.o map.o core.o
 
-main_SDL.o: main_SDL.c map.h tuiles.h mob.h
+main_SDL.o: main_SDL.c map.h tuiles.h mob.h display.h
 	clang -c $(CFLAGS) main_SDL.c
 
-sdl_main: main_SDL.o tuiles.o mob.o map.o core.o
-	clang -o sdl_main $(CFLAGS) main_SDL.o tuiles.o mob.o map.o core.o -lSDL2 -lSDL2_image
+sdl_main: main_SDL.o tuiles.o mob.o map.o core.o display.o
+	clang -o sdl_main $(CFLAGS) main_SDL.o tuiles.o mob.o map.o display.o core.o -lSDL2 -lSDL2_image
 
 map.o: map.c tuiles.h
 	clang -c $(CFLAGS) map.c
@@ -28,6 +28,9 @@ mob.o: mob.c
 
 core.o: core.c
 	clang -c $(CFLAGS) core.c
+
+display.o: display.c
+	clang -c $(CFLAGS) display.c
 
 test.o: test.c tuiles.h mob.h
 	clang -c $(CFLAGS) test.c
@@ -65,3 +68,5 @@ run: sdl_main
 #
 #clean: 
 #	rm -f main test *.o
+
+

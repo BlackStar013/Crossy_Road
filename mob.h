@@ -13,34 +13,37 @@ typedef struct _Mob {
     int speed; // ==Delay_max 
     int delay;
     int id_mob;
+    int offset_x;
+    int offset_y;             // pour une raison que j'ignore, il refuse d'avoir un autre champ ???
     void (*path)(struct _Mob*,Player*);
     int action_value;
     int action_delay;
+    int max_action_delay;
     int memory__x;
     int memory__y;
 } Mob;
 
+
+
 enum MOB{
-    CAR_RIGHT,
-    CAR_LEFT,
-    BUS_RIGHT,
-    BUS_LEFT,
-    PLANK_RIGHT,
-    PLANK_LEFT,
-    FIRE2CLOCK,
-    FIRE2COUNTER,
-    FIRE3CLOCK,
-    FIRE3COUNTER,
+    CAR,
+    BUS,
+    PLANK,
+    CANON_MOB,
+    CANON_BALL,
+    ////
+    FIRECLOCK,
+    FIRECOUNTER,
     BUSH,
-    CULTIST1CLOCK,
-    CULTIST2CLOCK,
-    CULTIST3CLOCK,
-    CULTIST1COUNTER,
-    CULTIST2COUNTER,
-    CULTIST3COUNTER,
+    MOB_CULTIST,
     HIGHCULTIST,
-    CURSE,
+    //CURSE,
     NB_MOB
+};
+
+enum PROJECTILE{
+    CURSE,
+    NB_PROJECTILE
 };
 
 typedef struct _List_Mob {
@@ -54,7 +57,7 @@ bool mob_collide(Mob*,Player*);
 //On gère la vitesse à l'aide du nombre d'actualisation
 
 bool mob_in_map(Mob*);
-Mob* clone_mob(Mob,int,int,int);
+Mob* clone_mob(Mob,int,int,int,int);
 
 void path_right(Mob*,Player*);
 extern const Mob car_right;
@@ -66,27 +69,45 @@ extern const Mob car_left;
 extern const Mob plank_left;
 extern const Mob bus_left;
 
+void canon_idle(Mob*,Player*);
+
+void canon_right_fast(Mob*,Player*);
+extern const Mob canon_right;
+extern const Mob canon_ball_right;
+
+void canon_left_fast(Mob*,Player*);
+extern const Mob canon_left;
+extern const Mob canon_ball_left;
+
+
+
+
 //Fonction liés à List_Mob
 Liste_Mob* list_create(Mob* mob);
 void list_destroy(Liste_Mob* list);
 bool list_is_empty(Liste_Mob* list);
 Liste_Mob *list_append(Liste_Mob* list, Mob* mob);
 void print_liste(Liste_Mob* list);
-void move_all_mob(Liste_Mob* list,Player* Joueur);
+void move_all_mob(Liste_Mob* list,Player*);
 void switch_mob(Liste_Mob* list);
 bool a_death_mob_collide(Liste_Mob* list,Player* player);
 bool a_mob_collide(Liste_Mob* list,Player* player);
 void destroy_mobs(Liste_Mob *liste);
 void destroy_liste_mob(Liste_Mob *liste);
+Liste_Mob* destroy_liste_mob_from(int y, Liste_Mob *liste);
+Liste_Mob* destroy_liste_mob_collide(Liste_Mob *liste,Player* player);
 
-void clockwise_cycle_2(Mob *fire,Player* player);
-extern const Mob fire_2_clock;
-void counterclock_cycle_2(Mob *fire,Player* player);
-extern const Mob fire_2_counter;
-void clockwise_cycle_3(Mob *fire,Player* player);
-extern const Mob fire_3_clock;
-void counterclock_cycle_3(Mob *fire,Player* player);
-extern const Mob fire_3_counter;
+
+
+///////
+void clockwise_cycle(Mob *fire,Player* player);
+extern const Mob fire_clock;
+void counterclock_cycle(Mob *fire,Player* player);
+extern const Mob fire_counter;
+// void clockwise_cycle_3(Mob *fire,Player* player);
+// extern const Mob fire_3_clock;
+// void counterclock_cycle_3(Mob *fire,Player* player);
+// extern const Mob fire_3_counter;
 
 void ambush(Mob *bush,Player* player);
 extern const Mob bush;
@@ -110,5 +131,5 @@ void follow(Mob *projectile,Player* player);
 
 extern const Mob mage;
 extern const Mob curse_arrow;
-extern const Mob curse_arrow_bis_1;
-extern const Mob curse_arrow_bis_2;
+//extern const Mob curse_arrow_bis_1;
+//extern const Mob curse_arrow_bis_2;
