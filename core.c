@@ -813,11 +813,6 @@ void print_percent(Game* game){
 void update_game(Game* game){
     // avance les mobs de leur path et génére un obstacle dans le buffer
     //printf("%d\n",game->score);
-    move_all_mob(game->mobs,game->joueur);
-    move_all_mob(game->projectile,game->joueur);
-    game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
-    game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
-    //SDL_Delay(1000);
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
         if(cur->mob->move_x){
@@ -830,6 +825,11 @@ void update_game(Game* game){
         }
         cur = cur->next;
     }
+    move_all_mob(game->mobs,game->joueur);
+    move_all_mob(game->projectile,game->joueur);
+    game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
+    game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
+    //SDL_Delay(1000);
     if(game->score%(game->until_next) == 0){
         game->score++;
         game->biome++;
