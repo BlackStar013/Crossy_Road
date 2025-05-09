@@ -91,6 +91,17 @@ void update_game_IA(Liste_Mob *liste, Player *joueur){
     joueur->_y = (joueur->_y + joueur->_y_dest)/2;
 }
 
+void desmove_all_mob_IA(Liste_Mob *liste, Player *p2){
+    if(liste!=NULL){
+        if((liste->mob->id_mob == CAR_LEFT) || (liste->mob->id_mob == PLANK_LEFT) || (liste->mob->id_mob == BUS_LEFT)){
+            (path_right)(liste->mob, p2);
+        }else if((liste->mob->id_mob == CAR_RIGHT) || (liste->mob->id_mob == PLANK_RIGHT) || (liste->mob->id_mob == BUS_RIGHT)){
+            (path_left)(liste->mob, p2);
+        }
+        desmove_all_mob_IA(liste->next, p2);
+    }
+}
+
 int move_up_IA(Map *map, Player *p2, Liste_Mob *liste){
     //renvoie 0 si il a pu bouger sans mourir, 1 si il n'a pas pu bouger, et 2 si il en meurt
     if(!move_IA(0, 1, p2, map)){
@@ -218,8 +229,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             //choix du troisieme mouvement droite
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -237,8 +248,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
 
             }
             //choix du troisieme mouvement gauche
@@ -257,8 +268,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             //choix du troisieme mouvement bas
             bouge3 = move_down_IA(game->carte, p2, liste);
@@ -285,8 +296,8 @@ bool eval(Game *game){
             temp2[0] = 0;
             if(bouge2 == 2){
                 move_down_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
 
         //choix du deuxieme mouvement droite
@@ -308,8 +319,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
 
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -327,8 +338,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
 
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -346,8 +357,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -373,8 +384,8 @@ bool eval(Game *game){
             temp2[1] = 0;
             if(bouge2 == 2){
                 move_left_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
 
         //choix du deuxieme mouvement gauche
@@ -396,8 +407,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
         
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -415,8 +426,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -434,8 +445,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -461,8 +472,8 @@ bool eval(Game *game){
             temp2[3] = 0;
             if(bouge2 == 2){
                 move_right_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
         
         //choix du deuxieme mouvement bas
@@ -484,8 +495,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
         
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -503,8 +514,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -522,8 +533,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -549,16 +560,16 @@ bool eval(Game *game){
             temp2[2] = 0;
             if(bouge2 == 2){
                 move_up_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
     }else{
         free(temp2);
         temp1[0] = 0;
         if(bouge1 == 2){
             move_down_IA(game->carte, p2, liste);
-        }
-        // desupdategame !!!
+                        desmove_all_mob_IA(liste, p2);
+            }
     }
 
     //choix du premier mouvement droite
@@ -585,8 +596,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             //choix du troisieme mouvement droite
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -604,8 +615,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
 
             }
             //choix du troisieme mouvement gauche
@@ -624,8 +635,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             //choix du troisieme mouvement bas
             bouge3 = move_down_IA(game->carte, p2, liste);
@@ -652,8 +663,8 @@ bool eval(Game *game){
             temp2[0] = 0;
             if(bouge2 == 2){
                 move_down_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
 
         //choix du deuxieme mouvement droite
@@ -675,8 +686,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
 
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -694,8 +705,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
 
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -713,8 +724,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -740,8 +751,8 @@ bool eval(Game *game){
             temp2[1] = 0;
             if(bouge2 == 2){
                 move_left_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
 
         //choix du deuxieme mouvement gauche
@@ -763,8 +774,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
         
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -782,8 +793,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -801,8 +812,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -828,8 +839,8 @@ bool eval(Game *game){
             temp2[3] = 0;
             if(bouge2 == 2){
                 move_right_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
         
         //choix du deuxieme mouvement bas
@@ -851,8 +862,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
         
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -870,8 +881,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -889,8 +900,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -916,16 +927,16 @@ bool eval(Game *game){
             temp2[2] = 0;
             if(bouge2 == 2){
                 move_up_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
     }else{
         free(temp2);
         temp1[1] = 0;
         if(bouge1 == 2){
             move_left_IA(game->carte, p2, liste);
-        }
-        // desupdategame !!!
+                        desmove_all_mob_IA(liste, p2);
+            }
     }
 
     //choix du premier mouvement gauche
@@ -952,8 +963,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             //choix du troisieme mouvement droite
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -971,8 +982,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
 
             }
             //choix du troisieme mouvement gauche
@@ -991,8 +1002,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             //choix du troisieme mouvement bas
             bouge3 = move_down_IA(game->carte, p2, liste);
@@ -1019,8 +1030,8 @@ bool eval(Game *game){
             temp2[0] = 0;
             if(bouge2 == 2){
                 move_down_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
 
         //choix du deuxieme mouvement droite
@@ -1042,8 +1053,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
 
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -1061,8 +1072,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
 
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -1080,8 +1091,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -1107,8 +1118,8 @@ bool eval(Game *game){
             temp2[1] = 0;
             if(bouge2 == 2){
                 move_left_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
 
         //choix du deuxieme mouvement gauche
@@ -1130,8 +1141,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
         
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -1149,8 +1160,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -1168,8 +1179,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -1195,8 +1206,8 @@ bool eval(Game *game){
             temp2[3] = 0;
             if(bouge2 == 2){
                 move_right_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
         
         //choix du deuxieme mouvement bas
@@ -1218,8 +1229,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
         
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -1237,8 +1248,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -1256,8 +1267,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -1283,16 +1294,16 @@ bool eval(Game *game){
             temp2[2] = 0;
             if(bouge2 == 2){
                 move_up_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
     }else{
         free(temp2);
         temp1[3] = 0;
         if(bouge1 == 2){
             move_right_IA(game->carte, p2, liste);
-        }
-        // desupdategame !!!
+                        desmove_all_mob_IA(liste, p2);
+            }
     }
 
     //choix du premier mouvement bas
@@ -1319,8 +1330,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             //choix du troisieme mouvement droite
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -1338,8 +1349,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
 
             }
             //choix du troisieme mouvement gauche
@@ -1358,8 +1369,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             //choix du troisieme mouvement bas
             bouge3 = move_down_IA(game->carte, p2, liste);
@@ -1386,8 +1397,8 @@ bool eval(Game *game){
             temp2[0] = 0;
             if(bouge2 == 2){
                 move_down_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
 
         //choix du deuxieme mouvement droite
@@ -1409,8 +1420,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
 
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -1428,8 +1439,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
 
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -1447,8 +1458,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -1474,8 +1485,8 @@ bool eval(Game *game){
             temp2[1] = 0;
             if(bouge2 == 2){
                 move_left_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
 
         //choix du deuxieme mouvement gauche
@@ -1497,8 +1508,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
         
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -1516,8 +1527,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -1535,8 +1546,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -1562,8 +1573,8 @@ bool eval(Game *game){
             temp2[3] = 0;
             if(bouge2 == 2){
                 move_right_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
         
         //choix du deuxieme mouvement bas
@@ -1585,8 +1596,8 @@ bool eval(Game *game){
                 temp3[0] = 0;
                 if(bouge3 == 2){
                     move_down_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
         
             bouge3 = move_right_IA(game->carte, p2, liste);
@@ -1604,8 +1615,8 @@ bool eval(Game *game){
                 temp3[1] = 0;
                 if(bouge3 == 2){
                     move_left_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             
             }
             bouge3 = move_left_IA(game->carte, p2, liste);
@@ -1623,8 +1634,8 @@ bool eval(Game *game){
                 temp3[3] = 0;
                 if(bouge3 == 2){
                     move_right_IA(game->carte, p2, liste);
-                }
-                // desupdategame !!!
+                                desmove_all_mob_IA(liste, p2);
+            }
             }
             bouge3 = move_down_IA(game->carte, p2, liste);
             if(!bouge3){
@@ -1650,16 +1661,16 @@ bool eval(Game *game){
             temp2[2] = 0;
             if(bouge2 == 2){
                 move_up_IA(game->carte, p2, liste);
+                            desmove_all_mob_IA(liste, p2);
             }
-            // desupdategame !!!
         }
     }else{
         free(temp2);
         temp1[2] = 0;
         if(bouge1 == 2){
             move_up_IA(game->carte, p2, liste);
-        }
-        // desupdategame !!!
+                        desmove_all_mob_IA(liste, p2);
+            }
     }
     game->joueur->score[0] = max_score(temp1);
     game->joueur->score[1] = max_score(temp2);
