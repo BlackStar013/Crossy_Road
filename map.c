@@ -81,9 +81,6 @@ void switch_map(Map *carte){
     //destroy_line(last);
 }
 
-void suppression_tile(Map *carte,int x,int y);
-int nb_tiles_remplies(Map *carte);
-
 
 Tile tile_map(Map *carte, int x, int y){
     // renvoie la tuile de la map a ces coordonnées, et empêche de sortir des côtés de la carte
