@@ -436,7 +436,7 @@ void generator_fire(Game *game){
     for(int i = 0; i<nb_Block; i++){
         clone(&line->tiles[rand()%LENGTH], brokenplanks);
     }
-    int nb_flames = rand()%3;
+    int nb_flames = rand()%4+1;
     for(int i = 0; i<nb_flames; i++){
         int pattern=rand()%4;
         int pos;
@@ -464,6 +464,7 @@ void generator_fire(Game *game){
         
     }
 }
+
 
 void proba_change_transition_cave(Game* game){
         for(int i = 0; i<NB_OBSTACLE; i++){
@@ -579,16 +580,16 @@ void generator_cultist(Game *game){
     int nb_lines;
     int lat_size;
     if (type==2) {
-        lat_size=5;
+        lat_size=6;
         }
     else {
-        lat_size=4;
+        lat_size=5;
     }
     if (type==1) {
-        nb_lines=5;
+        nb_lines=6;
         }
     else {
-        nb_lines=4;
+        nb_lines=5;
     }
     int pos_cult=rand()%(LENGTH-lat_size);
     int nb_cultists=rand()%2+1;
@@ -596,7 +597,7 @@ void generator_cultist(Game *game){
         add_buffer_line(game->carte);
         Line* line = game->carte->head_buffer;
         for(int j = 0; j<LENGTH; j++){
-            if (i==0 || ((j>=pos_cult && j<=(pos_cult+lat_size-1))&&(i==1||i==(nb_lines-1)||j==(pos_cult+lat_size-1)||j==pos_cult))) {
+            if (i==0 || i==nb_lines-1 || ((j>=pos_cult && j<=(pos_cult+lat_size-2))&&(i==1||i==(nb_lines-2)||j==(pos_cult+lat_size-2)||j==pos_cult))) {
                 clone(&line->tiles[j], cave);
             }
             else {
@@ -604,29 +605,30 @@ void generator_cultist(Game *game){
             }
         }
     }
+    int speed=(rand()%3)+1;
     switch (type) {
         case 0:
         if (sens==0){
-            game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+            game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos_cult+2, HEIGTH+nb_lines-2,speed,16));
         }
         else {
-            game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
-        }
-        break;
-        case 1:
-                if (sens==0){
-            game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
-        }
-        else {
-            game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+            game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos_cult+1, HEIGTH+nb_lines-2,speed,16));
         }
         break;
         case 2:
-        if (sens==0){
-            game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+                if (sens==0){
+            game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos_cult+3, HEIGTH+nb_lines-2,speed,16));
         }
         else {
-            game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+            game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos_cult+1, HEIGTH+nb_lines-2,speed,16));
+        }
+        break;
+        case 1:
+        if (sens==0){
+            game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos_cult+2, HEIGTH+nb_lines-2,speed,16));
+        }
+        else {
+            game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos_cult+1, HEIGTH+nb_lines-2,speed,16));
         }
         break;
     }
@@ -635,26 +637,26 @@ void generator_cultist(Game *game){
         switch (type) {
             case 0:
                 if (sens==0){
-                    Double=clone_mob(cult_clock1, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                    Double=clone_mob(cult_clock1, pos_cult+1, HEIGTH+1,speed,16);
                 }
                 else {
-                    Double=clone_mob(cult_counter1, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
-                }
-                break;
-            case 1:
-                if (sens==0){
-                    Double=clone_mob(cult_clock2, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
-                }
-                else {
-                    Double=clone_mob(cult_counter2, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                    Double=clone_mob(cult_counter1, pos_cult+2, HEIGTH+1,speed,16);
                 }
                 break;
             case 2:
                 if (sens==0){
-                    Double=clone_mob(cult_clock3, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                    Double=clone_mob(cult_clock2, pos_cult+1, HEIGTH+1,speed,16);
                 }
                 else {
-                    Double=clone_mob(cult_counter3, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                    Double=clone_mob(cult_counter2, pos_cult+3, HEIGTH+1,speed,16);
+                }
+                break;
+            case 1:
+                if (sens==0){
+                    Double=clone_mob(cult_clock3, pos_cult+1, HEIGTH+1,speed,16);
+                }
+                else {
+                    Double=clone_mob(cult_counter3, pos_cult+2, HEIGTH+1,speed,16);
                 }
                 break;
         }
@@ -663,6 +665,7 @@ void generator_cultist(Game *game){
     }
     proba_change_cultist(game);
 }
+
 
 void proba_change_mage(Game* game){
     int proba_change = (rand()%4)*5+10;
