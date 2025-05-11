@@ -2,6 +2,7 @@
 #include "core.h"
 #include "mob.h"
 #include "tuiles.h"
+#include "ia.h"
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -413,7 +414,6 @@ void destroy_game(Game *game){
     // Kaboum
     destroy_map(game->carte);
     destroy_liste_mob(game->mobs);
-    free(game->joueur->score);
     free(game->joueur);
     free(game->proba);
     free(game);

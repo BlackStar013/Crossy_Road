@@ -8,27 +8,48 @@
 #include <stdlib.h>
 
 
-bool move_IA(int x, int y, Player *joueur, Map *map){
-    //printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
-    //printf("%d\n",tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type);
-    if(tile_map(map, joueur->_x_dest/32 + x, (joueur->_y_dest)/32 + y).type != water.type){
-        if(joueur->_x_dest%32 > 16){
-            joueur->_x_dest =  (joueur->_x_dest/32+1)*32;
-        } else {
-            joueur->_x_dest = (joueur->_x_dest/32)*32;
-        }
-        if(joueur->_y_dest%32 > 16){
-            joueur->_y_dest =  (joueur->_y_dest/32+1)*32 ;
-        } else {
-            joueur->_y_dest =  (joueur->_y_dest/32)*32 ;
+int val_absolue(int x){
+    if(x<0){
+        return -x;
+    }
+    return x;
+}
+
+File *create_file(Point *sommet){
+    File *new_file = malloc(sizeof(File));
+    new_file->next = NULL;
+    new_file->sommet = sommet;
+    return new_file;
+}
+
+void append_file(File *file, Point *sommet){
+    if(file == NULL){
+        file = create_file(sommet);
+    }else{
+        if(!(file->sommet->i == sommet->i && file->sommet->j == sommet->j)){
+            if(file->next == NULL){
+                file->next = create_file(sommet);
+            }else{
+                append_file(file->next, sommet);
+            }
         }
     }
-    if(!IS_BLOCK(tile_map(map, joueur->_x_dest/32 + x, (joueur->_y_dest)/32 + y))){
-        joueur->_x_dest +=  x*32;
-        joueur->_y_dest +=  y*32;
-        return true ;
-    } else {
-        return false ;
+}
+
+File *defile(File *file){
+    if(file == NULL){
+        return NULL;
+    }
+    File *temp = file->next;
+    free(file);
+    return temp;
+}
+
+void destroy_file(File *file){
+    while(file!=NULL){
+        File *mem = file->next;
+        free(file);
+        file = mem;
     }
 }
 
@@ -91,14 +112,40 @@ void update_game_IA(Liste_Mob *liste, Player *joueur){
     joueur->_y = (joueur->_y + joueur->_y_dest)/2;
 }
 
-void desmove_all_mob_IA(Liste_Mob *liste, Player *p2){
-    if(liste!=NULL){
-        if((liste->mob->id_mob == CAR_LEFT) || (liste->mob->id_mob == PLANK_LEFT) || (liste->mob->id_mob == BUS_LEFT)){
-            (path_right)(liste->mob, p2);
-        }else if((liste->mob->id_mob == CAR_RIGHT) || (liste->mob->id_mob == PLANK_RIGHT) || (liste->mob->id_mob == BUS_RIGHT)){
-            (path_left)(liste->mob, p2);
+// void desmove_all_mob_IA(Liste_Mob *liste, Player *p2){
+//     if(liste!=NULL){
+//         for(int i=0; i<16; i++){
+//             if((liste->mob->id_mob == CAR_LEFT) || (liste->mob->id_mob == PLANK_LEFT) || (liste->mob->id_mob == BUS_LEFT)){
+//                 (path_right)(liste->mob, p2);
+//             }else if((liste->mob->id_mob == CAR_RIGHT) || (liste->mob->id_mob == PLANK_RIGHT) || (liste->mob->id_mob == BUS_RIGHT)){
+//                 (path_left)(liste->mob, p2);
+//             }
+//         }
+//         desmove_all_mob_IA(liste->next, p2);
+//     }
+// }
+
+bool move_IA(int x, int y, Player *joueur, Map *map){
+    //printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
+    //printf("%d\n",tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type);
+    if(tile_map(map, joueur->_x_dest/32 + x, (joueur->_y_dest)/32 + y).type != water.type){
+        if(joueur->_x_dest%32 > 16){
+            joueur->_x_dest =  (joueur->_x_dest/32+1)*32;
+        } else {
+            joueur->_x_dest = (joueur->_x_dest/32)*32;
         }
-        desmove_all_mob_IA(liste->next, p2);
+        if(joueur->_y_dest%32 > 16){
+            joueur->_y_dest =  (joueur->_y_dest/32+1)*32 ;
+        } else {
+            joueur->_y_dest =  (joueur->_y_dest/32)*32 ;
+        }
+    }
+    if(!IS_BLOCK(tile_map(map, joueur->_x_dest/32 + x, (joueur->_y_dest)/32 + y))){
+        joueur->_x_dest +=  x*32;
+        joueur->_y_dest +=  y*32;
+        return true ;
+    } else {
+        return false ;
     }
 }
 
@@ -106,32 +153,19 @@ int move_up_IA(Map *map, Player *p2, Liste_Mob *liste){
     //renvoie 0 si il a pu bouger sans mourir, 1 si il n'a pas pu bouger, et 2 si il en meurt
     if(!move_IA(0, 1, p2, map)){
         return 1;
-    }else{
-        for(int i=0; i<16; i++){
-            // printf("i :%d  mort? %d\n", i, test_death_IA(p2, game->carte, liste));
-            if(test_death_IA(p2, map, liste)){
-                return 2;
-            }else{
-                update_game_IA(liste, p2);
-            }
-        }
+    }
+    if(test_death_IA(p2, map, liste)){
+        return 2;   
     }
     return 0;
 }
-
 int move_down_IA(Map *map, Player *p2, Liste_Mob *liste){
     //renvoie 0 si il a pu bouger sans mourir, 1 si il n'a pas pu bouger, et 2 si il en meurt
     if(!move_IA(0, -1, p2, map)){
         return 1;
-    }else{
-        for(int i=0; i<16; i++){
-            // printf("i :%d  mort? %d\n", i, test_death_IA(p2, game->carte, liste));
-            if(test_death_IA(p2, map, liste)){
-                return 2;
-            }else{
-                update_game_IA(liste, p2);
-            }
-        }
+    }
+    if(test_death_IA(p2, map, liste)){
+        return 2;   
     }
     return 0;
 }
@@ -140,15 +174,9 @@ int move_left_IA(Map *map, Player *p2, Liste_Mob *liste){
     //renvoie 0 si il a pu bouger sans mourir, 1 si il n'a pas pu bouger, et 2 si il en meurt
     if(!move_IA(-1, 0, p2, map)){
         return 1;
-    }else{
-        for(int i=0; i<16; i++){
-            // printf("i :%d  mort? %d\n", i, test_death_IA(p2, game->carte, liste));
-            if(test_death_IA(p2, map, liste)){
-                return 2;
-            }else{
-                update_game_IA(liste, p2);
-            }
-        }
+    }
+    if(test_death_IA(p2, map, liste)){
+        return 2;   
     }
     return 0;
 }
@@ -157,1629 +185,205 @@ int move_right_IA(Map *map, Player *p2, Liste_Mob *liste){
     //renvoie 0 si il a pu bouger sans mourir, 1 si il n'a pas pu bouger, et 2 si il en meurt
     if(!move_IA(1, 0, p2, map)){
         return 1;
-    }else{
-        for(int i=0; i<16; i++){
-            // printf("i :%d  mort? %d\n", i, test_death_IA(p2, game->carte, liste));
-            if(test_death_IA(p2, map, liste)){
-                return 2;
-            }else{
-                update_game_IA(liste, p2);
-            }
-        }
+    }
+    if(test_death_IA(p2, map, liste)){
+        return 2;   
     }
     return 0;
 }
 
-int *score_temp(Game *game){
-    int *temp = calloc(5, sizeof(int));
-    temp[0] = 10;
-    temp[2] = 3;
-    if(IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, game->joueur->_y_dest/32))){
-        temp[4] = 6;
-    }else{
-        temp[4] = 1;
-    }
-    if(game->joueur->_x_dest/32 >= LENGTH/2){
-        temp[1] = 4;
-        temp[3] = 5;
-    }else{
-        temp[1] = 5;
-        temp[3] = 4;
-    }
-    return temp;
+Point *create_point(int i, int j, int val){
+    Point *new_point = malloc(sizeof(Point));
+    new_point->vu = false;
+    new_point->val = val;
+    new_point->i = i;
+    new_point->j = j;
+    new_point->chemin = calloc(PROFONDEUR, sizeof(int));
+    new_point->chemin[0] = 4;new_point->chemin[1] = 4;
+    return new_point;
 }
 
-bool eval(Game *game){
+Point ***matrice_evaluation(void){
+    Point ***evaluation = malloc(PROFONDEUR*sizeof(Point));
+    for(int i=0; i<PROFONDEUR; i++){
+        evaluation[i] = malloc(PROFONDEUR*sizeof(Point));
+        for(int j=0; j<PROFONDEUR; j++){
+            evaluation[i][j] = create_point(-PROFONDEUR/2+j, PROFONDEUR/2-i, PROFONDEUR/2-i);
+        }
+    }
+    evaluation[PROFONDEUR/2][PROFONDEUR/2]->val = -1;
+    return evaluation;
+}
+
+void print_matrice(Point ***evaluation){
+    for(int i=0; i<PROFONDEUR; i++){
+        for(int j=0; j<PROFONDEUR; j++){
+            // printf("(%d,%d) ", evaluation[i][j]->i, evaluation[i][j]->j);
+            // printf("(%d,%d) ", evaluation[i][j]->chemin[0], evaluation[i][j]->chemin[1]);
+            printf("%d ", evaluation[i][j]->val);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+void destroy_matrice(Point ***matrice_eval){
+    for(int i=0; i<PROFONDEUR; i++){
+        for(int j=0; j<PROFONDEUR; j++){
+            free(matrice_eval[i][j]->chemin);
+            free(matrice_eval[i][j]);
+        }
+        free(matrice_eval[i]);
+    }
+    free(matrice_eval);
+}
+
+int eval(Game *game){
     // score[i]=? => 0=haut; 1=droite; 2=bas; 3=gauche; 4=attendre
-    Player *p2 = malloc(sizeof(Player));
-    p2->_x = game->joueur->_x;
-    p2->_y = game->joueur->_y;
-    p2->_x_dest = game->joueur->_x_dest;
-    p2->_y_dest = game->joueur->_y_dest;
     Liste_Mob *liste = clone_listemob(game->mobs);
-    int *temp1 = NULL;
-    int *temp2 = NULL;
-    int *temp3 = NULL;
-    int bouge1;
-    int bouge2;
-    int bouge3;
-    //bouge vaut 0 si il a pu bouger sans mourir, 1 si il n'a pas pu bouger, et 2 si il en meurt
-    //choix du premier mouvement haut
-    temp1 = score_temp(game);
-    bouge1 = move_up_IA(game->carte, p2, liste);
-    if(!bouge1){
-        //choix du deuxieme mouvement haut
-        temp2 = score_temp(game);
-        bouge2 = move_up_IA(game->carte, p2, liste);
-        if(!bouge2){
-            //choix du troisième mouvement haut
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            //choix du troisieme mouvement droite
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-
-            }
-            //choix du troisieme mouvement gauche
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            //choix du troisieme mouvement bas
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-
-        }else{
-            free(temp3);
-            temp2[0] = 0;
-            if(bouge2 == 2){
-                move_down_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
+    Point ***matrice_eval = matrice_evaluation();
+    File *file = create_file(matrice_eval[PROFONDEUR/2][PROFONDEUR/2]);
+    int n = 0;
+    int o = 0;
+    // int compteur = 0;
+    while(file != NULL){
+        // printf("%d %d\n", file->sommet->i, file->sommet->j);
+        // compteur++;
+        // printf("%d %d\n", file->sommet->i, file->sommet->j);
+        Player *p2 = malloc(sizeof(Player));
+        // printf("x :%d, y : %d\n", game->joueur->_x_dest/32, game->joueur->_y_dest/32);
+        p2->_x = (game->joueur->_x)+32*file->sommet->i;
+        p2->_y = (game->joueur->_y)+32*file->sommet->j;
+        p2->_x_dest = (game->joueur->_x_dest)+32*file->sommet->i;
+        p2->_y_dest = (game->joueur->_y_dest)+32*file->sommet->j;
+        // printf("x : %d, y : %d\n", p2->_x_dest/32, p2->_y_dest/32);
+        // printf("%d %d\n", file->sommet->i, file->sommet->j);
+        matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+PROFONDEUR/2]->vu = true;
+        if(val_absolue(file->sommet->i)+val_absolue(file->sommet->j) > n){
+            n = val_absolue(file->sommet->i)+val_absolue(file->sommet->j);
+            // printf("UPDATE\n");
+            for(int k=0; k<10; k++){
+                update_game_IA(liste, p2);
             }
         }
-
-        //choix du deuxieme mouvement droite
-        bouge2 = move_right_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
+        o = val_absolue(file->sommet->i)+val_absolue(file->sommet->j);
+        // printf("o : %d\n", o);
+        int bouge;
+        if((val_absolue(file->sommet->i)+val_absolue(file->sommet->j)) < PROFONDEUR/2){
+            //essaye d'aller vers le bas
+            if((file->sommet->j)+PROFONDEUR/2 > 0){
+                bouge = move_down_IA(game->carte, p2, liste);
+                if(!bouge){
+                    if(!matrice_eval[PROFONDEUR/2-(file->sommet->j)+1][(file->sommet->i)+PROFONDEUR/2]->vu){
+                        for(int d=0; d<o; d++){
+                            matrice_eval[PROFONDEUR/2-(file->sommet->j)+1][(file->sommet->i)+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+PROFONDEUR/2]->chemin[d];
+                        }
+                        matrice_eval[PROFONDEUR/2-(file->sommet->j)+1][(file->sommet->i)+PROFONDEUR/2]->chemin[o] = 2;
+                        append_file(file, matrice_eval[PROFONDEUR/2-(file->sommet->j)+1][(file->sommet->i)+PROFONDEUR/2]);
+                    }
+                    
+                }else{ //if(bouge){
+                    matrice_eval[PROFONDEUR/2-(file->sommet->j)+1][(file->sommet->i)+PROFONDEUR/2]->val = -99;
+                }
+                if(bouge != 1){
                     move_up_IA(game->carte, p2, liste);
                 }
-                //desupdategame !!!
             }
-
-        }else{
-            free(temp3);
-            temp2[1] = 0;
-            if(bouge2 == 2){
-                move_left_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-
-        //choix du deuxieme mouvement gauche
-        bouge2 = move_left_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-        
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
+            // essaye d'aller a gauche
+            if((file->sommet->i)+PROFONDEUR/2 > 0){ 
+                bouge = move_left_IA(game->carte, p2, liste);
+                if(!bouge){
+                    if(!matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)-1+PROFONDEUR/2]->vu){
+                        for(int d = 0; d<o; d++){
+                            matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)-1+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+PROFONDEUR/2]->chemin[d];
+                        }  
+                        matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)-1+PROFONDEUR/2]->chemin[o] = 3;
+                        append_file(file, matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)-1+PROFONDEUR/2]);
+                    }
+                }else{ //if(bouge){
+                    matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)-1+PROFONDEUR/2]->val = -99;
                 }
-                //desupdategame !!!
-            }
-        
-        }else{
-            free(temp3);
-            temp2[3] = 0;
-            if(bouge2 == 2){
-                move_right_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-        
-        //choix du deuxieme mouvement bas
-        bouge2 = move_down_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-        
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
+                if(bouge != 1){
                     move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
                 }
-                //desupdategame !!!
             }
-        
-        }else{
-            free(temp3);
-            temp2[2] = 0;
-            if(bouge2 == 2){
-                move_up_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
+            // essaye d'aller a droite
+            if((file->sommet->i) < PROFONDEUR/2){
+                bouge = move_right_IA(game->carte, p2, liste);
+                if(!bouge){
+                    if(!matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+1+PROFONDEUR/2]->vu){
+                        for(int d=0; d<o; d++){
+                            matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+1+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+PROFONDEUR/2]->chemin[d];
+                        }
+                        matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+1+PROFONDEUR/2]->chemin[o] = 1;
+                        append_file(file, matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+1+PROFONDEUR/2]);
+                    }
+                }else{ //if(bouge){
+                    matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+1+PROFONDEUR/2]->val = -99;
+                }
+                if(bouge != 1){
+                    move_left_IA(game->carte, p2, liste);
+                }
+            }
+            // essaye de monter
+            if((file->sommet->j) < PROFONDEUR/2){
+                bouge = move_up_IA(game->carte, p2, liste);
+                if(!bouge){
+                    if(!matrice_eval[PROFONDEUR/2-(file->sommet->j)-1][(file->sommet->i)+PROFONDEUR/2]->vu){
+                        for(int d = 0; d<o; d++){
+                            matrice_eval[PROFONDEUR/2-(file->sommet->j)-1][(file->sommet->i)+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(file->sommet->j)][(file->sommet->i)+PROFONDEUR/2]->chemin[d];
+                        }
+                        matrice_eval[PROFONDEUR/2-(file->sommet->j)-1][(file->sommet->i)+PROFONDEUR/2]->chemin[o] = 0;
+                        append_file(file, matrice_eval[PROFONDEUR/2-(file->sommet->j)-1][(file->sommet->i)+PROFONDEUR/2]);
+                    }       
+                }else{  //if(bouge){
+                    matrice_eval[PROFONDEUR/2-(file->sommet->j)-1][(file->sommet->i)+PROFONDEUR/2]->val = -99;
+                }
+                if(bouge != 1){
+                    move_down_IA(game->carte, p2, liste);
+                }
             }
         }
-    }else{
-        free(temp2);
-        temp1[0] = 0;
-        if(bouge1 == 2){
-            move_down_IA(game->carte, p2, liste);
-                        desmove_all_mob_IA(liste, p2);
-            }
+        // printf("compteur : %d\n", compteur);
+        // File *temp = file;
+        // while(temp!=NULL){
+        //     printf("%d %d\n", temp->sommet->i, temp->sommet->j);
+        //     temp = temp->next;
+        // }
+        // printf("\n");
+        free(p2);
+        file = defile(file);
+        // print_matrice(matrice_eval);
+
     }
-
-    //choix du premier mouvement droite
-    bouge1 = move_right_IA(game->carte, p2, liste);
-    if(!bouge1){
-        temp2 = score_temp(game);
-        //choix du deuxieme mouvement haut
-        bouge2 = move_up_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            //choix du troisième mouvement haut
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            //choix du troisieme mouvement droite
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-
-            }
-            //choix du troisieme mouvement gauche
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            //choix du troisieme mouvement bas
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
+    
+    Point *max = NULL;
+    int val_max = -99;
+    for(int a=0; a<PROFONDEUR; a++){
+        for(int b=0; b<PROFONDEUR; b++){
+            // printf("max actuel : %d\n", max->val);
+            if(matrice_eval[a][b]->vu){
+                if(matrice_eval[a][b]->val > val_max){
+                    //free(max->chemin);
+                    //free(max);
+                    max = matrice_eval[a][b];
+                    val_max = matrice_eval[a][b]->val;
                 }
-                //desupdategame !!!
-            }
-
-        }else{
-            free(temp3);
-            temp2[0] = 0;
-            if(bouge2 == 2){
-                move_down_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
+            }else{
+                matrice_eval[a][b]->val = -99;
             }
         }
-
-        //choix du deuxieme mouvement droite
-        bouge2 = move_right_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-
-        }else{
-            free(temp3);
-            temp2[1] = 0;
-            if(bouge2 == 2){
-                move_left_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-
-        //choix du deuxieme mouvement gauche
-        bouge2 = move_left_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-        
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-        
-        }else{
-            free(temp3);
-            temp2[3] = 0;
-            if(bouge2 == 2){
-                move_right_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-        
-        //choix du deuxieme mouvement bas
-        bouge2 = move_down_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-        
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-        
-        }else{
-            free(temp3);
-            temp2[2] = 0;
-            if(bouge2 == 2){
-                move_up_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-    }else{
-        free(temp2);
-        temp1[1] = 0;
-        if(bouge1 == 2){
-            move_left_IA(game->carte, p2, liste);
-                        desmove_all_mob_IA(liste, p2);
-            }
     }
-
-    //choix du premier mouvement gauche
-    bouge1 = move_left_IA(game->carte, p2, liste);
-    if(!bouge1){
-        temp2 = score_temp(game);
-        //choix du deuxieme mouvement haut
-        bouge2 = move_up_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            //choix du troisième mouvement haut
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            //choix du troisieme mouvement droite
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-
-            }
-            //choix du troisieme mouvement gauche
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            //choix du troisieme mouvement bas
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-
-        }else{
-            free(temp3);
-            temp2[0] = 0;
-            if(bouge2 == 2){
-                move_down_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-
-        //choix du deuxieme mouvement droite
-        bouge2 = move_right_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-
-        }else{
-            free(temp3);
-            temp2[1] = 0;
-            if(bouge2 == 2){
-                move_left_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-
-        //choix du deuxieme mouvement gauche
-        bouge2 = move_left_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-        
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-        
-        }else{
-            free(temp3);
-            temp2[3] = 0;
-            if(bouge2 == 2){
-                move_right_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-        
-        //choix du deuxieme mouvement bas
-        bouge2 = move_down_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-        
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-        
-        }else{
-            free(temp3);
-            temp2[2] = 0;
-            if(bouge2 == 2){
-                move_up_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-    }else{
-        free(temp2);
-        temp1[3] = 0;
-        if(bouge1 == 2){
-            move_right_IA(game->carte, p2, liste);
-                        desmove_all_mob_IA(liste, p2);
-            }
-    }
-
-    //choix du premier mouvement bas
-    bouge1 = move_down_IA(game->carte, p2, liste);
-    if(!bouge1){
-        temp2 = score_temp(game);
-        //choix du deuxieme mouvement haut
-        bouge2 = move_up_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            //choix du troisième mouvement haut
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            //choix du troisieme mouvement droite
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-
-            }
-            //choix du troisieme mouvement gauche
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            //choix du troisieme mouvement bas
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-
-        }else{
-            free(temp3);
-            temp2[0] = 0;
-            if(bouge2 == 2){
-                move_down_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-
-        //choix du deuxieme mouvement droite
-        bouge2 = move_right_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-
-        }else{
-            free(temp3);
-            temp2[1] = 0;
-            if(bouge2 == 2){
-                move_left_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-
-        //choix du deuxieme mouvement gauche
-        bouge2 = move_left_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-        
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-        
-        }else{
-            free(temp3);
-            temp2[3] = 0;
-            if(bouge2 == 2){
-                move_right_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-        
-        //choix du deuxieme mouvement bas
-        bouge2 = move_down_IA(game->carte, p2, liste);
-        if(!bouge2){
-            temp3 = score_temp(game);
-            bouge3 = move_up_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[0] = 0;
-                if(bouge3 == 2){
-                    move_down_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-        
-            bouge3 = move_right_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[1] = 0;
-                if(bouge3 == 2){
-                    move_left_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            
-            }
-            bouge3 = move_left_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[3] = 0;
-                if(bouge3 == 2){
-                    move_right_IA(game->carte, p2, liste);
-                                desmove_all_mob_IA(liste, p2);
-            }
-            }
-            bouge3 = move_down_IA(game->carte, p2, liste);
-            if(!bouge3){
-                game->joueur->score[0] = max_score(temp1);
-                game->joueur->score[1] = max_score(temp2);
-                game->joueur->score[2] = max_score(temp3);
-                free(temp1);
-                free(temp2);
-                free(temp3);
-                free(p2);
-                destroy_liste_mob(liste);
-                return true;
-            }else{
-                temp3[2] = 0;
-                if(bouge3 == 2){
-                    move_up_IA(game->carte, p2, liste);
-                }
-                //desupdategame !!!
-            }
-        
-        }else{
-            free(temp3);
-            temp2[2] = 0;
-            if(bouge2 == 2){
-                move_up_IA(game->carte, p2, liste);
-                            desmove_all_mob_IA(liste, p2);
-            }
-        }
-    }else{
-        free(temp2);
-        temp1[2] = 0;
-        if(bouge1 == 2){
-            move_up_IA(game->carte, p2, liste);
-                        desmove_all_mob_IA(liste, p2);
-            }
-    }
-    game->joueur->score[0] = max_score(temp1);
-    game->joueur->score[1] = max_score(temp2);
-    game->joueur->score[2] = max_score(temp3);
-    free(temp1);
-    // free(temp2);
-    // free(temp3);
-    free(p2);
+    // printf("point max %d %d\n", max->i, max->j);
+    // int directive = 0;
+    int directive = max->chemin[0];
+    // printf("%d\n", directive);
+    // print_matrice(matrice_eval);
+    
+    // free(max->chemin);
+    // free(max);
+    destroy_file(file);
     destroy_liste_mob(liste);
-    return true;
-}
-
-    //test pour avancer 1 fois:
-    // bouge1 = move_IA(0, 1, p2, game->carte);
-    // if(!bouge1){
-    //     game->joueur->score[0] = 0;
-    // }else{
-    //     liste = clone_listemob(game->mobs);
-    //     for(int i=0; i<16; i++){
-    //         // printf("i :%d  mort? %d\n", i, test_death_IA(p2, game->carte, liste));
-    //         if(test_death_IA(p2, game->carte, liste)){
-    //             game->joueur->score[0] = 0;
-    //         }else{
-    //             update_game_IA(liste, p2);
-    //         }
-    //     }
-    //     destroy_liste_mob(liste);
-    // }
-    // if(bouge1){
-    //     move_IA(0, -1, p2, game->carte);
-    // }
-    // //test de reculer :
-    // bouge1 = move_IA(0, -1, p2, game->carte);
-    // if(!bouge1){
-    //     game->joueur->score[2] = 0;
-    // }else{
-    //     liste = clone_listemob(game->mobs);
-    //     for(int i=0; i<16; i++){
-    //         // printf("i :%d  mort? %d\n", i, test_death_IA(p2, game->carte, liste));
-    //         if(test_death_IA(p2, game->carte, liste)){
-    //             game->joueur->score[2] = 0;
-    //         }else{
-    //             update_game_IA(liste, p2);
-    //         }
-    //     }   
-    //     destroy_liste_mob(liste);
-    // }
-    // if(bouge1){
-    //     move_IA(0, 1, p2, game->carte);
-    // }
-    // //test d'aller a gauche :
-    // bouge1 = move_IA(-1, 0, p2, game->carte);
-    // if(!bouge1){
-    //     game->joueur->score[3] = 0;
-    // }else{
-    //     liste = clone_listemob(game->mobs);
-    //     for(int i=0; i<16; i++){
-    //         // printf("i :%d  mort? %d\n", i, test_death_IA(p2, game->carte, liste));
-    //         if(test_death_IA(p2, game->carte, liste)){
-    //             game->joueur->score[3] = 0;
-    //         }else{
-    //             update_game_IA(liste, p2);
-    //         }
-    //     }
-    //     destroy_liste_mob(liste);
-    // }
-    // if(bouge1){
-    //     move_IA(1, 0, p2, game->carte);
-    // }
-    // //test d'aller a droite :
-    // bouge1 = move_IA(1, 0, p2, game->carte);
-    // if(!bouge1){
-    //     game->joueur->score[1] = 0;
-    // }else{
-    //     liste = clone_listemob(game->mobs);
-    //     for(int i=0; i<16; i++){
-    //         // printf("i :%d  mort? %d\n", i, test_death_IA(p2, game->carte, liste));
-    //         if(test_death_IA(p2, game->carte, liste)){
-    //             game->joueur->score[1] = 0;
-    //         }else{
-    //             update_game_IA(liste, p2);
-    //         }
-    //     }
-    //     destroy_liste_mob(liste);
-    // }
-    // if(bouge1){
-    //     move_IA(-1, 0, p2, game->carte);
-    // }
-
-    // for(int i=0; i<5; i++){
-    //     printf("directive :%d; score : %d\n", i, *(game->joueur->score+i));
-    // }
-    // printf("\n");
-    // free(p2);
-// }
-
-int max_score(int *score){
-    if(score == NULL){
-        return 4;
-    }
-    printf("%d %d %d %d %d\n", score[0], score[1], score[2], score[3], score[4]);
-    // renvoie la directive donc le score était maximale
-    int max = -999999;
-    int directive = -1;
-    for(int i=0; i<5; i++){
-        if(*(score+i) > max){
-            max = *(score+i);
-            directive = i;
-        }
-    }
+    destroy_matrice(matrice_eval);
     return directive;
 }

@@ -339,21 +339,13 @@ int main(void){
         
         //si le joueur est une IA
         if(IA){
-            if(n < 0){
-                n = 2;
-                eval(game);
-                printf("%d %d %d\n", game->joueur->score[0], game->joueur->score[1], game->joueur->score[2]);
-            }
             if(game->joueur->delai){
                 game->joueur->delai--;
-            }else{
-                // for(int i=0; i<5; i++){
-                //     printf("directive :%d; score : %d\n", i, *(game->joueur->score+i));
-                // }
-                // printf("\n");
-                //SDL_Delay(3000);
-                int directive = game->joueur->score[2-n];
+            }else{ 
+                // SDL_Delay(5000);
+                //int directive = game->ia->directive[2-n];
                 //printf("directive %d\n", directive);
+                int directive = eval(game);
                 if(directive == 0){
                     if(move_up(game)&&game->joueur->_y_dest>=3*32){
                         pix_defil += 32;
@@ -381,7 +373,7 @@ int main(void){
                     game->joueur->offset_x += 1;
                     game->joueur->offset_x %= 4;
                 }
-                game->joueur->delai = 15;
+                game->joueur->delai = 10;
                 n --;
             }
         }else{

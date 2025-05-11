@@ -9,7 +9,7 @@
 
 int main(void){
     printf("les tests sont lancés\n");
-    assert(!2==false);
+    assert((!2)==false);
     printf("les tests sont passes\n");
     return 0;
 }

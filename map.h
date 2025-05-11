@@ -29,7 +29,6 @@ typedef struct _Player{
     int offset_y;
     int character_id;
     int delai;
-    int* score;
 }Player;
 
 //fonctions souhaités (Louan)
