@@ -636,6 +636,55 @@ void draw_all(Game* game){
     draw_background(game);
     draw_all_mob_game(game);
     draw_character(game);
+    wmove(stdscr,HEIGTH,0);
+    printw("Score : %d",game->score);
+    refresh();
+}
+
+
+void draw_menu(void){
+    clear();
+    mvaddstr(0,0,"  --------    Choose your  ");
+    mvaddstr(1,0,"  |      |     character   ");
+    mvaddstr(2,0,"  |    o |                 ");
+    mvaddstr(3,0,"  |      |                 ");
+    switch (character) {
+        case KAIRON:
+            mvaddstr(4,0,"  |      |  <|--KAIRON--|> ");
+            break;
+        
+        case SNITCH:
+            mvaddstr(4,0,"  |      |  <|--SNITCH--|> ");
+            break;
+
+        case AESIR:
+            mvaddstr(4,0,"  |      |  <|--AESIR --|> ");
+            break;
+        
+        case KABI:
+            mvaddstr(4,0,"  |      |  <|-- KABI --|> ");
+            break;
+        
+        case OOGWAAY:
+            mvaddstr(4,0,"  |      |  <|--OOGWAAY--|>");
+            break;
+
+        case JOLINAR:
+            mvaddstr(4,0,"  |      |  <|--JOLINAR--|>");
+            break;
+
+        case RANTON:
+            mvaddstr(4,0,"  |      |  <|--RANTON--|> ");
+            break;
+        
+    
+    }
+    mvaddstr(4,0,"  |      |  ");
+    mvaddstr(5,0,"  --------  ");
+    mvaddstr(6,0,"Press enter to open the door");
+    mvaddstr(7,0,"of the incredible Crossy Road !");
+    mvaddstr(9,0,"Or press m to quit...");
+
     refresh();
 }
 
@@ -643,8 +692,10 @@ int main(void){
     int ch;
     bool quit = false;
     bool quit_game = true;
+    bool pause = false;
     ncursesInit();
     while(!quit){
+        draw_menu();
         ch = getch();
         if(ch=='\n'){
             quit_game = false;
@@ -653,10 +704,19 @@ int main(void){
         } else if(ch==KEY_RIGHT){
             character++;
             character%=NB_PERSO;
+        } else if(ch==KEY_LEFT){
+            character--;
+            if(character<0){
+                character = NB_PERSO-1;
+            }
         }
         if(!quit_game){
             Game *game = initialise_game(character);
             while(!quit_game){
+                while(pause){
+                    ch = getch();
+                    
+                }
                 if(test_death(game)){
                     quit_game = true;
                 }
@@ -680,6 +740,8 @@ int main(void){
                         move_right(game);
                     }else if(ch == 'm' || (ch == 'M')){
                         quit_game = true;
+                    }else if(ch == 'p' || (ch == 'P')){
+                        pause = true;
                     }
                 draw_all(game);
 

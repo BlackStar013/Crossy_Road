@@ -433,7 +433,7 @@ int main(void){
     SDL_Surface** surfaceArrayProjectile = initSurfaceArrayProjectile();
     SDL_Surface** surfaceArrayPlayer = initSurfaceArrayPlayer();
 
-    Game *game = initialise_game(KAIRON);
+    Game *game = initialise_game(RANTON);
     // Line *line = game->carte->head_map;
     // while(line!=NULL){
     //     for(int i=0; i<HEIGHT; i++){
@@ -469,7 +469,7 @@ int main(void){
     //     line=line->next;
     // }
     // printf("\n");
-    const int desired_fps = 64;
+    const int desired_fps = 80;
     const int frameDelay = 1000 / desired_fps;
     int fps = 0;
     Uint32 startTime = SDL_GetTicks();

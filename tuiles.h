@@ -14,8 +14,8 @@ typedef struct _Tile {
 #define TYPE(tile) (tile.type)
 #define COLOR(tile) (tile.color)
 
-#define LENGTH 16
-#define HEIGTH 16
+#define LENGTH 12
+#define HEIGTH 12
 
 
 enum TILE{
