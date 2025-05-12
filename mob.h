@@ -84,8 +84,6 @@ extern const Mob canon_ball_left;
 
 //Fonction liés à List_Mob
 Liste_Mob* list_create(Mob* mob);
-void list_destroy(Liste_Mob* list);
-bool list_is_empty(Liste_Mob* list);
 Liste_Mob *list_append(Liste_Mob* list, Mob* mob);
 void print_liste(Liste_Mob* list);
 void move_all_mob(Liste_Mob* list,Player*);
@@ -112,12 +110,12 @@ extern const Mob fire_counter;
 void ambush(Mob *bush,Player* player);
 extern const Mob bush;
 
-void patrol_clock4x2(Mob *fire, Player* player);
-void patrol_clock5x2(Mob *fire, Player* player);
 void patrol_clock4x3(Mob *fire, Player* player);
-void patrol_counter4x2(Mob *fire, Player* player);
-void patrol_counter5x2(Mob *fire, Player* player);
+void patrol_clock5x3(Mob *fire, Player* player);
+void patrol_clock4x4(Mob *fire, Player* player);
 void patrol_counter4x3(Mob *fire, Player* player);
+void patrol_counter5x3(Mob *fire, Player* player);
+void patrol_counter4x4(Mob *fire, Player* player);
 
 extern const Mob cult_clock1;
 extern const Mob cult_clock2;
