@@ -78,7 +78,9 @@ SDL_Surface** initSurfaceArrayMob(void){
         }else if(i==FIRECOUNTER){
             surfaceArrayMob[i] = IMG_Load("sprites/FEU.png");
         }else if(i==BUSH){
-            surfaceArrayMob[i] = IMG_Load("sprites/Buisson.png");
+            surfaceArrayMob[i] = IMG_Load("sprites/Buisson?.png");
+        }else if(i==MAGIC_CAR){
+            surfaceArrayMob[i] = IMG_Load("sprites/ChariotArcanique.png");
         }else if(i==MOB_CULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/Cultiste.png");
         }else{ //if(i==HIGHCULTIST){   

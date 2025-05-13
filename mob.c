@@ -1034,3 +1034,83 @@ const Mob curse_arrow={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,0,0,0,0};
 //const Mob curse_arrow_bis_1={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,100,0,0,0};
 //const Mob curse_arrow_bis_2={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,200,0,0,0};
 
+
+
+
+///////New_mobs -> Biome Hard_Croussy_Rod
+
+void path_hard_right(Mob *car, Player*p){
+    if(car->action_value==2){
+        if(!car->action_delay){
+            car->offset_y = 1;
+            car->action_value=1;
+            car->path = path_hard_left;
+
+        } else {
+            car->action_delay--;
+        }
+    } else if(!car->delay){
+        if(car->_x/32 >= LENGTH){
+            car->action_value=0;
+            car->_x = -car->length*32;
+        } else {
+            car->_x += 3; 
+        }
+        car->action_delay = !car->action_delay;
+        if(car->action_delay&&(car->id_mob!=PLANK)){
+            car->offset_x ++;
+            car->offset_x %= 2;
+        }
+        car->delay = car->speed;
+        if(car->action_value==0){
+            if(((car->_x-16-64)<=p->_x_dest)&&(p->_x_dest <= car->_x + 16 -64 + (car->length - 1)*32)){ //Dépassement supérieur
+                if(((car->_y -16 )<=p->_y_dest)&&(p->_y_dest <= car->_y + 16 + (car->heigth - 1)*32)) {
+                    car->action_value = 2;
+                    car->action_delay = car->max_action_delay;
+                }
+            }
+        }
+    } else {
+        car->delay--;
+    }
+}
+
+const Mob magic_car_right = {1,2,true,0,0,0,0,0,MAGIC_CAR,0,0,path_hard_right,0,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici 
+
+void path_hard_left(Mob *car, Player*p){
+    if(car->action_value==2){
+        if(!car->action_delay){
+            car->offset_y = 0;
+            car->action_value=1;
+            car->path = path_hard_right;
+
+        } else {
+            car->action_delay--;
+        }
+    } else if(!car->delay){
+        if(car->_x/32 < -car->length+1){
+            car->action_value=0;
+            car->_x = LENGTH*32;
+        } else {
+            car->_x -= 3; 
+        }
+        car->action_delay = !car->action_delay;
+        if(car->action_delay&&(car->id_mob!=PLANK)){
+            car->offset_x ++;
+            car->offset_x %= 2;
+        }
+        car->delay = car->speed;
+        if(car->action_value==0){
+            if(((car->_x-16+64)<=p->_x_dest)&&(p->_x_dest <= car->_x + 16 +64 + (car->length - 1)*32)){ //Dépassement supérieur
+                if(((car->_y -16 )<=p->_y_dest)&&(p->_y_dest <= car->_y + 16 + (car->heigth - 1)*32)) {
+                    car->action_value = 2;
+                    car->action_delay = car->max_action_delay;
+                }
+            }
+        }
+    } else {
+        car->delay--;
+    }
+}
+
+const Mob magic_car_left = {1,2,true,0,0,0,0,0,MAGIC_CAR,0,1,path_hard_left,0,0,0,0,0};

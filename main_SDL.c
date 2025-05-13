@@ -120,7 +120,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil, SDL_Su
     // affiche les mobs un par un selon le même principe que ci-ci-dessus-dessus
     while(liste!=NULL){
         SDL_Surface *spriteSurface = surfaceArrayMob[liste->mob->id_mob];
-        if(liste->mob->id_mob==CAR){
+        if((liste->mob->id_mob==CAR)||(liste->mob->id_mob==MAGIC_CAR)){
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);
@@ -258,6 +258,30 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil, SDL_Su
             }
             int spriteWidth = spriteFullWidth/4; // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
             int spriteHeight = spriteFullHeight;
+            SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y =  (liste->mob->offset_y)*spriteHeight, .w = spriteWidth, .h = spriteHeight};
+            SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGTH*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
+            if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+            }
+            SDL_DestroyTexture(spriteTexture);
+        } else if(liste->mob->id_mob==BUSH){
+            if (!spriteSurface){
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
+                exit(-1);
+            }
+            SDL_Texture *spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+            if(!spriteTexture){
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                exit(-1);
+            }
+            int spriteFullWidth;
+            int spriteFullHeight;
+            if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)){
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                exit(-1);
+            }
+            int spriteWidth = spriteFullWidth/2; // pour les chariots, on a 2 lignes de 2 cases, pour le sens et le déplacement, d'où le /2
+            int spriteHeight = spriteFullHeight/2;
             SDL_Rect spriteRect = {.x = liste->mob->offset_x*spriteWidth, .y =  (liste->mob->offset_y)*spriteHeight, .w = spriteWidth, .h = spriteHeight};
             SDL_Rect destRect = {.x = liste->mob->_x*ECHELLE, .y = (HEIGTH*32-liste->mob->_y-32-pix_defil)*ECHELLE, .w = spriteWidth*ECHELLE, .h = spriteHeight*ECHELLE};
             if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){

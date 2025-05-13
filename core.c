@@ -322,6 +322,10 @@ void generator_obstacle(Game*game){
         case BUSHES:
         generator_bushes(game);
         break;
+
+        case MAGIC_ROAD:
+        generator_magic_road(game);
+        break;
                 
         case ENTRANCE:
         generator_entrance(game);
@@ -356,38 +360,6 @@ void generator_obstacle(Game*game){
 //générateurs avancés
 ///////////////////////////////////////////
 
-
-void generator_bushes(Game *game){
-    //les buissons
-    int proba_change = (rand()%4)*5;
-    if(*((game->proba)+BUSHES) <= proba_change){
-        *((game->proba)+FOREST) += (2*(*((game->proba)+BUSHES)))/3 ;
-        *((game->proba)+RIVER) += (*((game->proba)+BUSHES))/3 ;
-        *((game->proba)+ENTRANCE)+=1;
-        *((game->proba)+BUSHES) = 0 ;
-        *((game->proba)+BUSHES) += check_percent(game, FOREST, ENTRANCE);
-
-    } else {
-        *((game->proba)+FOREST) += 2*proba_change/3 ;
-        *((game->proba)+BUSHES) -= proba_change ;
-        *((game->proba)+RIVER) += proba_change/3 ;
-        *((game->proba)+ENTRANCE)+=1;
-        *((game->proba)+BUSHES) += check_percent(game, FOREST, ENTRANCE);
-    }
-    add_buffer_line(game->carte);
-    Line* line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], plain);
-    }
-    int nb_regular = rand()%5;
-    for(int i = 0; i<nb_regular; i++){
-        clone(&line->tiles[rand()%LENGTH], tree);
-    }
-    int nb_aggressive = rand()%3;
-    for(int i = 0; i<nb_aggressive; i++){
-        game->mobs = list_append(game->mobs, clone_mob(bush, (rand()%LENGTH)*32, HEIGTH,1,256));
-    }
-}
 
 void proba_change_entrance(Game* game){
     for(int i = 0; i<NB_OBSTACLE; i++){
@@ -619,7 +591,7 @@ void generator_cultist(Game *game){
                 if (sens==0){
             game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos_cult+3, HEIGTH+nb_lines-2,speed,16));
         }
-        else {
+        else { //WARNING HERE, normal ?
             game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos_cult+1, HEIGTH+nb_lines-2,speed,16));
         }
         break;
@@ -706,6 +678,128 @@ void generator_mage(Game *game){
         else {game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,200));}
     }
     proba_change_mage(game);
+}
+
+//NEW_GENERATOR//
+
+void proba_change_bushes(Game* game){
+    int proba_change = (rand()%4)*5 + 10;
+    if(*((game->proba)+BUSHES) <= proba_change){
+        *((game->proba)+MAGIC_ROAD) += ((*((game->proba)+BUSHES)))/2 ;
+        //*((game->proba)+CANON) += ((*((game->proba)+FOREST)))/4 ;
+        //*((game->proba)+RIVER) += (*((game->proba)+FOREST))/4 ;
+        *((game->proba)+BUSHES) = 0 ;
+    } else {
+        *((game->proba)+MAGIC_ROAD) += proba_change/2 ;
+        *((game->proba)+BUSHES) -= proba_change ;
+        //*((game->proba)+RIVER) += proba_change/4 ;
+        //*((game->proba+CANON)) += proba_change/4;
+    }
+    *((game->proba)+RIVER) += check_percent(game, BUSHES, MAGIC_ROAD);
+}
+
+void generator_bushes(Game *game){
+    //les buissons
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], plain);
+    }
+    //Pas bien
+    int nb_regular = rand()%5;
+    for(int i = 0; i<nb_regular; i++){
+        //clone(&line->tiles[rand()%LENGTH], tree);
+    }
+    int nb_aggressive = rand()%3;
+    for(int i = 0; i<nb_aggressive; i++){
+        game->mobs = list_append(game->mobs, clone_mob(bush, (rand()%LENGTH), HEIGTH,32,185));
+    }
+}
+
+
+void add_magic_road(Game *game, Mob car, Tile road_, int pos, int speed, int nb_car){
+    add_buffer_line(game->carte);
+    Line *line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], road_);
+    }
+    int init_x = -car.length+(rand()%3+1)*pos;
+    for(int i = 0; i < nb_car; i++){
+        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(LENGTH/nb_car)*i, HEIGTH+pos,speed,0));
+    }
+}
+
+void proba_change_magic_road(Game *game, int nb_line){
+    int proba_change = 6 + (nb_line-1)*(rand()%8+6);
+    if(*((game->proba)+MAGIC_ROAD) <= proba_change){
+        *((game->proba)+BUSHES) += ((*((game->proba)+MAGIC_ROAD)))/3 ;
+        //*((game->proba)+CANON) += ((*((game->proba)+ROAD)))/3 ;
+        //*((game->proba)+RIVER) += (*((game->proba)+ROAD))/3 ;
+        *((game->proba)+MAGIC_ROAD) = 0 ;
+    } else {
+        *((game->proba)+MAGIC_ROAD) -= proba_change ;
+        *((game->proba)+BUSHES) += proba_change/3 ;
+        //*((game->proba+CANON)) += proba_change/3;
+        //*((game->proba)+RIVER) += proba_change/3 ;
+    }
+    *((game->proba)+MAGIC_ROAD) += check_percent(game, BUSHES, MAGIC_ROAD);
+}
+
+void generator_magic_road(Game *game){
+    // explicite
+    int nb_line = rand()%3+1;
+    Tile tile;
+    if(nb_line == 1){
+        tile = road;
+    } else {
+        tile = road_down;
+    }
+    for(int i = 0 ; i < nb_line ; i++){
+        if(rand()%4){
+            int direction = rand()%2;
+            int speed = rand()%5 +1;
+            int nb_car;
+            if(speed==6){
+                nb_car = rand()%4 + 2;
+            } else if(speed==1){
+                nb_car = rand()%3 +1;
+            } else {
+                nb_car = rand()%4 + 1;
+            }
+            if(direction == 0){
+                add_road(game, magic_car_right,tile,i,speed,nb_car);
+            } else {
+                add_road(game,magic_car_left,tile,i,speed,nb_car);
+            }
+            if(i==nb_line - 2){
+                tile = road_up;
+            } else {
+                tile = road_middle;
+            }
+        } else {
+            int direction = rand()%2;
+            int speed = rand()%6 +2;
+            int nb_bus;
+            if(speed==7){
+                nb_bus = rand()%3 + 1;
+            } else if(speed==2){
+                nb_bus = 1;
+            } else {
+                nb_bus = rand()%2 + 1;
+            }
+            if(direction == 0){
+                add_road(game, bus_right,tile,i,speed,nb_bus);
+            } else {
+                add_road(game,bus_left,tile,i,speed,nb_bus);
+            }
+            if(i==nb_line - 2){
+                tile = road_up;
+            } else {
+                tile = road_middle;
+            }
+        }   
+    }
+    proba_change_magic_road(game, nb_line);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -840,6 +934,11 @@ void update_game(Game* game){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
             game->until_next = 10;
+            break;
+
+            case HARD_CROSSY_ROAD:
+            proba_change_game(game, BUSHES);
+            game->until_next = 45;
             break;
 
             case FLAMING_MANOR:

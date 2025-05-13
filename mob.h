@@ -32,6 +32,7 @@ enum MOB{
     CANON_MOB,
     CANON_BALL,
     ////
+    MAGIC_CAR,
     FIRECLOCK,
     FIRECOUNTER,
     BUSH,
@@ -133,3 +134,9 @@ extern const Mob mage;
 extern const Mob curse_arrow;
 //extern const Mob curse_arrow_bis_1;
 //extern const Mob curse_arrow_bis_2;
+
+//
+void path_hard_right(Mob *car, Player*p);
+void path_hard_left(Mob *car, Player*p);
+extern const Mob magic_car_right;
+extern const Mob magic_car_left;

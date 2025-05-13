@@ -25,6 +25,7 @@ typedef struct _Game {
 
 enum Biome {
     CROSSY_ROAD,
+    HARD_CROSSY_ROAD,
     FLAMING_MANOR,
     CULTIST_CAVE,
     NB_BIOME
@@ -38,6 +39,7 @@ enum Obstacle {
     CANON,
     /////////
     BUSHES,
+    MAGIC_ROAD,
     ////////
     ENTRANCE,
     FIRE,
@@ -59,6 +61,7 @@ void generator_road(Game*);
 void generator_river(Game*);
 void generator_canon(Game*);
 void generator_bushes(Game*);
+void generator_magic_road(Game*);
 void generator_entrance(Game*);
 void generator_fire(Game*);
 void generator_transition_cave(Game * game);

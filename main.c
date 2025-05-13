@@ -20,6 +20,7 @@ enum COLORS {
     LET_IT_GOOOOOO,
     ON_GRASS,
     ON_GRASS_EVIL,
+    ON_GRASS_WEIRD_EVIL,
     ON_GRASS_CAILLOU,
     ON_PLANKS,
     ON_PLANKS_EVIL,
@@ -67,6 +68,7 @@ void ncursesInit(void){
         init_pair(ON_GRASS, COLOR_YELLOW, COLOR_GREEN);
         init_pair(ON_GRASS_CAILLOU, COLOR_WHITE, COLOR_GREEN);
         init_pair(ON_GRASS_EVIL, COLOR_RED, COLOR_GREEN);
+        init_pair(ON_GRASS_WEIRD_EVIL, COLOR_MAGENTA, COLOR_GREEN);
         init_pair(ON_PLANKS, COLOR_BLACK, COLOR_YELLOW);
         init_pair(ON_PLANKS_EVIL, COLOR_RED, COLOR_YELLOW);
         init_pair(ON_CAVE, COLOR_WHITE, COLOR_BLACK);
@@ -362,6 +364,32 @@ void draw_mob(Mob* mob){
             } 
             break;
 
+        case MAGIC_CAR :
+            if(hascolor){
+                attron(COLOR_PAIR(ON_GRASS_WEIRD_EVIL));
+            }
+            if(mob->offset_y == 1){
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'<');
+                        }
+                    }
+                }
+            } else {
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'>');
+                        }
+                    }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_GRASS_WEIRD_EVIL));
+            } 
+            break;
+
         case PLANK :
             if(hascolor){
                 attron(COLOR_PAIR(ON_WATER_GOOD));
@@ -472,6 +500,7 @@ void draw_mob(Mob* mob){
                     attroff(COLOR_PAIR(ON_GRASS));
                 }
             }
+            break;
 
 
         case MOB_CULTIST :
@@ -632,7 +661,6 @@ void draw_all_mob_game(Game* game){
 
 
 void draw_all(Game* game){
-    clear();
     draw_background(game);
     draw_all_mob_game(game);
     draw_character(game);
@@ -643,7 +671,6 @@ void draw_all(Game* game){
 
 
 void draw_menu(void){
-    clear();
     mvaddstr(0,0,"  --------    Choose your  ");
     mvaddstr(1,0,"  |      |     character   ");
     mvaddstr(2,0,"  |    o |                 ");
@@ -688,6 +715,11 @@ void draw_menu(void){
     refresh();
 }
 
+void draw_pause(void){
+    mvaddstr(HEIGTH+1,0,"Press enter to resume the game !");
+    refresh();
+}
+
 int main(void){
     int ch;
     bool quit = false;
@@ -698,6 +730,7 @@ int main(void){
         draw_menu();
         ch = getch();
         if(ch=='\n'){
+            clear();
             quit_game = false;
         } else if(ch=='m'||ch=='M'){
             quit = true;
@@ -715,12 +748,18 @@ int main(void){
             while(!quit_game){
                 while(pause){
                     ch = getch();
+                    draw_pause();
+                    if(ch=='\n'){
+                        clear();
+                        pause=false;
+                    }
                     
                 }
                 if(test_death(game)){
                     quit_game = true;
                 }
                 update_game(game);
+                draw_all(game);
                 ch = getch();
                 if((ch == KEY_UP) || (ch == 'z') || (ch == 'Z')){
                         // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
@@ -740,12 +779,12 @@ int main(void){
                         move_right(game);
                     }else if(ch == 'm' || (ch == 'M')){
                         quit_game = true;
-                    }else if(ch == 'p' || (ch == 'P')){
+                    }else if(ch == '\n'){
                         pause = true;
                     }
-                draw_all(game);
 
             }
+            clear();
             destroy_game(game);
         }
     }
