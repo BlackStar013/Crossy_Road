@@ -37,6 +37,7 @@ enum Personnages {
     KABI,
     OOGWAAY,
     JOLINAR,
+    RANTON,
     NB_PERSO
 };
 

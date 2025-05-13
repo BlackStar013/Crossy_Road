@@ -23,6 +23,8 @@ typedef struct _Mob {
     int memory__y;
 } Mob;
 
+
+
 enum MOB{
     CAR,
     BUS,
@@ -35,10 +37,14 @@ enum MOB{
     BUSH,
     MOB_CULTIST,
     HIGHCULTIST,
-    CURSE,
+    //CURSE,
     NB_MOB
 };
 
+enum PROJECTILE{
+    CURSE,
+    NB_PROJECTILE
+};
 
 typedef struct _List_Mob {
     Mob* mob;
@@ -89,6 +95,8 @@ bool a_mob_collide(Liste_Mob* list,Player* player);
 void destroy_mobs(Liste_Mob *liste);
 void destroy_liste_mob(Liste_Mob *liste);
 Liste_Mob* destroy_liste_mob_from(int y, Liste_Mob *liste);
+Liste_Mob* destroy_liste_mob_collide(Liste_Mob *liste,Player* player);
+
 
 
 ///////

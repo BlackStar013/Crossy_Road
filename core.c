@@ -574,117 +574,92 @@ void proba_change_cultist(Game* game){
 
 void generator_cultist(Game *game){
     //les cultistes avec des dagues
-    int nb_lines=rand()%3+2;
-    int nb_cultists=rand()%3+2+(nb_lines/2);
-    int nb_used=0;
+    int type=rand()%3;
+    int sens=rand()%2;
+    int nb_lines;
+    int lat_size;
+    if (type==2) {
+        lat_size=5;
+        }
+    else {
+        lat_size=4;
+    }
+    if (type==1) {
+        nb_lines=5;
+        }
+    else {
+        nb_lines=4;
+    }
+    int pos_cult=rand()%(LENGTH-lat_size);
+    int nb_cultists=rand()%2+1;
     for (int i=0;i<nb_lines;i++) {
         add_buffer_line(game->carte);
         Line* line = game->carte->head_buffer;
-        for(int i = 0; i<LENGTH; i++){
-            clone(&line->tiles[i], cave);
-        }
-        if (i==0) { //on ne fait rien
-        }else if (i==1){
-            int nb_here = rand()%(nb_cultists-nb_used+1);
-            nb_used+=nb_here;
-            for(int i = 0; i<nb_here; i++){
-                int pattern=rand()%4;
-                int pos;
-                switch (pattern)
-                {
-                case 0:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 1:
-                    pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 2:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 3:
-                    pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                default:
-                    break;
-                }
+        for(int j = 0; j<LENGTH; j++){
+            if (i==0 || ((j>=pos_cult && j<=(pos_cult+lat_size-1))&&(i==1||i==(nb_lines-1)||j==(pos_cult+lat_size-1)||j==pos_cult))) {
+                clone(&line->tiles[j], cave);
             }
-        } else if (i<nb_lines-1){
-            int nb_here = rand()%(nb_cultists-nb_used+1);
-            nb_used+=nb_here;
-            for(int i = 0; i<nb_here; i++){
-                int pattern=rand()%6;
-                int pos;
-                switch (pattern)
-                {
-                case 0:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 1:
-                    pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 2:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 3:
-                    pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 4:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 5:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                default:
-                    break;
-                }
-            }
-        }else if (i<nb_lines-1){
-            int nb_here = nb_cultists-nb_used;
-            for(int i = 0; i<nb_here; i++){
-                int pattern=rand()%6;
-                int pos;
-                switch (pattern)
-                {
-                case 0:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 1:
-                    pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 2:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 3:
-                    pos=rand()%(LENGTH-5);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 4:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                case 5:
-                    pos=rand()%(LENGTH-4);
-                    game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos, HEIGTH,(rand()%3)+1,16));
-                    break;
-                default:
-                    break;
-                }
+            else {
+                clone(&line->tiles[j], stalagmite);
             }
         }
-        
+    }
+    switch (type) {
+        case 0:
+        if (sens==0){
+            game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+        }
+        else {
+            game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+        }
+        break;
+        case 1:
+                if (sens==0){
+            game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+        }
+        else {
+            game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+        }
+        break;
+        case 2:
+        if (sens==0){
+            game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+        }
+        else {
+            game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos_cult, HEIGTH+nb_lines-1,(rand()%3)+1,16));
+        }
+        break;
+    }
+    if (nb_cultists==2) {
+        Mob *Double;
+        switch (type) {
+            case 0:
+                if (sens==0){
+                    Double=clone_mob(cult_clock1, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                }
+                else {
+                    Double=clone_mob(cult_counter1, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                }
+                break;
+            case 1:
+                if (sens==0){
+                    Double=clone_mob(cult_clock2, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                }
+                else {
+                    Double=clone_mob(cult_counter2, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                }
+                break;
+            case 2:
+                if (sens==0){
+                    Double=clone_mob(cult_clock3, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                }
+                else {
+                    Double=clone_mob(cult_counter3, pos_cult+lat_size, HEIGTH+1,(rand()%3)+1,16);
+                }
+                break;
+        }
+        Double->action_value=2;
+        game->mobs=list_append(game->mobs,Double);
     }
     proba_change_cultist(game);
 }
@@ -718,14 +693,14 @@ void generator_mage(Game *game){
     if (level==0){
         int speed=rand()%3+1;
         game->mobs = list_append(game->mobs, clone_mob(mage, pos_x, HEIGTH,speed,0));
-        game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
+        game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
     }
     else{
         int speed=(rand()%2+1)*2;
         game->mobs = list_append(game->mobs, clone_mob(mage, pos_x, HEIGTH,speed,0));
-        game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
-        if (speed==2) {game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,100));}
-        else {game->mobs = list_append(game->mobs, clone_mob(curse_arrow, pos_x, HEIGTH,speed,200));}
+        game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
+        if (speed==2) {game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,100));}
+        else {game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,200));}
     }
     proba_change_mage(game);
 }
@@ -750,10 +725,13 @@ Game *initialise_game(int character_id){
     game->carte = create_empty_map();
     game->joueur = initialise_player(character_id); //0 for now
     game->score = 1;
+    game->nb_exp = 0;
+    game->exp = NULL;
     game->mobs = NULL;
+    game->projectile = NULL;
     game->proba = initialise_proba();
     game->biome = CROSSY_ROAD;
-    game->until_next = 20;
+    game->until_next = 10;
     initialise_map(game);
     return game;
 }
@@ -763,13 +741,15 @@ void switch_game(Game* game){
     //printf("%d\n",game->score+1);
     switch_map(game->carte);
     game->score++;
+    switch_mob(game->exp);
     switch_mob(game->mobs);
+    switch_mob(game->projectile);
     game->joueur->_y -= 32;
     game->joueur->_y_dest -= 32;
 }
 
 
-bool move(int x, int y, Game* game){
+bool move_player(int x, int y, Game* game){
     //printf("(%d,%d)\n",game->joueur->_x_dest/32,game->joueur->_y_dest/32);
     //printf("%d\n",tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type);
     if(tile_map(game->carte, game->joueur->_x_dest/32 + x, (game->joueur->_y_dest)/32 + y).type != water.type){
@@ -794,19 +774,19 @@ bool move(int x, int y, Game* game){
 }
 
 bool move_up(Game* game){
-    return move(0,1,game);
+    return move_player(0,1,game);
 }
 
 bool move_right(Game* game){
-    return move(1,0,game);
+    return move_player(1,0,game);
 }
 
 bool move_left(Game* game){
-    return move(-1,0,game);
+    return move_player(-1,0,game);
 }
 
 bool move_down(Game* game){
-    return move(0,-1,game);
+    return move_player(0,-1,game);
 }
 
 bool test_death(Game* game){
@@ -815,6 +795,8 @@ bool test_death(Game* game){
         return true;
     }else if(a_mob_collide(game->mobs, game->joueur)){
         return false;
+    }else if(a_mob_collide(game->projectile, game->joueur)){
+        return true;
     }else{
         return IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, game->joueur->_y_dest/32));
     }
@@ -831,10 +813,6 @@ void print_percent(Game* game){
 void update_game(Game* game){
     // avance les mobs de leur path et génére un obstacle dans le buffer
     //printf("%d\n",game->score);
-    move_all_mob(game->mobs,game->joueur);
-    game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
-    game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
-    //SDL_Delay(1000);
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
         if(cur->mob->move_x){
@@ -847,18 +825,23 @@ void update_game(Game* game){
         }
         cur = cur->next;
     }
+    move_all_mob(game->mobs,game->joueur);
+    move_all_mob(game->projectile,game->joueur);
+    game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
+    game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
+    //SDL_Delay(1000);
     if(game->score%(game->until_next) == 0){
         game->score++;
         game->biome++;
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 20;
+            game->until_next = 10;
             break;
 
             case FLAMING_MANOR:
             proba_change_game(game, ENTRANCE);
-            game->until_next = 40;
+            game->until_next = 10;
             break;
 
             case CULTIST_CAVE:
@@ -872,6 +855,10 @@ void update_game(Game* game){
             break;
         }
     }
+    if(a_mob_collide(game->exp, game->joueur)){
+        game->exp = destroy_liste_mob_collide(game->exp, game->joueur);
+        game->nb_exp++;
+    }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);
         //print_percent(game);
@@ -882,7 +869,9 @@ void update_game(Game* game){
 void destroy_game(Game *game){
     // Kaboum
     destroy_map(game->carte);
+    destroy_liste_mob(game->exp);
     destroy_liste_mob(game->mobs);
+    destroy_liste_mob(game->projectile);
     free(game->joueur);
     free(game->proba);
     free(game);

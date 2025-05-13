@@ -6,13 +6,19 @@ main.o: main.c tuiles.h mob.h
 	clang -c $(CFLAGS) main.c
 
 main: main.o tuiles.o mob.o map.o core.o
-	clang -o main $(CFLAGS) main.o tuiles.o mob.o map.o core.o
+	clang -o main $(CFLAGS) main.o tuiles.o mob.o map.o core.o -lncurses
 
 main_SDL.o: main_SDL.c map.h tuiles.h mob.h display.h
 	clang -c $(CFLAGS) main_SDL.c
 
-sdl_main: main_SDL.o tuiles.o mob.o map.o core.o display.o
-	clang -o sdl_main $(CFLAGS) main_SDL.o tuiles.o mob.o map.o display.o core.o -lSDL2 -lSDL2_image
+sdl_main: main_SDL.o tuiles.o mob.o map.o core.o display.o menu.o
+	clang -o sdl_main $(CFLAGS) main_SDL.o tuiles.o mob.o map.o display.o menu.o core.o -lSDL2 -lSDL2_image -lSDL2_ttf
+
+menu.o: menu.c
+	clang -c $(CFLAGS) menu.c
+
+run_menu: menu.o
+	clang -o menu $(CFLAGS) menu.o -lSDL2 -lSDL2_image -lSDL2_ttf
 
 map.o: map.c tuiles.h
 	clang -c $(CFLAGS) map.c
@@ -44,6 +50,9 @@ clean:
 run: sdl_main
 	./sdl_main
 
+runt : main
+	./main
+
 
 #main.o: main.c fonctions.h tuiles.h mob.h
 #	clang -c $(CFLAGS) main.c
@@ -68,3 +77,5 @@ run: sdl_main
 #
 #clean: 
 #	rm -f main test *.o
+
+

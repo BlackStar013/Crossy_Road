@@ -1,4 +1,5 @@
 #include "display.h"
+#include "mob.h"
 
 SDL_Surface** initSurfaceArrayMap(void){
     SDL_Surface** surfaceArrayMap = malloc(sizeof(SDL_Surface*)*NB_TILE);
@@ -60,7 +61,7 @@ void freeSurfaceArrayMap(SDL_Surface** surfaceArrayMap){
 }
 
 SDL_Surface** initSurfaceArrayMob(void){
-    SDL_Surface** surfaceArrayMob = malloc(sizeof(SDL_Surface*)*NB_TILE);
+    SDL_Surface** surfaceArrayMob = malloc(sizeof(SDL_Surface*)*NB_MOB);
     for(int i = 0; i<NB_MOB; i++){
         if(i==CAR){              
             surfaceArrayMob[i] = IMG_Load("sprites/Chariot.png");
@@ -80,11 +81,11 @@ SDL_Surface** initSurfaceArrayMob(void){
             surfaceArrayMob[i] = IMG_Load("sprites/Buisson.png");
         }else if(i==MOB_CULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/Cultiste.png");
-        }else if(i==HIGHCULTIST){   
+        }else{ //if(i==HIGHCULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/HautCultiste.png");
-        }else{ //if(i==CURSE){
-            surfaceArrayMob[i] = IMG_Load("sprites/ProjectileMaudit.png");
-        }
+        }//else{ //if(i==CURSE){
+         //   surfaceArrayMob[i] = IMG_Load("sprites/ProjectileMaudit.png");
+        // }
     }
     return surfaceArrayMob;
 }
@@ -94,6 +95,36 @@ void freeSurfaceArrayMob(SDL_Surface** surfaceArrayMob){
         SDL_FreeSurface(surfaceArrayMob[i]);
     }
     free(surfaceArrayMob);
+}
+
+
+SDL_Surface** initSurfaceExp(void){
+    SDL_Surface** surfaceExp = malloc(sizeof(SDL_Surface*));
+    *surfaceExp = IMG_Load("sprites/FEU.png");
+    return surfaceExp;
+}
+
+void freeSurfaceExp(SDL_Surface** surfaceExp){
+    SDL_FreeSurface(*surfaceExp);
+    free(surfaceExp);
+}
+
+
+SDL_Surface** initSurfaceArrayProjectile(void){
+    SDL_Surface** surfaceArrayProjectile = malloc(sizeof(SDL_Surface*)*NB_PROJECTILE);
+    for(int i = 0; i<NB_PROJECTILE; i++){
+        //if(i==CURSE){              
+            surfaceArrayProjectile[i] = IMG_Load("sprites/ProjectileMaudit.png");
+        //}
+    }
+    return surfaceArrayProjectile;
+}
+
+void freeSurfaceArrayProjectile(SDL_Surface** surfaceArrayProjectile){
+    for(int i=0; i<NB_PROJECTILE; i++){
+        SDL_FreeSurface(surfaceArrayProjectile[i]);
+    }
+    free(surfaceArrayProjectile);
 }
 
 //IMG_Load("sprites/Kairon.png");
@@ -111,6 +142,8 @@ SDL_Surface** initSurfaceArrayPlayer(void){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Kabi.png");
         }else if(i==OOGWAAY){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Oogwaay.png");
+        }else if(i==RANTON){
+            surfaceArrayPlayer[i] = IMG_Load("sprites/Rantons.png");
         }else{ //if(i==JOLINAR){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Jolinar.png");
         }
