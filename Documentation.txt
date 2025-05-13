@@ -143,3 +143,13 @@
 
     test
 Fichier contenant les tests sur le fonctionnement de fonctions.
+
+
+
+        Choix effectués:
+carte comme liste doublement chainée de lignes de tuiles avec des pointeurs vers les diverses lignes notables
+mobs divers stockées via des listes différentes selon l'ordre d'affichage
+chaque mobs a un pointeur vers sa fonction de déplacement
+structure jeu contenant tout les éléments utilisés
+structures modifiés en place dans les fonctions,pour ne pas avoir à libérer l'escpace des clones
+mobs n'ayant que besoin de la position du joueur pour savoir ou aller
