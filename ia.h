@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 typedef struct _Point{
-    bool vu;
+    int vu;
     int val;
     int i;
     int j;
@@ -21,7 +21,7 @@ typedef struct _File{
     Point *sommet;
 }File;
 
-#define PROFONDEUR 7
+#define PROFONDEUR 5
 //vraie profondeur = 5/2 car 5 == taille du tableau pour l'evaluation, mais donc pour profondeur 2 => PROFONDEUR = 2*2+1; 3=> PROFONDEUR = 3*2+1; ...
 
 

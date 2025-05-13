@@ -342,10 +342,11 @@ int main(void){
             if(game->joueur->delai){
                 game->joueur->delai--;
             }else{ 
-                // SDL_Delay(5000);
+                // SDL_Delay(3000);
                 //int directive = game->ia->directive[2-n];
-                //printf("directive %d\n", directive);
+                
                 int directive = eval(game);
+                printf("directive %d\n", directive);
                 if(directive == 0){
                     if(move_up(game)&&game->joueur->_y_dest>=3*32){
                         pix_defil += 32;
