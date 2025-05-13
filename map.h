@@ -3,13 +3,13 @@
 #include <stdbool.h>
 #include "tuiles.h"
 
-
 typedef struct _Line{
     //La tailles de tiles est LENGTH 
     Tile* tiles;
     struct _Line* prev;
     struct _Line* next; 
 }Line;
+
 
 typedef struct _Map{
     Line* head_buffer;
@@ -31,13 +31,22 @@ typedef struct _Player{
     int delai;
 }Player;
 
+enum Personnages {
+    KAIRON,
+    SNITCH,
+    AESIR,
+    KABI,
+    OOGWAAY,
+    JOLINAR,
+    RANTON,
+    NB_PERSO
+};
+
+#define DELAI 10
+
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done
-void ajout_tile(Map *carte,int x,int y,Tile tuile); //Done
-void suppression_tile(Map *carte,int x,int y); //? A quoi sert cette fonction vu qu'on a pas malloc les tiles individuellement
-bool coord_remplie(Map *carte,int x,int y); //Done
 bool carte_vide(Map *map); //Done
-int nb_tiles_remplies(Map *carte); //return LENGHT*HEIGHT?
 Tile tile_map(Map *carte,int x,int y); //Elle renvoie qu'elle est la tile (x,y) , done
 void switch_map(Map *carte);
 
@@ -50,3 +59,4 @@ void destroy_line(Line *line);
 void destroy_tail_buffer(Map* map);
 void destroy_last_buffer(Map* map);
 void destroy_map(Map *map);
+

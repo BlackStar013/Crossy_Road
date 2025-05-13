@@ -51,10 +51,12 @@ const Tile transition = {false,false,_TRANSITION};
 
 const Tile planks = {false,false,_PLANKS};
 
-const Tile burningplanks = {false,false,_BURNINGPLANKS};
-
 const Tile low_wall = {true,false,_LOW_WALL};
 
 const Tile cave = {false,false,_CAVE};
 
 const Tile stalagmite = {true,false,_STALAGMITE};
+
+const Tile channel = {false,false,_CHANNEL};
+
+const Tile base = {false,false,_BASE};

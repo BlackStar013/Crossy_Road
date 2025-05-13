@@ -81,9 +81,6 @@ void switch_map(Map *carte){
     //destroy_line(last);
 }
 
-void suppression_tile(Map *carte,int x,int y);
-int nb_tiles_remplies(Map *carte);
-
 
 Tile tile_map(Map *carte, int x, int y){
     // renvoie la tuile de la map a ces coordonnées, et empêche de sortir des côtés de la carte
@@ -109,7 +106,7 @@ Player* initialise_player(int id){
     joueur->offset_x = 0;
     joueur->offset_y = 1;
     joueur->character_id = id;
-    joueur->delai = 10;
+    joueur->delai = DELAI;
     return joueur;
 }
 

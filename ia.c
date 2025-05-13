@@ -274,14 +274,14 @@ int eval(Game *game){
         int bouge;
         bool bas = true; bool gauche = true; bool droite = true; bool haut = true;
         if(n < PROFONDEUR/2){
-            for(int k=0; k<10; k++){
+            for(int k=0; k<DELAI; k++){
                 update_game_IA(liste, p2);
                 // printf("o : %d\n", o);
                 // essaye de monter
                 if((encours->sommet->j) < PROFONDEUR/2){
                     bouge = move_up_IA(game->carte, p2, liste);
                     if(!bouge){
-                        if(k == 9 && haut && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                        if(k == DELAI-1 && haut && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
                             matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu = n;
                             for(int d = 0; d<n; d++){
                                 matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
@@ -305,7 +305,7 @@ int eval(Game *game){
                 if((encours->sommet->j)+PROFONDEUR/2 > 0){
                     bouge = move_down_IA(game->carte, p2, liste);
                     if(!bouge){
-                        if(k==9 && bas && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                        if(k == DELAI-1 && bas && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu){
                             matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu = n;
                             for(int d=0; d<n; d++){
                                 matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
@@ -330,7 +330,7 @@ int eval(Game *game){
                 if((encours->sommet->i)+PROFONDEUR/2 > 0){ 
                     bouge = move_left_IA(game->carte, p2, liste);
                     if(!bouge){
-                        if(k==9 && gauche && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->vu){
+                        if(k == DELAI-1 && gauche && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->vu){
                             matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->vu = n;
                             for(int d = 0; d<n; d++){
                                 matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
@@ -354,7 +354,7 @@ int eval(Game *game){
                 if((encours->sommet->i) < PROFONDEUR/2){
                     bouge = move_right_IA(game->carte, p2, liste);
                     if(!bouge){
-                        if(k == 9 && droite && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->vu){
+                        if(k == DELAI-1 && droite && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->vu){
                             matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->vu = n;
                             for(int d=0; d<n; d++){
                                 matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
