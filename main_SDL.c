@@ -547,7 +547,7 @@ int main(void){
         display_all(game, renderer,pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp);
         
         // une fois l'affichage fait, on regarde si le joueur se déplace
-        if(IA){
+       if(IA){
             if(game->joueur->delai){
                 game->joueur->delai--;
             }else{ 
@@ -664,5 +664,4 @@ int main(void){
     freeSurfaceExp(surfaceExp);
     SDL_Quit();
     return 0;
-}
-
+    }
