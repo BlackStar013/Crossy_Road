@@ -38,6 +38,8 @@ enum MOB{
     MOB_CULTIST,
     HIGHCULTIST,
     //CURSE,
+    PEBBLE,
+    BEBERT,
     NB_MOB
 };
 
@@ -116,6 +118,14 @@ void patrol_clock4x4(Mob *fire, Player* player);
 void patrol_counter4x3(Mob *fire, Player* player);
 void patrol_counter5x3(Mob *fire, Player* player);
 void patrol_counter4x4(Mob *fire, Player* player);
+void babel1_1(Mob *mob,Player* player);
+void babel2_1(Mob *mob,Player* player);
+void babel3_1(Mob *mob,Player* player);
+void babel4_1(Mob *mob,Player* player);
+void babel1_2(Mob *mob,Player* player);
+void babel2_2(Mob *mob,Player* player);
+void babel3_2(Mob *mob,Player* player);
+void babel4_2(Mob *mob,Player* player);
 
 extern const Mob cult_clock1;
 extern const Mob cult_clock2;
@@ -131,3 +141,14 @@ extern const Mob mage;
 extern const Mob curse_arrow;
 //extern const Mob curse_arrow_bis_1;
 //extern const Mob curse_arrow_bis_2;
+extern const Mob pebble_left;
+extern const Mob pebble_right;
+
+extern const Mob babel11;
+extern const Mob babel12;
+extern const Mob babel21;
+extern const Mob babel22;
+extern const Mob babel31;
+extern const Mob babel32;
+extern const Mob babel41;
+extern const Mob babel42;
