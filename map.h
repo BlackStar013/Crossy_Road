@@ -3,13 +3,13 @@
 #include <stdbool.h>
 #include "tuiles.h"
 
-
 typedef struct _Line{
     //La tailles de tiles est LENGTH 
     Tile* tiles;
     struct _Line* prev;
     struct _Line* next; 
 }Line;
+
 
 typedef struct _Map{
     Line* head_buffer;
@@ -28,6 +28,7 @@ typedef struct _Player{
     int offset_x;
     int offset_y;
     int character_id;
+    int delai;
 }Player;
 
 enum Personnages {
@@ -40,6 +41,8 @@ enum Personnages {
     RANTON,
     NB_PERSO
 };
+
+#define DELAI 10
 
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done
@@ -56,3 +59,4 @@ void destroy_line(Line *line);
 void destroy_tail_buffer(Map* map);
 void destroy_last_buffer(Map* map);
 void destroy_map(Map *map);
+

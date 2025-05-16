@@ -4,6 +4,7 @@
 #include "core.h"
 #include "mob.h"
 #include <stdbool.h>
+#include "ia.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

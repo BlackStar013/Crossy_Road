@@ -83,7 +83,6 @@ bool a_mob_collide(Liste_Mob* list,Player* player){
 //////////////////////////////////////////////////////
 
 
-
 bool mob_in_map(Mob *mob){
     if(((mob->_x)/32>LENGTH)||((mob->_y)/32>HEIGTH)){ //Dépassement supérieur
         return false;

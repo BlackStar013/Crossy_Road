@@ -94,8 +94,3 @@ extern const Tile stalagmite;
 extern const Tile channel;
 
 extern const Tile base;
-
-
-
-
-
