@@ -887,7 +887,7 @@ bool move_down(Game* game){
 }
 
 bool test_death(Game* game){
-    // test si le joueur rentre dans un mon, avance sur une case danger
+    // test si le joueur rentre dans un mob, avance sur une case danger
     if(a_death_mob_collide(game->mobs, game->joueur)){
         return true;
     }else if(a_mob_collide(game->mobs, game->joueur)){
