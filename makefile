@@ -20,7 +20,6 @@ menu.o: menu.c
 run_menu: menu.o
 	clang -o menu $(CFLAGS) menu.o -lSDL2 -lSDL2_image -lSDL2_ttf
 
-
 map.o: map.c tuiles.h
 	clang -c $(CFLAGS) map.c
 
@@ -53,3 +52,4 @@ run: sdl_main
 
 runt : main
 	./main
+

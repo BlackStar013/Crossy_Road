@@ -56,10 +56,10 @@ void destroy_file(File *file){
 bool test_death_IA(Player *joueur, Map *map, Liste_Mob *liste, Liste_Mob *projectiles){
     if(a_death_mob_collide(liste, joueur)){
         return true;
+    }else if(a_death_mob_collide(projectiles, joueur)){
+        return true;
     }else if(a_mob_collide(liste, joueur)){
         return false;
-    }else if(a_mob_collide(projectiles, joueur)){
-        return true;
     }else{
         return IS_DANGER(tile_map(map, joueur->_x_dest/32, joueur->_y_dest/32));
     }
@@ -218,10 +218,10 @@ Point ***matrice_evaluation(void){
         }
         evaluation[i] = malloc(PROFONDEUR*sizeof(Point));
         for(int j=0; j<PROFONDEUR; j++){
-            evaluation[i][j] = create_point(-PROFONDEUR/2+j, PROFONDEUR/2-i, coef*(1 + val_absolue(PROFONDEUR/2-i) + val_absolue(PROFONDEUR/2-j))   );
+            evaluation[i][j] = create_point(-PROFONDEUR/2+j, PROFONDEUR/2-i, coef*(1 + val_absolue(PROFONDEUR/2-i) + val_absolue(PROFONDEUR/2-j)) );
         }
     }
-    // evaluation[PROFONDEUR/2][PROFONDEUR/2]->val = -1;
+    evaluation[0][PROFONDEUR/2]->val += 1;
     return evaluation;
 }
 
@@ -254,6 +254,24 @@ int eval(Game *game){
     Liste_Mob *liste = clone_listemob(game->mobs);
     Liste_Mob *projectiles = clone_listemob(game->projectile);
     Point ***matrice_eval = matrice_evaluation();
+    if(game->joueur->_x_dest/32 >= LENGTH/2){
+        for(int i=0; i<PROFONDEUR; i++){
+            for(int j=0; j<PROFONDEUR; j++){
+                if((i<PROFONDEUR/2) && (j<=PROFONDEUR/2)){
+                    matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
+                }
+            }
+        }
+    }else{
+        for(int i=0; i<PROFONDEUR; i++){
+            for(int j=0; j<PROFONDEUR; j++){
+                if((i<PROFONDEUR/2) && (j>=PROFONDEUR/2)){
+                    matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
+                }
+            }
+        }
+    }
+    // print_matrice(matrice_eval);
     File *encours = create_file(matrice_eval[PROFONDEUR/2][PROFONDEUR/2]);
     File *futur = NULL;
     int n = 0;
@@ -298,7 +316,9 @@ int eval(Game *game){
                         }       
                     }else{  //if(bouge){
                         haut = false;
-                        matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->val = -99;
+                        if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->val = -99;
+                        }
                     }
                     if(bouge != 1){
                         move_down_IA(game->carte, p2, liste, projectiles);
@@ -323,7 +343,9 @@ int eval(Game *game){
 
                     }else{ //if(bouge){
                         bas = false;
-                        matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->val = -99;
+                        if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->val = -99;
+                        }
                     }
                     if(bouge != 1){
                         move_up_IA(game->carte, p2, liste, projectiles);
@@ -347,7 +369,9 @@ int eval(Game *game){
                         }
                     }else{ //if(bouge){
                         gauche = false;
-                        matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->val = -99;
+                        if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->val = -99;
+                        }
                     }
                     if(bouge != 1){
                         move_right_IA(game->carte, p2, liste, projectiles);
@@ -371,7 +395,9 @@ int eval(Game *game){
                         }
                     }else{ //if(bouge){
                         droite = false;
-                        matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->val = -99;
+                        if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->val = -99;
+                        }
                     }
                     if(bouge != 1){
                         move_left_IA(game->carte, p2, liste, projectiles);
@@ -400,7 +426,7 @@ int eval(Game *game){
                 futur = defile(futur);
             }
         }
-        //print_matrice(matrice_eval);
+        // print_matrice(matrice_eval);
     }
     
     Point *max = NULL;
