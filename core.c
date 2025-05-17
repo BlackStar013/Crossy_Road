@@ -345,10 +345,11 @@ void generator_obstacle(Game*game){
 
         case TRANSITION_CAVE:
         generator_transition_cave(game);
+        break;
 
         case STONE:
         generator_pebble(game);
-
+        break;
         case BABEL:
         generator_babel(game);
         break;
@@ -715,19 +716,21 @@ void generator_mage(Game *game){
             clone(&line->tiles[i], channel);
         }
     }
-    int level =rand()%2;
-    if (level==0){
-        int speed=rand()%3+1;
-        game->mobs = list_append(game->mobs, clone_mob(mage, pos_x, HEIGTH,speed,0));
-        game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
+    int speed=3;
+    Mob *c=clone_mob(mage, pos_x, HEIGTH,speed,0);
+    c->offset_x+=3;
+    game->mobs = list_append(game->mobs, c);
+    Mob *arrow=clone_mob(curse_arrow, pos_x, HEIGTH,speed,0);
+    if (speed==2){
+        arrow->action_value=16;
     }
-    else{
-        int speed=(rand()%2+1)*2;
-        game->mobs = list_append(game->mobs, clone_mob(mage, pos_x, HEIGTH,speed,0));
-        game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,0));
-        if (speed==2) {game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,100));}
-        else {game->projectile = list_append(game->projectile, clone_mob(curse_arrow, pos_x, HEIGTH,speed,200));}
+    if (speed==3){
+        arrow->action_value=12;
     }
+    if (speed==1){
+        arrow->action_value=24;
+    }
+    game->projectile = list_append(game->projectile, arrow);
     proba_change_mage(game);
 }
 
@@ -749,7 +752,7 @@ void add_pebble(Game *game, Mob pebble, Tile cave_, int pos, int speed, int nb_p
 }
 
 void proba_change_pebble(Game *game, int nb_line){
-    int proba_change = 6 + (nb_line-1)*(rand()%8+6);
+    int proba_change = 10 + (nb_line-1)*(rand()%8+10);
     if(*((game->proba)+STONE) <= proba_change){
         *((game->proba)+CAVE) += ((*((game->proba)+STONE)))/4 ;
         *((game->proba)+MAGE) += ((*((game->proba)+STONE)))/4 ;
@@ -808,7 +811,7 @@ void generator_babel(Game *game){
     int type=rand()%4;
     int sens=rand()%2;
     int pos_b=rand()%(LENGTH-5);
-    for (int i=0;i<5;i++) {
+    for (int i=0;i<4;i++) {
         add_buffer_line(game->carte);
         Line* line = game->carte->head_buffer;
         for(int j = 0; j<LENGTH; j++){
@@ -841,23 +844,23 @@ void generator_babel(Game *game){
                             clone(&line->tiles[j], stalagmite);
                         }
                     }
-                    if (i==4){
-                        if (j==1+pos_b ||j==3+pos_b){
-                            clone(&line->tiles[j], stalagmite);
-                        }
-                    }
+                    // if (i==4){
+                    //     if (j==1+pos_b ||j==3+pos_b){
+                    //         clone(&line->tiles[j], stalagmite);
+                    //     }
+                    // }
                     break;
                 case 2:
                     if (i==0){
-                        if (j==0+pos_b ||j==3+pos_b||j==1+pos_b||j==4+pos_b){
+                        if (j==0+pos_b ||j==4+pos_b){
                             clone(&line->tiles[j], stalagmite);
                         }
                     }
-                    if (i==4){
-                        if (j==1+pos_b ||j==2+pos_b||j==3+pos_b){
-                            clone(&line->tiles[j], stalagmite);
-                        }
-                    }
+                    // if (i==4){
+                    //     if (j==1+pos_b ||j==2+pos_b||j==3+pos_b){
+                    //         clone(&line->tiles[j], stalagmite);
+                    //     }
+                    // }
                     break;
                 case 3:
                     if (i==2){
@@ -881,34 +884,34 @@ void generator_babel(Game *game){
     switch (type) {
             case 0:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b, HEIGTH+4,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b+2, HEIGTH+2,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel12, pos_b+4, HEIGTH+6,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel12, pos_b+3, HEIGTH+3,speed,16));
                 }
                 break;
             case 1:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel21, pos_b, HEIGTH+4,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel21, pos_b+1, HEIGTH+3,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel22, pos_b, HEIGTH+4,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel22, pos_b+3, HEIGTH+3,speed,16));
                 }
                 break;
             case 2:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel31, pos_b+1, HEIGTH+6,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel31, pos_b+2, HEIGTH+3,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel32, pos_b+1, HEIGTH+6,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel32, pos_b+1, HEIGTH+2,speed,16));
                 }
                 break;
             case 3:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel41, pos_b+2, HEIGTH+2,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel41, pos_b+1, HEIGTH+2,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel42, pos_b+1, HEIGTH+3,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel42, pos_b+3, HEIGTH+2,speed,16));
                 }
                 break;
             default:
