@@ -39,6 +39,7 @@ enum Personnages {
     OOGWAAY,
     JOLINAR,
     RANTON,
+    DEDE,
     NB_PERSO
 };
 
