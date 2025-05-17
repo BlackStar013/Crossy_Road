@@ -725,7 +725,7 @@ void add_pebble(Game *game, Mob pebble, Tile cave_, int pos, int speed, int nb_p
         clone(&line->tiles[i], cave_);
     }
     add_buffer_line(game->carte);
-    Line *line = game->carte->head_buffer;
+    line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], cave_);
     }
