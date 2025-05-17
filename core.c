@@ -579,14 +579,14 @@ void generator_cave(Game *game){
 void proba_change_cultist(Game* game){
     *((game->proba)+CAVE) += ((*((game->proba)+CULTIST))/3) ;
     *((game->proba)+STONE) += ((*((game->proba)+CULTIST))/3) ;
-    *((game->proba)+CULTIST) = 0 ;
     *((game->proba)+MAGE) += ((*((game->proba)+CULTIST))/3)+1;
+    *((game->proba)+CULTIST) = 0 ;
     *((game->proba)+CAVE) += check_percent(game, CAVE, BABEL);
 
     *((game->proba)+CAVE) += ((*((game->proba)+BABEL))/3) ;
     *((game->proba)+STONE) += ((*((game->proba)+BABEL))/3) ;
-    *((game->proba)+BABEL) = 0 ;
     *((game->proba)+MAGE) += ((*((game->proba)+BABEL))/3)+1;
+    *((game->proba)+BABEL) = 0 ;
     *((game->proba)+CAVE) += check_percent(game, CAVE, BABEL);
 
 }
@@ -744,7 +744,7 @@ void add_pebble(Game *game, Mob pebble, Tile cave_, int pos, int speed, int nb_p
     }
     int init_x = -pebble.length+(rand()%3+1)*pos;
     for(int i = 0; i < nb_pebble; i++){
-        game->mobs = list_append(game->mobs, clone_mob(pebble, init_x+(LENGTH/nb_pebble)*i, HEIGTH+pos,speed,0));
+        game->mobs = list_append(game->mobs, clone_mob(pebble, init_x+(LENGTH/nb_pebble)*i, HEIGTH+pos+1,speed,0));
     }
 }
 
@@ -790,6 +790,20 @@ void generator_pebble(Game *game){
     proba_change_pebble(game, nb_line);
 }
 
+void proba_change_babel(Game* game){
+    *((game->proba)+STONE) += ((*((game->proba)+CAVE))/2) ;
+    *((game->proba)+MAGE) += ((*((game->proba)+CAVE))/2)+1;
+    *((game->proba)+STONE) += ((*((game->proba)+CULTIST))/2) ;
+    *((game->proba)+MAGE) += ((*((game->proba)+CULTIST))/2)+1;
+    *((game->proba)+STONE) += ((*((game->proba)+BABEL))/2) ;
+    *((game->proba)+MAGE) += ((*((game->proba)+BABEL))/2)+1;
+    *((game->proba)+CULTIST) = 0 ;
+    *((game->proba)+BABEL) = 0 ;
+    *((game->proba)+CAVE) = 0 ;
+    *((game->proba)+STONE) += check_percent(game, CAVE, BABEL);
+
+}
+
 void generator_babel(Game *game){
     int type=rand()%4;
     int sens=rand()%2;
@@ -799,63 +813,67 @@ void generator_babel(Game *game){
         Line* line = game->carte->head_buffer;
         for(int j = 0; j<LENGTH; j++){
             clone(&line->tiles[j], cave);
-            switch (type)
-            {
-            case 0:
-                if (i==1){
-                    if (j==1+pos_b ||j==3+pos_b){
-                        clone(&line->tiles[j], stalagmite);
+            if(j<pos_b ||j>pos_b+4){
+                clone(&line->tiles[j], stalagmite);
+            }
+            else {
+                switch (type){
+                case 0:
+                    if (i==1){
+                        if (j==1+pos_b ||j==3+pos_b){
+                            clone(&line->tiles[j], stalagmite);
+                        }
                     }
-                }
-                if (i==3){
-                    if (j==0+pos_b ||j==2+pos_b||j==4+pos_b){
-                        clone(&line->tiles[j], stalagmite);
+                    if (i==3){
+                        if (j==0+pos_b ||j==2+pos_b||j==4+pos_b){
+                            clone(&line->tiles[j], stalagmite);
+                        }
                     }
-                }
-                break;
-            case 1:
-                if (i==1){
-                    if (j==2+pos_b){
-                        clone(&line->tiles[j], stalagmite);
+                    break;
+                case 1:
+                    if (i==1){
+                        if (j==2+pos_b){
+                            clone(&line->tiles[j], stalagmite);
+                        }
                     }
-                }
-                if (i==3){
-                    if (j==0+pos_b ||j==4+pos_b){
-                        clone(&line->tiles[j], stalagmite);
+                    if (i==3){
+                        if (j==0+pos_b ||j==4+pos_b){
+                            clone(&line->tiles[j], stalagmite);
+                        }
                     }
-                }
-                if (i==4){
-                    if (j==1+pos_b ||j==3+pos_b){
-                        clone(&line->tiles[j], stalagmite);
+                    if (i==4){
+                        if (j==1+pos_b ||j==3+pos_b){
+                            clone(&line->tiles[j], stalagmite);
+                        }
                     }
-                }
-                break;
-            case 2:
-                if (i==0){
-                    if (j==0+pos_b ||j==3+pos_b||j==1+pos_b||j==4+pos_b){
-                        clone(&line->tiles[j], stalagmite);
+                    break;
+                case 2:
+                    if (i==0){
+                        if (j==0+pos_b ||j==3+pos_b||j==1+pos_b||j==4+pos_b){
+                            clone(&line->tiles[j], stalagmite);
+                        }
                     }
-                }
-                if (i==4){
-                    if (j==1+pos_b ||j==2+pos_b||j==3+pos_b){
-                        clone(&line->tiles[j], stalagmite);
+                    if (i==4){
+                        if (j==1+pos_b ||j==2+pos_b||j==3+pos_b){
+                            clone(&line->tiles[j], stalagmite);
+                        }
                     }
-                }
-                break;
-            case 3:
-                if (i==2){
-                    if (j==0+pos_b ||j==4+pos_b){
-                        clone(&line->tiles[j], stalagmite);
+                    break;
+                case 3:
+                    if (i==2){
+                        if (j==0+pos_b ||j==4+pos_b){
+                            clone(&line->tiles[j], stalagmite);
+                        }
                     }
-                }
-                if (i==3){
-                    if (j==1+pos_b ||j==3+pos_b){
-                        clone(&line->tiles[j], stalagmite);
+                    if (i==3){
+                        if (j==1+pos_b ||j==3+pos_b){
+                            clone(&line->tiles[j], stalagmite);
+                        }
                     }
+                    break;
+                default:
+                    break;
                 }
-                break;
-            default:
-                break;
             }
         }
     }
@@ -899,7 +917,7 @@ void generator_babel(Game *game){
                 break;
             }
     }
-    proba_change_cultist(game);
+    proba_change_babel(game);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
