@@ -345,6 +345,12 @@ void generator_obstacle(Game*game){
 
         case TRANSITION_CAVE:
         generator_transition_cave(game);
+
+        case STONE:
+        generator_transition_cave(game);
+
+        case BABEL:
+        generator_transition_cave(game);
         break;
 
 
@@ -729,12 +735,12 @@ void add_pebble(Game *game, Mob pebble, Tile cave_, int pos, int speed, int nb_p
     add_buffer_line(game->carte);
     Line *line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave);
+        clone(&line->tiles[i], cave_);
     }
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave);
+        clone(&line->tiles[i], cave_);
     }
     int init_x = -pebble.length+(rand()%3+1)*pos;
     for(int i = 0; i < nb_pebble; i++){
