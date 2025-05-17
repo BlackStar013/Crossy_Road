@@ -310,6 +310,8 @@ Liste_Mob* destroy_liste_mob_from(int y, Liste_Mob *list){
     }
     if(prev_not_free!=NULL){
         prev_not_free->next=NULL;
+    } else{
+        list=NULL;
     }
     return list;
 }
