@@ -73,7 +73,7 @@ SDL_Surface** initSurfaceArrayMob(void){
             surfaceArrayMob[i] = IMG_Load("sprites/Canon.png");
         }else if(i==CANON_BALL){
             surfaceArrayMob[i] = IMG_Load("sprites/Boulet.png");
-        }else if(i==FIRE){
+        }else if(i==FIRE_MOB){
             surfaceArrayMob[i] = IMG_Load("sprites/FEU.png");
         }else if(i==BUSH){
             surfaceArrayMob[i] = IMG_Load("sprites/Buisson.png");

@@ -240,7 +240,7 @@ void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil, SDL_Su
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
             }
             SDL_DestroyTexture(spriteTexture);
-        } else if(liste->mob->id_mob==FIRECLOCK || liste->mob->id_mob==FIRECOUNTER){
+        } else if(liste->mob->id_mob==FIRE_MOB){
             if (!spriteSurface){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
                 exit(-1);

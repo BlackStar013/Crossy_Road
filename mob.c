@@ -372,7 +372,7 @@ void clockwise_cycle(Mob *fire,Player* Joueur){
     }
 }
 
-const Mob fire_clock = {1,1,true,0,0,0,0,0,FIRE,0,0,clockwise_cycle,0,16,0,0,0};
+const Mob fire_clock = {1,1,true,0,0,0,0,0,FIRE_MOB,0,0,clockwise_cycle,0,16,0,0,0};
 
 void counterclock_cycle(Mob *fire,Player* Joueur){
     //fait des tours dans le sens antihoraire d'une zone de 2*2 cases
@@ -412,7 +412,7 @@ void counterclock_cycle(Mob *fire,Player* Joueur){
     }
 }
 
-const Mob fire_counter = {1,1,true,0,0,0,0,0,FIRE,0,0,counterclock_cycle,0,16,0,0,0};
+const Mob fire_counter = {1,1,true,0,0,0,0,0,FIRE_MOB,0,0,counterclock_cycle,0,16,0,0,0};
 
 // void clockwise_cycle_3(Mob *fire,Player* Joueur){
 //     //fait des tours dans le sens horaire d'une zone de 3*3 cases
