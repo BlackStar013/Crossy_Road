@@ -881,7 +881,7 @@ void generator_babel(Game *game){
     switch (type) {
             case 0:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b+4, HEIGTH+4,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b, HEIGTH+4,speed,16));
                 }
                 else{
                     game->mobs = list_append(game->mobs, clone_mob(babel12, pos_b+4, HEIGTH+4,speed,16));
@@ -905,7 +905,7 @@ void generator_babel(Game *game){
                 break;
             case 3:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel41, pos_b+1, HEIGTH+4,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel41, pos_b+2, HEIGTH+3,speed,16));
                 }
                 else{
                     game->mobs = list_append(game->mobs, clone_mob(babel42, pos_b+1, HEIGTH+4,speed,16));
