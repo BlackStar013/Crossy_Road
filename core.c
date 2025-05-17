@@ -623,7 +623,7 @@ void generator_cultist(Game *game){
         }
         break;
         case 2:
-                if (sens==0){
+        if (sens==0){
             game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos_cult+3, HEIGTH+nb_lines-1,speed,16));
         }
         else {
