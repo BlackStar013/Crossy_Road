@@ -881,34 +881,34 @@ void generator_babel(Game *game){
     switch (type) {
             case 0:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b, HEIGTH+1,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b, HEIGTH+6,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel12, pos_b, HEIGTH+1,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel12, pos_b, HEIGTH+6,speed,16));
                 }
                 break;
             case 1:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel21, pos_b, HEIGTH+1,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel21, pos_b, HEIGTH+6,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel22, pos_b, HEIGTH+1,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel22, pos_b, HEIGTH+6,speed,16));
                 }
                 break;
             case 2:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel31, pos_b, HEIGTH+2,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel31, pos_b, HEIGTH+7,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel32, pos_b, HEIGTH+2,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel32, pos_b, HEIGTH+7,speed,16));
                 }
                 break;
             case 3:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel41, pos_b, HEIGTH,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel41, pos_b, HEIGTH+5,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel42, pos_b, HEIGTH,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel42, pos_b, HEIGTH+5,speed,16));
                 }
                 break;
             default:
