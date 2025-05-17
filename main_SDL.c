@@ -211,8 +211,7 @@ int main(void){
                 if(game->joueur->delai){
                     game->joueur->delai--;
                 }else{ 
-                    // SDL_Delay(3000);
-                    //int directive = game->ia->directive[2-n];
+                    // SDL_Delay(1000);
 
                     int directive = eval(game);
                     // printf("directive %d\n", directive);

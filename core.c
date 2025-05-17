@@ -933,17 +933,17 @@ void update_game(Game* game){
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 45;
+            game->until_next = 30;
             break;
 
             case HARD_CROSSY_ROAD:
             proba_change_game(game, BUSHES);
-            game->until_next = 45;
+            game->until_next = 30;
             break;
 
             case FLAMING_MANOR:
             proba_change_game(game, ENTRANCE);
-            game->until_next = 45;
+            game->until_next = 30;
             break;
 
             case CULTIST_CAVE:
