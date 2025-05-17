@@ -57,6 +57,7 @@ bool test_death_IA(Player *joueur, Map *map, Liste_Mob *liste, Liste_Mob *projec
     if(a_death_mob_collide(liste, joueur)){
         return true;
     }else if(a_death_mob_collide(projectiles, joueur)){
+        printf("je passe la\n");
         return true;
     }else if(a_mob_collide(liste, joueur)){
         return false;
@@ -255,19 +256,17 @@ int eval(Game *game){
     Liste_Mob *projectiles = clone_listemob(game->projectile);
     Point ***matrice_eval = matrice_evaluation();
     if(game->joueur->_x_dest/32 >= LENGTH/2){
-        for(int i=0; i<PROFONDEUR; i++){
+        matrice_eval[PROFONDEUR/2][0]->val += 1;
+        for(int i=0; i<PROFONDEUR/2; i++){
             for(int j=0; j<PROFONDEUR; j++){
-                if((i<PROFONDEUR/2) && (j<=PROFONDEUR/2)){
-                    matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
-                }
+                matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
             }
         }
     }else{
-        for(int i=0; i<PROFONDEUR; i++){
+        matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val += 1;
+        for(int i=0; i<PROFONDEUR/2; i++){
             for(int j=0; j<PROFONDEUR; j++){
-                if((i<PROFONDEUR/2) && (j>=PROFONDEUR/2)){
-                    matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
-                }
+                matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val)));
             }
         }
     }
@@ -324,33 +323,6 @@ int eval(Game *game){
                         move_down_IA(game->carte, p2, liste, projectiles);
                     }
                 }
-                //essaye d'aller vers le bas
-                if((encours->sommet->j)+PROFONDEUR/2 > 0){
-                    bouge = move_down_IA(game->carte, p2, liste, projectiles);
-                    if(!bouge){
-                        if(k == DELAI-1 && bas && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu){
-                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu = n;
-                            for(int d=0; d<n; d++){
-                                matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
-                            }
-                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->chemin[n] = 2;
-                            if(futur == NULL){
-                                futur = create_file(matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]);
-                            }else{
-                                append_file(futur, matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]);
-                            }
-                        }
-
-                    }else{ //if(bouge){
-                        bas = false;
-                        if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
-                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->val = -99;
-                        }
-                    }
-                    if(bouge != 1){
-                        move_up_IA(game->carte, p2, liste, projectiles);
-                    }
-                }
                 // essaye d'aller a gauche
                 if((encours->sommet->i)+PROFONDEUR/2 > 0){ 
                     bouge = move_left_IA(game->carte, p2, liste, projectiles);
@@ -403,6 +375,33 @@ int eval(Game *game){
                         move_left_IA(game->carte, p2, liste, projectiles);
                     }
                 }
+                //essaye d'aller vers le bas
+                if((encours->sommet->j)+PROFONDEUR/2 > 0){
+                    bouge = move_down_IA(game->carte, p2, liste, projectiles);
+                    if(!bouge){
+                        if(k == DELAI-1 && bas && n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu = n;
+                            for(int d=0; d<n; d++){
+                                matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
+                            }
+                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->chemin[n] = 2;
+                            if(futur == NULL){
+                                futur = create_file(matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]);
+                            }else{
+                                append_file(futur, matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]);
+                            }
+                        }
+
+                    }else{ //if(bouge){
+                        bas = false;
+                        if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                            matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->val = -99;
+                        }
+                    }
+                    if(bouge != 1){
+                        move_up_IA(game->carte, p2, liste, projectiles);
+                    }
+                }
             }
         }
         // printf("compteur : %d\n", compteur);
@@ -447,12 +446,12 @@ int eval(Game *game){
         }
     }
     // printf("point max %d %d\n", max->i, max->j);
-    int directive = 0;
+    int directive = 4;
     if(max != NULL){
         directive = max->chemin[0];
     }
     // printf("%d\n", directive);
-    // print_matrice(matrice_eval);
+    print_matrice(matrice_eval);
     
     destroy_file(encours);
     destroy_file(futur);
