@@ -1,0 +1,60 @@
+    Dossier Comptes_rendus:
+-contient les comptes rendus des réunions hebdomadaires (sauf problèmes ayant empèché la réunion)
+
+
+    Dossier sprites:
+-contient l'intégralité des textures de jeu pour la version SDL
+
+
+    menu_zone?
+
+    main_memory
+-contient une ancienne version de la boucle faisant tourner le jeu dans le terminal, au tour par tour.
+
+    main
+-contient la boucle faisant tourner le jeu dans le terminal, en temps réel. (à finir)
+
+    main_SDL
+-contient la boucle faisant tourner le jeu dans une interface graphique via SDL, en temps réel.
+-gère les changements d'état des sprites
+
+    display
+-charges les différentes texture qu'utilise main_SDL selon les objets recherchés.
+
+    tuiles
+-définit le type "Tuile" servant à la représentation du terrain du jeu
+-définit les Macros liés à la taille du jeu ainsi qu'à l'utilisation des tuiles 
+-définit la fonction permettant de cloner les tuiles   
+-définit les différentes tuiles pouvant etre utilisés par le jeu
+
+    map
+-Définit la structure de la carte
+-Définit les fonctions de création, destruction, défilement et ajout et retrait de lignes à la carte
+-Définit la structure du joueur ainsi que les personnages jouables
+
+    mob
+-Définit les "mobs", objets sur la carte pouvant interagir avec le jeu diverses manières
+-Définit les fonctions d'intercation avec le joueur en cas de collision
+-Définit la liste servant à stocker les mobs
+-Définit les fonctions de gestion de cette liste
+-Définit les fonctions de mise à jour des mobs lors des boucles de jeu et lors du défilement de la carte
+-Définit les différentes fonctions definissant le parcours des mobs
+-Définit les différents mobs utilisés par le jeu ainsi que des macros simplifiant leur appel
+
+    Core
+-Définit la structure du jeu, contenant l'intégralité des objets utilisés par ce dernier
+-Définit les biomes, gérant l'évolution des types d'obstacles au fur à mesure que la partie avance
+-Définit les fonctions servant à faire appairaitre les différents obstacles
+-Définit les probabilités d'apparitions des obstacles au cours d'une partie
+-Définit les fonctions altérant les probabilités d'apparitions des divers obstacles lors de la création d'un obstacle
+-Définit l'initialisation du jeu
+-Définit la fonction d'update du jeu (à chaque boucle)
+-Définit la fonction assurant le défilement global (map, mob et joueur)
+-Définit la fonction faisant apparaitre un obstacle selon l'état global du jeu
+-Définit les fonctions de déplacement du joueur 
+    ->les inputs appelant ses dernières se situent dans les boucles principales des fichiers main
+-Définit la fonction de fin de partie 
+-Définit la fonction effacant les donnés de la partie
+
+    test
+Fichier contenant les tests sur le fonctionnement de fonctions.
