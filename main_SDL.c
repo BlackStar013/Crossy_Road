@@ -1,11 +1,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_image.h>
 #include "map.h"
 #include "tuiles.h"
 #include "ia.h"
+#include "ia.h"
 #include "core.h"
+#include "menu.h"
 #include "menu.h"
 #include "mob.h"
 #include "display.h"
