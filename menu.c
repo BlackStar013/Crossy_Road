@@ -38,19 +38,21 @@ void displayMainMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int wid
     SDL_Rect backRect = {0, 0, width, heigth};
     SDL_RenderCopy(renderer, backTexture, NULL, &backRect);
 
-    SDL_Rect titleRect = {width / 2 - 120, heigth / 2 - 180, 240, 96};
+    SDL_Rect titleRect = {width / 2 - 120*ECHELLE, heigth / 2 - 150*ECHELLE, 240*ECHELLE, 96*ECHELLE};
     SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
-    SDL_Rect curRect = {width / 2 - 144, heigth / 2+(cursor*50)-20, 2*32, 2*32};
+    int decals[] = {(23*5)/2, (23*8)/2, 80, (23*4)/2};
+
+    SDL_Rect curRect = {width / 2 - (decals[cursor]+50)*ECHELLE, heigth / 2+(cursor*50*ECHELLE)-40*ECHELLE, 2*32*ECHELLE, 2*32*ECHELLE};
     SDL_RenderCopy(renderer, cursorTexture, NULL, &curRect);
 
-    SDL_Rect rect1 = {width / 2 - 80, heigth / 2, 160, 32};
+    SDL_Rect rect1 = {width / 2 - ((23*5)/2)*ECHELLE, heigth / 2 - 20*ECHELLE, 23*5*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[0], NULL, &rect1);
-    SDL_Rect rect2 = {width / 2 - 80, heigth / 2 + 50, 160, 32};
+    SDL_Rect rect2 = {width / 2 - ((23*8)/2)*ECHELLE, heigth / 2 +30*ECHELLE, 23*8*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[1], NULL, &rect2);
-    SDL_Rect rect3 = {width / 2 - 80, heigth / 2 + 100, 160, 32};
+    SDL_Rect rect3 = {width / 2 - 80*ECHELLE, heigth / 2 + 80*ECHELLE, 160*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[2], NULL, &rect3);
-    SDL_Rect rect4 = {width / 2 - 80, heigth / 2 + 150, 160, 32};
+    SDL_Rect rect4 = {width / 2 - ((23*4)/2)*ECHELLE, heigth / 2 + 130*ECHELLE, 23*4*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[3], NULL, &rect4);
     
     SDL_RenderPresent(renderer);
@@ -75,14 +77,14 @@ void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer
             *quit = SDL_TRUE;
             quit2 = SDL_TRUE;
         }else if(pevent->type == SDL_KEYUP){
-            if(pevent->key.keysym.sym == SDLK_z){
+            if((pevent->key.keysym.sym == SDLK_z) || (pevent->key.keysym.sym == SDLK_UP)){
                 cursor = (cursor-1)%NB_GOOPTION;
                 if(cursor < 0){
                     cursor = NB_GOOPTION-1;
                 }
-            }else if(pevent->key.keysym.sym == SDLK_s){
+            }else if((pevent->key.keysym.sym == SDLK_s) || (pevent->key.keysym.sym == SDLK_DOWN)){
                 cursor = (cursor+1)%NB_GOOPTION;
-            }else if(pevent->key.keysym.sym == SDLK_SPACE){
+            }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
                 if(cursor == RETRY){
                     destroy_game(*game);;
                     *game = initialise_game(chara);
@@ -118,17 +120,18 @@ void displayGameOverMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int
 
     SDL_Texture* textTextures[] = {strToTexture("RETRY", font, renderer), strToTexture("MAIN MENU", font, renderer), strToTexture("QUIT", font, renderer)};
 
-    SDL_Rect titleRect = {width / 2 - 120, heigth / 2 - 200, 240, 96};
+    SDL_Rect titleRect = {width / 2 - 120*ECHELLE, heigth / 2 - 150*ECHELLE, 240*ECHELLE, 96*ECHELLE};
     SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
-    SDL_Rect curRect = {width / 2 - 144, heigth / 2+(cursor*50)-20, 2*32, 2*32};
+    int decals[] = {(23*5)/2, (23*9)/2, (23*4)/2};
+    SDL_Rect curRect = {width / 2 - (decals[cursor]+50)*ECHELLE, heigth / 2+(cursor*50)*ECHELLE-20*ECHELLE, 2*32*ECHELLE, 2*32*ECHELLE};
     SDL_RenderCopy(renderer, cursorTexture, NULL, &curRect);
 
-    SDL_Rect rect1 = {width / 2 - 80, heigth / 2, 160, 32};
+    SDL_Rect rect1 = {width / 2 - ((23*5)/2)*ECHELLE, heigth / 2, (23*5)*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[0], NULL, &rect1);
-    SDL_Rect rect2 = {width / 2 - 80, heigth / 2 + 50, 160, 32};
+    SDL_Rect rect2 = {width / 2 - ((23*9)/2)*ECHELLE, heigth / 2 + 50*ECHELLE, (23*9)*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[1], NULL, &rect2);
-    SDL_Rect rect3 = {width / 2 - 80, heigth / 2 + 100, 160, 32};
+    SDL_Rect rect3 = {width / 2 - ((23*4)/2)*ECHELLE, heigth / 2 + 100*ECHELLE, (23*4)*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[2], NULL, &rect3);
     
     SDL_RenderPresent(renderer);
@@ -151,14 +154,14 @@ void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_
             *quit = SDL_TRUE;
             quit2 = SDL_TRUE;
         }else if(pevent->type == SDL_KEYUP){
-            if(pevent->key.keysym.sym == SDLK_z){
+            if((pevent->key.keysym.sym == SDLK_z) || (pevent->key.keysym.sym == SDLK_UP)){
                 cursor = (cursor-1)%NB_PMOPTION;
                 if(cursor < 0){
                     cursor = NB_PMOPTION-1;
                 }
-            }else if(pevent->key.keysym.sym == SDLK_s){
+            }else if((pevent->key.keysym.sym == SDLK_s) || (pevent->key.keysym.sym == SDLK_DOWN)){
                 cursor = (cursor+1)%NB_PMOPTION;
-            }else if(pevent->key.keysym.sym == SDLK_SPACE){
+            }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
                 if(cursor == RESUME){
                     quit2 = SDL_TRUE;
                 }
@@ -190,29 +193,35 @@ void displayPauseMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
 
     SDL_Texture* titleTexture = strToTexture("PAUSE", font, renderer);
 
-    SDL_Surface* backSurface = IMG_Load("sprites/filtrepause.png");
-    SDL_Texture* backTexture = SDL_CreateTextureFromSurface(renderer, backSurface);
+    //SDL_Surface* backSurface = IMG_Load("sprites/filtrepause.png");
+    //SDL_Texture* backTexture = SDL_CreateTextureFromSurface(renderer, backSurface);
 
-    display_all(game, renderer, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp);
+    display_map(game->carte, renderer,pix_defil, surfaceArrayMap);
+    display_exp(game->exp, renderer,pix_defil, surfaceExp);
+    display_mob(game->mobs, renderer,pix_defil, surfaceArrayMob);
+    display_projectile(game->projectile, renderer,pix_defil, surfaceArrayProjectile);
+    display_joueur(game->joueur, renderer,pix_defil, surfaceArrayPlayer);
 
     SDL_Texture* textTextures[] = {strToTexture("RESUME", font, renderer), strToTexture("MAIN MENU", font, renderer), strToTexture("OPTIONS", font, renderer), strToTexture("QUIT", font, renderer)};
 
     //SDL_Rect backRect = {0, 0, width, heigth};
     //SDL_RenderCopy(renderer, backTexture, NULL, &backRect);
 
-    SDL_Rect titleRect = {width / 2 - 120, heigth / 2 - 180, 240, 96};
+    SDL_Rect titleRect = {width / 2 - 120*ECHELLE, heigth / 2 - 180*ECHELLE, 240*ECHELLE, 96*ECHELLE};
     SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
-    SDL_Rect curRect = {width / 2 - 144, heigth / 2+(cursor*50)-20, 2*32, 2*32};
+    int decals[] = {(23*6)/2, (23*9)/2, 80, (23*4)/2};
+
+    SDL_Rect curRect = {width / 2 - (decals[cursor]+50)*ECHELLE, heigth / 2+(cursor*50*ECHELLE)-40*ECHELLE, 2*32*ECHELLE, 2*32*ECHELLE};
     SDL_RenderCopy(renderer, cursorTexture, NULL, &curRect);
 
-    SDL_Rect rect1 = {width / 2 - 80, heigth / 2, 160, 32};
+    SDL_Rect rect1 = {width / 2 - ((23*6)/2)*ECHELLE, heigth / 2 - 20*ECHELLE, 23*6*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[0], NULL, &rect1);
-    SDL_Rect rect2 = {width / 2 - 80, heigth / 2 + 50, 160, 32};
+    SDL_Rect rect2 = {width / 2 - ((23*9)/2)*ECHELLE, heigth / 2 +30*ECHELLE, 23*9*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[1], NULL, &rect2);
-    SDL_Rect rect3 = {width / 2 - 80, heigth / 2 + 100, 160, 32};
+    SDL_Rect rect3 = {width / 2 - 80*ECHELLE, heigth / 2 + 80*ECHELLE, 160*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[2], NULL, &rect3);
-    SDL_Rect rect4 = {width / 2 - 80, heigth / 2 + 150, 160, 32};
+    SDL_Rect rect4 = {width / 2 - ((23*4)/2)*ECHELLE, heigth / 2 + 130*ECHELLE, 23*4*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[3], NULL, &rect4);
     
     SDL_RenderPresent(renderer);
@@ -222,8 +231,8 @@ void displayPauseMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
 
     //SDL_DestroyTexture(screenTexture);
 
-    SDL_FreeSurface(backSurface);
-    SDL_DestroyTexture(backTexture);
+    //SDL_FreeSurface(backSurface);
+    //SDL_DestroyTexture(backTexture);
 
     SDL_DestroyTexture(titleTexture);
 
@@ -260,29 +269,18 @@ void displayCharaMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
 
     SDL_Texture* titleTexture = strToTexture("CHARACTERS", font, renderer);
 
-    SDL_Surface* backSurface = IMG_Load("sprites/filtrepause.png");
-    SDL_Texture* backTexture = SDL_CreateTextureFromSurface(renderer, backSurface);
-
-    SDL_Texture* screenTexture = takeScreenshot(renderer);
-
-    SDL_Texture* textTextures[] = {strToTexture("KAIRON", font, renderer), strToTexture("SNITCH", font, renderer), strToTexture("AESIR", font, renderer), strToTexture("KABI", font, renderer), strToTexture("OOGWAAY", font, renderer), strToTexture("JOLINAR", font, renderer), strToTexture("RANTON", font, renderer)};
-
-    SDL_Rect screenRect = {0, 0, width, heigth};
-    SDL_RenderCopy(renderer, screenTexture, NULL, &screenRect);
+    SDL_Texture* textTextures[] = {strToTexture("KAIRON", font, renderer), strToTexture("SNITCH", font, renderer), strToTexture("AESIR", font, renderer), strToTexture("KABI", font, renderer), strToTexture("OOGWAAY", font, renderer), strToTexture("JOLINAR", font, renderer), strToTexture("RANTON", font, renderer), strToTexture("DEDE", font, renderer)};
 
     //SDL_Rect backRect = {0, 0, width, heigth};
     //SDL_RenderCopy(renderer, backTexture, NULL, &backRect);
 
     SDL_Rect titleRect = {width / 2 - 120, heigth / 2 - 180, 240, 96};
     SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
-    if (0<=cursor && cursor <=2){
-        SDL_Rect curRect = {width / 2 - 100 - 144, heigth / 2+(cursor*50)-20, 2*32, 2*32};
+    if (0<=cursor && cursor <=3){
+        SDL_Rect curRect = {width / 2 - 100 - 130, heigth / 2+(cursor*50)-20, 2*32, 2*32};
         SDL_RenderCopy(renderer, cursorTexture, NULL, &curRect);
-    } else if (3<=cursor && cursor<=5){
-        SDL_Rect curRect = {width / 2 + 100 - 144, heigth / 2+((cursor-3)*50)-20, 2*32, 2*32};
-        SDL_RenderCopy(renderer, cursorTexture, NULL, &curRect);
-    } else{
-        SDL_Rect curRect = {width / 2 - 144, heigth / 2+((cursor-3)*50)-20, 2*32, 2*32};
+    } else if (4<=cursor && cursor<=7){
+        SDL_Rect curRect = {width / 2 + 100 - 130, heigth / 2+((cursor-4)*50)-20, 2*32, 2*32};
         SDL_RenderCopy(renderer, cursorTexture, NULL, &curRect);
     }
 
@@ -292,26 +290,25 @@ void displayCharaMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
     SDL_RenderCopy(renderer, textTextures[1], NULL, &rect2);
     SDL_Rect rect3 = {width / 2 - 100 - 80, heigth / 2 + 100, 160, 32};
     SDL_RenderCopy(renderer, textTextures[2], NULL, &rect3);
-
-    SDL_Rect rect4 = {width / 2 + 100 - 80, heigth / 2, 160, 32};
+    SDL_Rect rect4 = {width / 2 - 100 - 80, heigth / 2 + 150, 160, 32};
     SDL_RenderCopy(renderer, textTextures[3], NULL, &rect4);
-    SDL_Rect rect5 = {width / 2 + 100 - 80, heigth / 2 + 50, 160, 32};
-    SDL_RenderCopy(renderer, textTextures[4], NULL, &rect5);
-    SDL_Rect rect6 = {width / 2 + 100 - 80, heigth / 2 + 100, 160, 32};
-    SDL_RenderCopy(renderer, textTextures[5], NULL, &rect6);
 
-    SDL_Rect rect7 = {width / 2 - 80, heigth / 2 + 150, 160, 32};
+    SDL_Rect rect5 = {width / 2 + 100 - 80, heigth / 2, 160, 32};
+    SDL_RenderCopy(renderer, textTextures[4], NULL, &rect5);
+    SDL_Rect rect6 = {width / 2 + 100 - 80, heigth / 2 + 50, 160, 32};
+    SDL_RenderCopy(renderer, textTextures[5], NULL, &rect6);
+    SDL_Rect rect7 = {width / 2 + 100 - 80, heigth / 2 + 100, 160, 32};
     SDL_RenderCopy(renderer, textTextures[6], NULL, &rect7);
+    SDL_Rect rect8 = {width / 2 + 100 - 80, heigth / 2 + 150, 160, 32};
+    SDL_RenderCopy(renderer, textTextures[7], NULL, &rect8);
+
     
     SDL_RenderPresent(renderer);
-    for(int i = 0; i<4; i++){
+    for(int i = 0; i<8; i++){
         SDL_DestroyTexture(textTextures[i]);
     }
 
     //SDL_DestroyTexture(screenTexture);
-
-    SDL_FreeSurface(backSurface);
-    SDL_DestroyTexture(backTexture);
 
     SDL_DestroyTexture(titleTexture);
 
@@ -329,14 +326,14 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
             *quit = SDL_TRUE;
             quit2 = SDL_TRUE;
         }else if(pevent->type == SDL_KEYUP){
-            if(pevent->key.keysym.sym == SDLK_z){
+            if((pevent->key.keysym.sym == SDLK_z) || (pevent->key.keysym.sym == SDLK_UP)){
                 cursor = (cursor-1)%NB_PERSO;
                 if(cursor < 0){
                     cursor = NB_PERSO-1;
                 }
-            }else if(pevent->key.keysym.sym == SDLK_s){
+            }else if((pevent->key.keysym.sym == SDLK_s) || (pevent->key.keysym.sym == SDLK_DOWN)){
                 cursor = (cursor+1)%NB_PERSO;
-            }else if(pevent->key.keysym.sym == SDLK_SPACE){
+            }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
                 if(cursor == KAIRON){
                     *pchara = KAIRON;
                     quit2 = SDL_TRUE;
@@ -357,6 +354,9 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
                     quit2 = SDL_TRUE;
                 }if(cursor == RANTON){
                     *pchara = RANTON;
+                    quit2 = SDL_TRUE;
+                }if(cursor == DEDE){
+                    *pchara = DEDE;
                     quit2 = SDL_TRUE;
                 }
             }else if(pevent->key.keysym.sym == SDLK_TAB){
