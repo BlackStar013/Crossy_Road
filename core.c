@@ -879,8 +879,6 @@ void generator_babel(Game *game){
     }
     int speed=(rand()%3)+1;
     switch (type) {
-        switch (type)
-            {
             case 0:
                 if (sens==0){
                     game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b, HEIGTH+1,speed,16));
@@ -915,7 +913,6 @@ void generator_babel(Game *game){
                 break;
             default:
                 break;
-            }
     }
     proba_change_babel(game);
 }

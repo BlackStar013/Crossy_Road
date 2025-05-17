@@ -32,12 +32,10 @@ enum MOB{
     CANON_MOB,
     CANON_BALL,
     ////
-    FIRECLOCK,
-    FIRECOUNTER,
+    FIRE,
     BUSH,
     MOB_CULTIST,
     HIGHCULTIST,
-    //CURSE,
     PEBBLE,
     BEBERT,
     NB_MOB
