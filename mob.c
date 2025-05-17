@@ -1098,32 +1098,32 @@ void babel1_1(Mob *mob,Player* Joueur){
         if (mob->action_delay==0) {
             switch (mob->action_value){
                 case 0:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 1:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 0;
                     break;
                 case 2:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 3:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 1;
                     break;
                 case 4:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 3;
                     break;
                 case 5:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value=0;
                     mob->offset_y = 1;
                     break;
@@ -1195,32 +1195,32 @@ void babel1_2(Mob *mob,Player* Joueur){
         if (mob->action_delay==0) {
             switch (mob->action_value){
                 case 0:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 3;
                     break;
                 case 1:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 1;
                     break;
                 case 2:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 3;
                     break;
                 case 3:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 0;
                     break;
                 case 4:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 5:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value=0;
                     mob->offset_y = 0;
                     break;
@@ -1290,32 +1290,32 @@ void babel2_1(Mob *mob,Player* Joueur){
         if (mob->action_delay==0) {
             switch (mob->action_value){
                 case 0:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 1:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 2:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y ++;
                     break;
                 case 3:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 3;
                     break;
                 case 4:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 3;
                     break;
                 case 5:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value=0;
                     mob->offset_y = 1;
                     break;
@@ -1385,32 +1385,32 @@ void babel2_2(Mob *mob,Player* Joueur){
         if (mob->action_delay==0) {
             switch (mob->action_value){
                 case 0:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 3;
                     break;
                 case 1:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 3;
                     break;
                 case 2:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 1;
                     break;
                 case 3:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 4:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 5:
-                    mob->action_delay=mob->max_action_delay;
+                    mob->action_delay=16;
                     mob->action_value=0;
                     mob->offset_y = 0;
                     break;
@@ -1456,17 +1456,17 @@ void babel3_1(Mob *mob,Player* Joueur){
         if (mob->action_delay==0) {
             switch (mob->action_value){
                 case 0:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 1:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 3;
                     break;
                 case 2:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value=0;
                     mob->offset_y = 1;
                     break;
@@ -1513,17 +1513,17 @@ void babel3_2(Mob *mob,Player* Joueur){
         if (mob->action_delay==0) {
             switch (mob->action_value){
                 case 0:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 0;
                     break;
                 case 1:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 2:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value=0;
                     mob->offset_y = 3;
                     break;
@@ -1570,17 +1570,17 @@ void babel4_1(Mob *mob,Player* Joueur){
         if (mob->action_delay==0) {
             switch (mob->action_value){
                 case 0:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 1:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 1;
                     break;
                 case 2:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value=0;
                     mob->offset_y = 3;
                     break;
@@ -1627,17 +1627,17 @@ void babel4_2(Mob *mob,Player* Joueur){
         if (mob->action_delay==0) {
             switch (mob->action_value){
                 case 0:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 2;
                     break;
                 case 1:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value++;
                     mob->offset_y = 0;
                     break;
                 case 2:
-                    mob->action_delay=2*mob->max_action_delay;
+                    mob->action_delay=32;
                     mob->action_value=0;
                     mob->offset_y = 3;
                     break;
