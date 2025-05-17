@@ -487,25 +487,33 @@ const Mob fire_counter = {1,1,true,0,0,0,0,0,FIRECOUNTER,0,0,counterclock_cycle,
 
 // const Mob fire_3_counter = {1,1,true,0,0,0,0,0,FIRE2CLOCK,counterclock_cycle_3,0,32,0,0};
 
-void ambush(Mob *bush,Player* player){
+void ambush(Mob *bush,Player* p){
     //embuscade
     bool has_move = false;
         if(!bush->delay){
-            if (player->_x-bush->_x<=32 && player->_x-bush->_x>=0 && (player->_y-bush->_y<=8 && bush->_y-player->_y<=8)){
-                bush->_x+=4;
-                has_move = true;
+             if(((bush->_x-16+32)<=p->_x_dest)&&(p->_x_dest <= bush->_x + 16 +32)){ 
+                if(((bush->_y -16 )<=p->_y_dest)&&(p->_y_dest <= bush->_y + 16)) {
+                    bush->_x+=4;
+                    has_move = true;
+                }
             }
-            if (bush->_x-player->_x<=32 && bush->_x-player->_x>=0 &&(player->_y-bush->_y<=8 && bush->_y-player->_y<=8)){
-                bush->_x-=4;
-                has_move = true;
+             if(((bush->_x-16-32)<=p->_x_dest)&&(p->_x_dest <= bush->_x + 16 -32)){ //Dépassement supérieur
+                if(((bush->_y -16 )<=p->_y_dest)&&(p->_y_dest <= bush->_y + 16)) {
+                    bush->_x-=4;
+                    has_move = true;
+                }
             }
-            if (player->_y-bush->_y<=32 && player->_y-bush->_y>=0 && (player->_x-bush->_x<=8 && bush->_x-player->_x<=8)){
-                bush->_y+=4;
-                has_move = true;
+            if(((bush->_y-16+32)<=p->_y_dest)&&(p->_y_dest <= bush->_y + 16 +32)){ 
+                if(((bush->_x -16 )<=p->_y_dest)&&(p->_x_dest <= bush->_x + 16)) {
+                    bush->_y+=4;
+                    has_move = true;
+                }
             }
-            if (bush->_y-player->_y<=32 && bush->_y-player->_y>=0 && (player->_x-bush->_x<=8 && bush->_x-player->_x<=8)){
-                bush->_y-=4;
-                has_move = true;
+             if(((bush->_y-16-32)<=p->_x_dest)&&(p->_y_dest <= bush->_y + 16 -32)){ //Dépassement supérieur
+                if(((bush->_x -16 )<=p->_y_dest)&&(p->_x_dest <= bush->_x + 16)) {
+                    bush->_y-=4;
+                    has_move = true;
+                }
             }
         bush->delay = bush->speed;
         if(has_move){
@@ -519,7 +527,7 @@ void ambush(Mob *bush,Player* player){
     if(!bush->action_delay){
             switch(bush->action_value){
                 case 0:
-                bush->action_delay=2;
+                bush->action_delay=32;
                 bush->offset_y++;
                 bush->offset_y %= 2;
                 bush->action_value = 1;
@@ -1100,7 +1108,7 @@ void path_hard_left(Mob *car, Player*p){
         }
         car->delay = car->speed;
         if(car->action_value==0){
-            if(((car->_x-16+64)<=p->_x_dest)&&(p->_x_dest <= car->_x + 16 +64 + (car->length - 1)*32)){ //Dépassement supérieur
+            if(((car->_x-16+64)<=p->_x_dest)&&(p->_x_dest <= car->_x + 16 +64 + (car->length - 1)*32)){ 
                 if(((car->_y -16 )<=p->_y_dest)&&(p->_y_dest <= car->_y + 16 + (car->heigth - 1)*32)) {
                     car->action_value = 2;
                     car->action_delay = car->max_action_delay;
@@ -1113,3 +1121,69 @@ void path_hard_left(Mob *car, Player*p){
 }
 
 const Mob magic_car_left = {1,2,true,0,0,0,0,0,MAGIC_CAR,0,1,path_hard_left,0,0,0,0,0};
+
+void path_still_right(Mob *car, Player*p){
+    if(car->action_value==0){
+        if(!car->action_delay){
+            car->action_value=car->max_action_delay;
+
+        } else {
+            car->action_delay--;
+        }
+    } else if(!car->delay){
+        if(car->_x/32 >= LENGTH){
+            car->_x = LENGTH*32;
+        } else {
+            car->_x += 3; 
+        }
+        car->action_delay = !car->action_delay;
+        if(car->action_delay){
+            car->offset_x ++;
+            car->offset_x %= 2;
+        }
+        car->delay = car->speed;
+    } else {
+        car->delay--;
+        car->action_value--;
+        if(car->action_value==0){
+            car->offset_x = 0;
+            car->action_delay = car->max_action_delay;
+        }
+    }
+}
+
+const Mob big_bus_right = {1,4,true,0,0,0,0,0,BUS,0,0,path_still_right,0,0,0,0,0};
+
+
+void path_still_left(Mob *car, Player*p){
+    if(car->action_value==0){
+        if(!car->action_delay){
+            car->action_value=car->max_action_delay;
+
+        } else {
+            car->action_delay--;
+        }
+    } else if(!car->delay){
+        if(car->_x/32 < -car->length+1){
+            car->_x = LENGTH*32;
+        } else {
+            car->_x -= 3; 
+        }
+        car->action_delay = !car->action_delay;
+        if(car->action_delay){
+            car->offset_x ++;
+            car->offset_x %= 2;
+        }
+        car->delay = car->speed;
+    } else {
+        car->delay--;
+        car->action_value--;
+        if(car->action_value==0){
+            car->offset_x = 0;
+            car->action_delay = car->max_action_delay;
+        }
+    }
+}
+
+const Mob big_bus_left = {1,4,true,0,0,0,0,0,BUS,0,1,path_still_left,0,0,0,0,0};
+

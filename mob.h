@@ -140,3 +140,8 @@ void path_hard_right(Mob *car, Player*p);
 void path_hard_left(Mob *car, Player*p);
 extern const Mob magic_car_right;
 extern const Mob magic_car_left;
+
+void path_still_right(Mob *car, Player*p);
+void path_still_left(Mob *car, Player*p);
+extern const Mob big_bus_right;
+extern const Mob big_bus_left;
