@@ -401,6 +401,11 @@ void generator_entrance(Game *game){
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i],plain);
+    }
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
         if (i==LENGTH/2 || i==((LENGTH/2)-1)) {
             clone(&line->tiles[i],transition);
         }
@@ -514,7 +519,7 @@ void generator_transition_cave(Game * game){
         add_buffer_line(game->carte);
         line = game->carte->head_buffer;
         for(int i = 0; i<LENGTH; i++){
-            clone(&line->tiles[i], stalagmite);
+            clone(&line->tiles[i], cave);//TODO
         }
         clone(&line->tiles[LENGTH/2], cave);
         if(!LENGTH%2){
@@ -553,11 +558,13 @@ void generator_cave(Game *game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], cave);
     }
-    int nb_wall = rand()%8+2;
+    int nb_wall = rand()%6+2;
     for(int i = 0; i<nb_wall; i++){
         int place=rand()%LENGTH;
-        if (!line->tiles[place+1].is_block || !line->tiles[place-1].is_block){
-            clone(&line->tiles[place], stalagmite);
+        if (place!=0 && place!=LENGTH-1){
+            if (!line->tiles[place+1].is_block || !line->tiles[place-1].is_block){
+                clone(&line->tiles[place], stalagmite);
+            }
         }
     }
     proba_change_cave(game);
