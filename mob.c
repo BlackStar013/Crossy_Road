@@ -1650,11 +1650,11 @@ void babel4_2(Mob *mob,Player* Joueur){
     }
 }
 
-const Mob babel11 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel1_1,0,16,0,0,0};
-const Mob babel12 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel1_2,0,16,0,0,0};
-const Mob babel21 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel2_1,0,16,0,0,0};
-const Mob babel22 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel2_2,0,16,0,0,0};
+const Mob babel11 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel1_1,1,16,0,0,0};
+const Mob babel12 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel1_2,5,16,0,0,0};
+const Mob babel21 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel2_1,1,16,0,0,0};
+const Mob babel22 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel2_2,5,16,0,0,0};
 const Mob babel31 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel3_1,0,16,0,0,0};
 const Mob babel32 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel3_2,0,16,0,0,0};
-const Mob babel41 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel4_1,0,16,0,0,0};
-const Mob babel42 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel4_2,0,16,0,0,0};
+const Mob babel41 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel4_1,2,16,0,0,0};
+const Mob babel42 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel4_2,1,16,0,0,0};
