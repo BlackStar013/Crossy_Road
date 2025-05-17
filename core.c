@@ -347,10 +347,10 @@ void generator_obstacle(Game*game){
         generator_transition_cave(game);
 
         case STONE:
-        generator_transition_cave(game);
+        generator_pebble(game);
 
         case BABEL:
-        generator_transition_cave(game);
+        generator_babel(game);
         break;
 
 
