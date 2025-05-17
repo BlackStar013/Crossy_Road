@@ -781,7 +781,6 @@ void generator_babel(Game *game){
     int type=rand()%4;
     int sens=rand()%2;
     int pos_b=rand()%(LENGTH-5);
-    int nb_cultists=rand()%2+1;
     for (int i=0;i<5;i++) {
         add_buffer_line(game->carte);
         Line* line = game->carte->head_buffer;

@@ -81,8 +81,12 @@ SDL_Surface** initSurfaceArrayMob(void){
             surfaceArrayMob[i] = IMG_Load("sprites/Buisson.png");
         }else if(i==MOB_CULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/Cultiste.png");
-        }else{ //if(i==HIGHCULTIST){   
+        }else if(i==HIGHCULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/HautCultiste.png");
+        }else if(i==PEBBLE){   
+            surfaceArrayMob[i] = IMG_Load("sprites/GrosRocher.png");
+        }else if(i==BEBERT){   
+            surfaceArrayMob[i] = IMG_Load("sprites/Babelien.png");
         }//else{ //if(i==CURSE){
          //   surfaceArrayMob[i] = IMG_Load("sprites/ProjectileMaudit.png");
         // }
