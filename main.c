@@ -757,7 +757,7 @@ int main(void){
                     
                 }
                 if(test_death(game)){
-                    quit_game = true;
+                    //quit_game = true;
                 }
                 update_game(game);
                 draw_all(game);

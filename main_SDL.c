@@ -201,7 +201,7 @@ int main(void){
                 if(SDL_RenderClear(renderer)){
                     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
                 }
-                gameOverMenu(&main_menu, &quit, &game, renderer, &event, font, chara);
+                //gameOverMenu(&main_menu, &quit, &game, renderer, &event, font, chara);
                 //quit = SDL_TRUE;
             }
             if(SDL_RenderClear(renderer)){
