@@ -1256,7 +1256,7 @@ bool move_down(Game* game){
 }
 
 bool test_death(Game* game){
-    // test si le joueur rentre dans un mon, avance sur une case danger
+    // test si le joueur rentre dans un mob, avance sur une case danger
     if(a_death_mob_collide(game->mobs, game->joueur)){
         return true;
     }else if(a_death_mob_collide(game->projectile, game->joueur)){
@@ -1302,17 +1302,17 @@ void update_game(Game* game){
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 10;
+            game->until_next = 30;
             break;
 
             case HARD_CROSSY_ROAD:
             proba_change_game(game, BUSHES);
-            game->until_next = 45;
+            game->until_next = 30;
             break;
 
             case FLAMING_MANOR:
             proba_change_game(game, ENTRANCE);
-            game->until_next = 10;
+            game->until_next = 30;
             break;
 
             case CULTIST_CAVE:

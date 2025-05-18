@@ -462,8 +462,7 @@ void draw_mob(Mob* mob){
             break;
 
 
-        case FIRECLOCK :
-        case FIRECOUNTER :
+        case FIRE_MOB :
             if(hascolor){
                 attron(COLOR_PAIR(ON_PLANKS_EVIL));
             }
@@ -505,6 +504,7 @@ void draw_mob(Mob* mob){
 
 
         case MOB_CULTIST :
+        case BEBERT :
             if(hascolor){
                 attron(COLOR_PAIR(ON_CAVE_EVIL));
             }
@@ -581,6 +581,26 @@ void draw_mob(Mob* mob){
                     for(int j = 0;j<mob->heigth;j++){
                         if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
                             mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'8');
+                        }
+                    }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_CAVE_EVIL));
+            } 
+            break;
+
+         case PEBBLE :
+            if(hascolor){
+                attron(COLOR_PAIR(ON_CAVE_EVIL));
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                        if(i){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,')');
+                        } else {
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'(');
                         }
                     }
                 }

@@ -134,7 +134,7 @@ void freeSurfaceArrayProjectile(SDL_Surface** surfaceArrayProjectile){
 //IMG_Load("sprites/Kairon.png");
 
 SDL_Surface** initSurfaceArrayPlayer(void){
-    SDL_Surface** surfaceArrayPlayer = malloc(sizeof(SDL_Surface*)*NB_TILE);
+    SDL_Surface** surfaceArrayPlayer = malloc(sizeof(SDL_Surface*)*NB_PERSO);
     for(int i = 0; i<NB_PERSO; i++){
         if(i==KAIRON){              
             surfaceArrayPlayer[i] = IMG_Load("sprites/Kairon.png");
@@ -148,8 +148,10 @@ SDL_Surface** initSurfaceArrayPlayer(void){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Oogwaay.png");
         }else if(i==RANTON){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Rantons.png");
-        }else{ //if(i==JOLINAR){
+        }else if(i==JOLINAR){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Jolinar.png");
+        }else{
+            surfaceArrayPlayer[i] = IMG_Load("sprites/DeTruque.png");
         }
     }
     return surfaceArrayPlayer;

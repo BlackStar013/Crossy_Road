@@ -11,15 +11,17 @@ main: main.o tuiles.o mob.o map.o core.o ia.o
 main_SDL.o: main_SDL.c map.h tuiles.h mob.h display.h ia.h
 	clang -c $(CFLAGS) main_SDL.c
 
-sdl_main: main_SDL.o tuiles.o mob.o map.o core.o display.o ia.o menu.o
-	clang -o sdl_main $(CFLAGS) main_SDL.o tuiles.o mob.o menu.o map.o display.o core.o ia.o -lSDL2 -lSDL2_image -lSDL2_ttf	
+sdl_main: main_SDL.o tuiles.o mob.o map.o core.o display.o ia.o menu.o SDLdisplay.o
+	clang -o sdl_main $(CFLAGS) main_SDL.o tuiles.o mob.o menu.o map.o display.o core.o ia.o SDLdisplay.o -lSDL2 -lSDL2_image -lSDL2_ttf	
 
 menu.o: menu.c
 	clang -c $(CFLAGS) menu.c
 
+SDLdisplay.o: SDLdisplay.c
+	clang -c $(CFLAGS) SDLdisplay.c
+
 run_menu: menu.o
 	clang -o menu $(CFLAGS) menu.o -lSDL2 -lSDL2_image -lSDL2_ttf
-
 
 map.o: map.c tuiles.h
 	clang -c $(CFLAGS) map.c
@@ -53,3 +55,4 @@ run: sdl_main
 
 runt : main
 	./main
+
