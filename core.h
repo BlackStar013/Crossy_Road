@@ -50,6 +50,8 @@ enum Obstacle {
     CAVE,
     CULTIST,
     MAGE,
+    STONE,
+    BABEL,
     //CAVE_CANON,
     NB_OBSTACLE
 };
@@ -72,6 +74,8 @@ void generator_transition_cave(Game * game);
 void generator_cave(Game*);
 void generator_cultist(Game*);
 void generator_mage(Game*);
+void generator_pebble(Game*);
+void generator_babel(Game*);
 void generator_obstacle(Game*);
 
 //Initialise les générateurs

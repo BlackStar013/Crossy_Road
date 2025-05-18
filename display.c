@@ -73,9 +73,7 @@ SDL_Surface** initSurfaceArrayMob(void){
             surfaceArrayMob[i] = IMG_Load("sprites/Canon.png");
         }else if(i==CANON_BALL){
             surfaceArrayMob[i] = IMG_Load("sprites/Boulet.png");
-        }else if(i==FIRECLOCK){
-            surfaceArrayMob[i] = IMG_Load("sprites/FEU.png");
-        }else if(i==FIRECOUNTER){
+        }else if(i==FIRE_MOB){
             surfaceArrayMob[i] = IMG_Load("sprites/FEU.png");
         }else if(i==BUSH){
             surfaceArrayMob[i] = IMG_Load("sprites/Buisson?.png");
@@ -83,8 +81,12 @@ SDL_Surface** initSurfaceArrayMob(void){
             surfaceArrayMob[i] = IMG_Load("sprites/ChariotArcanique.png");
         }else if(i==MOB_CULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/Cultiste.png");
-        }else{ //if(i==HIGHCULTIST){   
+        }else if(i==HIGHCULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/HautCultiste.png");
+        }else if(i==PEBBLE){   
+            surfaceArrayMob[i] = IMG_Load("sprites/GrosRocher.png");
+        }else if(i==BEBERT){   
+            surfaceArrayMob[i] = IMG_Load("sprites/Babelien.png");
         }//else{ //if(i==CURSE){
          //   surfaceArrayMob[i] = IMG_Load("sprites/ProjectileMaudit.png");
         // }

@@ -44,6 +44,8 @@ enum Personnages {
 
 #define DELAI 10
 
+Line* create_empty_line(Line* prev, Line* next);
+
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done
 bool carte_vide(Map *map); //Done
