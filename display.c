@@ -76,7 +76,9 @@ SDL_Surface** initSurfaceArrayMob(void){
         }else if(i==FIRE_MOB){
             surfaceArrayMob[i] = IMG_Load("sprites/FEU.png");
         }else if(i==BUSH){
-            surfaceArrayMob[i] = IMG_Load("sprites/Buisson.png");
+            surfaceArrayMob[i] = IMG_Load("sprites/Buisson?.png");
+        }else if(i==MAGIC_CAR){
+            surfaceArrayMob[i] = IMG_Load("sprites/ChariotArcanique.png");
         }else if(i==MOB_CULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/Cultiste.png");
         }else if(i==HIGHCULTIST){   
@@ -102,7 +104,7 @@ void freeSurfaceArrayMob(SDL_Surface** surfaceArrayMob){
 
 SDL_Surface** initSurfaceExp(void){
     SDL_Surface** surfaceExp = malloc(sizeof(SDL_Surface*));
-    *surfaceExp = IMG_Load("sprites/xp.png");
+    *surfaceExp = IMG_Load("sprites/FEU.png");
     return surfaceExp;
 }
 
@@ -132,7 +134,7 @@ void freeSurfaceArrayProjectile(SDL_Surface** surfaceArrayProjectile){
 //IMG_Load("sprites/Kairon.png");
 
 SDL_Surface** initSurfaceArrayPlayer(void){
-    SDL_Surface** surfaceArrayPlayer = malloc(sizeof(SDL_Surface*)*NB_TILE);
+    SDL_Surface** surfaceArrayPlayer = malloc(sizeof(SDL_Surface*)*NB_PERSO);
     for(int i = 0; i<NB_PERSO; i++){
         if(i==KAIRON){              
             surfaceArrayPlayer[i] = IMG_Load("sprites/Kairon.png");
@@ -146,8 +148,10 @@ SDL_Surface** initSurfaceArrayPlayer(void){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Oogwaay.png");
         }else if(i==RANTON){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Rantons.png");
-        }else{ //if(i==JOLINAR){
+        }else if(i==JOLINAR){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Jolinar.png");
+        }else{
+            surfaceArrayPlayer[i] = IMG_Load("sprites/DeTruque.png");
         }
     }
     return surfaceArrayPlayer;

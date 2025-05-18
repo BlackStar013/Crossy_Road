@@ -25,6 +25,7 @@ typedef struct _Game {
 
 enum Biome {
     CROSSY_ROAD,
+    HARD_CROSSY_ROAD,
     FLAMING_MANOR,
     CULTIST_CAVE,
     NB_BIOME
@@ -38,6 +39,9 @@ enum Obstacle {
     CANON,
     /////////
     BUSHES,
+    FAST_RIVER,
+    BLOCKED_CANON,
+    MAGIC_ROAD,
     ////////
     ENTRANCE,
     FIRE,
@@ -61,6 +65,9 @@ void generator_road(Game*);
 void generator_river(Game*);
 void generator_canon(Game*);
 void generator_bushes(Game*);
+void generator_fast_river(Game*);
+void generator_blocked_canon(Game*);
+void generator_magic_road(Game*);
 void generator_entrance(Game*);
 void generator_fire(Game*);
 void generator_transition_cave(Game * game);
@@ -85,7 +92,7 @@ void switch_game(Game *game);
 void add_obstacle(Game*);
 
 //Fait déplacer le joueur de x case à droite (positif) et y cases en haut.
-bool move(int x, int y,Game*);
+bool move_player(int x, int y,Game*);
 bool move_up(Game*);
 bool move_left(Game*);
 bool move_right(Game*);

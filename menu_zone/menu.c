@@ -73,3 +73,4 @@ void display_background(SDL_Renderer *renderer){
     SDL_DestroyTexture(spriteTexture);
     SDL_FreeSurface(spriteSurface);
 }
+
