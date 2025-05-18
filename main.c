@@ -61,7 +61,7 @@ void ncursesInit(void){
 	noecho(); 
 	keypad(stdscr, TRUE);
 	cbreak();
-    timeout(10);
+    timeout(15);
     if(has_colors() ==FALSE){
         hascolor = false;
     } else {
@@ -261,6 +261,9 @@ void draw_background(Game *game){
 
 
 void draw_character(Game* game){
+    if((game->joueur->inv_frame%2)){
+        return;
+    }
     switch(game->joueur->character_id){
         case KAIRON:
             if(hascolor){
@@ -681,10 +684,35 @@ void draw_all_mob_game(Game* game){
 }
 
 
+
+void draw_power(Game* game){
+    switch(game->joueur->character_id){
+        case KAIRON :
+            wmove(stdscr,0,LENGTH);
+            printw("Life : %d",game->joueur->character_value);
+            break;
+
+        case SNITCH:
+            if(game->joueur->character_delay){
+                wmove(stdscr,0,LENGTH+1);
+                printw("Power : Not enough energy");
+                wmove(stdscr,1,LENGTH+1);
+                printw("(%d step to go) ",game->joueur->character_delay);
+            } else {
+                wmove(stdscr,0,LENGTH+1);
+                printw("Power : Ready !              ");
+                wmove(stdscr,1,LENGTH+1);
+                printw("                             ");
+            }
+            break;
+    }
+}
+
 void draw_all(Game* game){
     draw_background(game);
     draw_all_mob_game(game);
     draw_character(game);
+    draw_power(game);
     wmove(stdscr,HEIGTH,0);
     printw("Score : %d",game->score);
     refresh();
@@ -755,17 +783,17 @@ int main(void){
             quit_game = false;
         } else if(ch=='m'||ch=='M'){
             quit = true;
-        } else if(ch==KEY_RIGHT){
+        } else if((ch == KEY_RIGHT) || (ch == 'd') || (ch == 'D')){
             character++;
             character%=NB_PERSO;
-        } else if(ch==KEY_LEFT){
+        } else if((ch == KEY_LEFT) || (ch == 'q') || (ch == 'Q')){
             character--;
             if(character<0){
                 character = NB_PERSO-1;
             }
         }
         if(!quit_game){
-            Game *game = initialise_game(character);
+            Game *game = initialise_game(character,0);
             while(!quit_game){
                 while(pause){
                     ch = getch();
@@ -777,7 +805,7 @@ int main(void){
                     
                 }
                 if(test_death(game)){
-                    //quit_game = true;
+                    quit_game = true;
                 }
                 update_game(game);
                 draw_all(game);
@@ -802,6 +830,8 @@ int main(void){
                         quit_game = true;
                     }else if(ch == '\n'){
                         pause = true;
+                    }else if(ch == ' '){
+                        use_power(game);
                     }
 
             }

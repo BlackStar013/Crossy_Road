@@ -87,7 +87,7 @@ void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer
             }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
                 if(cursor == RETRY){
                     destroy_game(*game);;
-                    *game = initialise_game(chara);
+                    *game = initialise_game(chara,0);
                     *main_menu = SDL_FALSE;
                     quit2 = SDL_TRUE;
                 }

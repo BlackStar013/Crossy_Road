@@ -1177,19 +1177,22 @@ void generator_blocked_canon(Game *game){
 void initialise_map(Game* game){
     for(int i=0;i<HEIGTH-4;i++){
         update_game(game);
-        move_up(game);
-        switch_game(game);
-        update_game(game);
+        if(game->carte->head_buffer!=game->carte->head_map){
+             move_up(game);
+             switch_game(game);
+        } else {
+            update_game(game);
+        }
         game->score--;
     }
 }
 
-Game *initialise_game(int character_id){
+Game *initialise_game(int character_id, int tot_exp){
     // explicite
     srand( time( NULL ) );
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
-    game->joueur = initialise_player(character_id); //0 for now
+    game->joueur = initialise_player(character_id,tot_exp); //0 for now
     game->score = 1;
     game->nb_exp = 0;
     game->exp = NULL;
@@ -1212,6 +1215,9 @@ void switch_game(Game* game){
     switch_mob(game->projectile);
     game->joueur->_y -= 32;
     game->joueur->_y_dest -= 32;
+    if(game->joueur->character_delay){
+        game->joueur->character_delay--;
+    }
 }
 
 
@@ -1255,7 +1261,38 @@ bool move_down(Game* game){
     return move_player(0,-1,game);
 }
 
-bool test_death(Game* game){
+
+bool use_power(Game* game){
+    if(game->joueur->character_delay){
+        return false;
+    } 
+    switch(game->joueur->character_id){
+        case SNITCH:
+            game->joueur->inv_frame = game->joueur->character_value;
+            game->joueur->offset_sup += 4;
+            game->joueur->nb_frame_to_change = game->joueur->inv_frame;
+            game->joueur->character_delay = game->joueur->character_max_delay;
+            return true;
+            break;
+    }
+}
+
+void to_norm(Game* game){
+    if(game->joueur->nb_frame_to_change == -1){
+        return;
+    }else if(game->joueur->nb_frame_to_change){
+        game->joueur->nb_frame_to_change--;
+    } else {
+        switch(game->joueur->character_id){
+            case SNITCH:
+                game->joueur->offset_sup=0;
+                break;
+        }
+
+    }
+}
+
+bool test_collide(Game* game){
     // test si le joueur rentre dans un mob, avance sur une case danger
     if(a_death_mob_collide(game->mobs, game->joueur)){
         return true;
@@ -1267,6 +1304,25 @@ bool test_death(Game* game){
         return IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, game->joueur->_y_dest/32));
     }
 }
+
+bool test_death(Game* game){
+    if(game->joueur->inv_frame){
+        game->joueur->inv_frame--;
+        return false;
+    } else if(test_collide(game)) {
+        if(game->joueur->character_id == KAIRON){
+            if(game->joueur->character_value){
+                game->joueur->character_value--;
+                game->joueur->inv_frame = 64;
+                return false;
+            } 
+        } 
+        return true;
+    } else {
+        return false;
+    }
+}
+
 
 void print_percent(Game* game){
     int tot = 0;
@@ -1334,6 +1390,7 @@ void update_game(Game* game){
         generator_obstacle(game);
         //print_percent(game);
     }
+    to_norm(game);
 }
 
 

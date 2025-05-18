@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_timer.h>
@@ -19,7 +20,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define IA true
+#define IA false
 
 int main(void){
     //globalement beaucoup d'initialisation diverses et variees
@@ -121,7 +122,7 @@ int main(void){
     int fps = 0;
     int cursor = 0;
     int chara = AESIR;
-    Game* game = initialise_game(chara);
+    Game* game = initialise_game(chara,0);
     Uint32 startTime = SDL_GetTicks();
     Uint32 currentTime;
     Uint32 endframeTime;
@@ -158,7 +159,7 @@ int main(void){
         }
         if(!main_menu){
             destroy_game(game);
-            game = initialise_game(chara);
+            game = initialise_game(chara,0);
         }
         while(!quit && !main_menu){
             cursor = 0;
@@ -281,6 +282,8 @@ int main(void){
                         game->joueur->offset_y = 2;
                         game->joueur->offset_x += 1;
                         game->joueur->offset_x %= 4;
+                    }else if(event.key.keysym.sym == SDLK_SPACE){
+                        use_power(game);
                     }else if(event.key.keysym.sym == SDLK_TAB){
                         pauseMenu(&main_menu, &quit, renderer, &event, font, game, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp);
                     }else if(event.key.keysym.sym == SDLK_m){

@@ -83,7 +83,7 @@ void (*initialise_generator(void))(Game*);
 
 
 //Initialise une partie
-Game *initialise_game(int character_id);
+Game *initialise_game(int character_id, int tot_exp);
 void update_game(Game* game);
 
 void switch_game(Game *game);
@@ -97,6 +97,7 @@ bool move_up(Game*);
 bool move_left(Game*);
 bool move_right(Game*);
 bool move_down(Game*);
+bool use_power(Game*);
 
 //Fait déplacer la giga mab et les mobs dedans et les joueurs dedans.
 bool test_death(Game*);

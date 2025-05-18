@@ -96,7 +96,7 @@ Tile tile_map(Map *carte, int x, int y){
     return ((cur->tiles)[x]);
 }
 
-Player* initialise_player(int id){
+Player* initialise_player(int id, int tot_exp){
     // intitialise le joueur au milieu en bas de la carte
     Player* joueur = malloc(sizeof(Player));
     joueur->_x = ((LENGTH-1)/2)*32;
@@ -107,6 +107,30 @@ Player* initialise_player(int id){
     joueur->offset_y = 1;
     joueur->character_id = id;
     joueur->delai = DELAI;
+    joueur->character_delay = 0;
+    joueur->nb_frame_to_change = -1;
+    joueur->offset_sup = 0;
+    switch(id){
+        case KAIRON:
+            joueur->character_lvl = 3;
+            joueur->character_value = 3;
+            joueur->inv_frame = 0;
+            joueur->character_max_delay = 0;
+            break;
+
+        case SNITCH:
+            joueur->character_lvl = 3;
+            joueur->character_value = 64;
+            joueur->inv_frame = 0;
+            joueur->character_max_delay = 32;
+            break;
+        
+        default:
+            joueur->character_lvl = 3;
+            joueur->character_value = 3;
+            joueur->inv_frame = 0;
+            break;
+    }
     return joueur;
 }
 
