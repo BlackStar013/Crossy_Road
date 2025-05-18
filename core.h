@@ -39,6 +39,8 @@ enum Obstacle {
     CANON,
     /////////
     BUSHES,
+    FAST_RIVER,
+    BLOCKED_CANON,
     MAGIC_ROAD,
     ////////
     ENTRANCE,
@@ -61,6 +63,8 @@ void generator_road(Game*);
 void generator_river(Game*);
 void generator_canon(Game*);
 void generator_bushes(Game*);
+void generator_fast_river(Game*);
+void generator_blocked_canon(Game*);
 void generator_magic_road(Game*);
 void generator_entrance(Game*);
 void generator_fire(Game*);

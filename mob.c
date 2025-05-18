@@ -186,7 +186,7 @@ const Mob bus_left = {1,4,true,0,0,0,0,0,BUS,0,1,path_left,0,0,0,0,0};
 void canon_idle(Mob* mob, Player *p){
     switch (mob->action_value) {
         case 0:
-            if(mob->delay < 32){
+            if(mob->delay < 64){
                 mob->action_value = 1;
                 mob->offset_x ++;
                 mob->offset_x %= 3;
@@ -493,26 +493,26 @@ void ambush(Mob *bush,Player* p){
     //embuscade
     bool has_move = false;
         if(!bush->delay){
-             if(((bush->_x-16+32)<=p->_x_dest)&&(p->_x_dest <= bush->_x + 16 +32)){ 
+             if(((bush->_x-16+36)<=p->_x_dest)&&(p->_x_dest <= bush->_x + 16 +36)){ 
                 if(((bush->_y -16 )<=p->_y_dest)&&(p->_y_dest <= bush->_y + 16)) {
                     bush->_x+=4;
                     has_move = true;
                 }
             }
-             if(((bush->_x-16-32)<=p->_x_dest)&&(p->_x_dest <= bush->_x + 16 -32)){ //Dépassement supérieur
+             if(((bush->_x-16-36)<=p->_x_dest)&&(p->_x_dest <= bush->_x + 16 -36)){ //Dépassement supérieur
                 if(((bush->_y -16 )<=p->_y_dest)&&(p->_y_dest <= bush->_y + 16)) {
                     bush->_x-=4;
                     has_move = true;
                 }
             }
-            if(((bush->_y-16+32)<=p->_y_dest)&&(p->_y_dest <= bush->_y + 16 +32)){ 
-                if(((bush->_x -16 )<=p->_y_dest)&&(p->_x_dest <= bush->_x + 16)) {
+            if(((bush->_y-16+36)<=p->_y_dest)&&(p->_y_dest <= bush->_y + 16 +36)){ 
+                if(((bush->_x -16 )<=p->_x_dest)&&(p->_x_dest <= bush->_x + 16)) {
                     bush->_y+=4;
                     has_move = true;
                 }
             }
-             if(((bush->_y-16-32)<=p->_x_dest)&&(p->_y_dest <= bush->_y + 16 -32)){ //Dépassement supérieur
-                if(((bush->_x -16 )<=p->_y_dest)&&(p->_x_dest <= bush->_x + 16)) {
+             if(((bush->_y-16-36)<=p->_y_dest)&&(p->_y_dest <= bush->_y + 16 -36)){ //Dépassement supérieur
+                if(((bush->_x -16 )<=p->_x_dest)&&(p->_x_dest <= bush->_x + 16)) {
                     bush->_y-=4;
                     has_move = true;
                 }

@@ -274,7 +274,7 @@ void generator_canon(Game *game){
     // explicite
     int nb_line = 1;//zzzrand()%(4)+1;
     for(int i = 0 ; i < nb_line ; i++){
-        int speed = rand()%240+64;
+        int speed = rand()%128+128;
         int direction = rand()%2;
         if(direction == 0){
             add_canon(game, canon_left,canon_ball_left,i, speed,LENGTH-1);
@@ -314,6 +314,14 @@ void generator_obstacle(Game*game){
 
         case BUSHES:
         generator_bushes(game);
+        break;
+
+        case FAST_RIVER:
+        generator_fast_river(game);
+        break;
+
+        case BLOCKED_CANON:
+        generator_blocked_canon(game);
         break;
 
         case MAGIC_ROAD:
@@ -581,7 +589,7 @@ void generator_cultist(Game *game){
         }
         break;
         case 2:
-                if (sens==0){
+        if (sens==0){
             game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos_cult+3, HEIGTH+nb_lines-2,speed,16));
         }
         else { //WARNING HERE, normal ?
@@ -679,16 +687,16 @@ void proba_change_bushes(Game* game){
     int proba_change = (rand()%4)*5 + 10;
     if(*((game->proba)+BUSHES) <= proba_change){
         *((game->proba)+MAGIC_ROAD) += ((*((game->proba)+BUSHES)))/2 ;
-        //*((game->proba)+CANON) += ((*((game->proba)+FOREST)))/4 ;
-        //*((game->proba)+RIVER) += (*((game->proba)+FOREST))/4 ;
+        *((game->proba)+BLOCKED_CANON) += ((*((game->proba)+BUSHES)))/4 ;
+        *((game->proba)+FAST_RIVER) += (*((game->proba)+BUSHES))/4 ;
         *((game->proba)+BUSHES) = 0 ;
     } else {
         *((game->proba)+MAGIC_ROAD) += proba_change/2 ;
         *((game->proba)+BUSHES) -= proba_change ;
-        //*((game->proba)+RIVER) += proba_change/4 ;
-        //*((game->proba+CANON)) += proba_change/4;
+        *((game->proba)+FAST_RIVER) += proba_change/4 ;
+        *((game->proba+BLOCKED_CANON)) += proba_change/4;
     }
-    *((game->proba)+BUSHES) += check_percent(game, BUSHES, MAGIC_ROAD);
+    *((game->proba)+FAST_RIVER) += check_percent(game, BUSHES, MAGIC_ROAD);
 }
 
 void generator_bushes(Game *game){
@@ -738,16 +746,16 @@ void proba_change_magic_road(Game *game, int nb_line){
     int proba_change = 6 + (nb_line-1)*(rand()%8+6);
     if(*((game->proba)+MAGIC_ROAD) <= proba_change){
         *((game->proba)+BUSHES) += ((*((game->proba)+MAGIC_ROAD)))/3 ;
-        //*((game->proba)+CANON) += ((*((game->proba)+ROAD)))/3 ;
-        //*((game->proba)+RIVER) += (*((game->proba)+ROAD))/3 ;
+        *((game->proba)+BLOCKED_CANON) += ((*((game->proba)+MAGIC_ROAD)))/3 ;
+        *((game->proba)+FAST_RIVER) += (*((game->proba)+MAGIC_ROAD))/3 ;
         *((game->proba)+MAGIC_ROAD) = 0 ;
     } else {
         *((game->proba)+MAGIC_ROAD) -= proba_change ;
         *((game->proba)+BUSHES) += proba_change/3 ;
-        //*((game->proba+CANON)) += proba_change/3;
-        //*((game->proba)+RIVER) += proba_change/3 ;
+        *((game->proba+BLOCKED_CANON)) += proba_change/3;
+        *((game->proba)+FAST_RIVER) += proba_change/3 ;
     }
-    *((game->proba)+BUSHES) += check_percent(game, BUSHES, MAGIC_ROAD);
+    *((game->proba)+BLOCKED_CANON) += check_percent(game, BUSHES, MAGIC_ROAD);
 }
 
 void generator_magic_road(Game *game){
@@ -806,6 +814,150 @@ void generator_magic_road(Game *game){
     proba_change_magic_road(game, nb_line);
 }
 
+
+void add_fast_plank(Game *game, Mob plank,Tile tile, int pos, int speed){
+    add_buffer_line(game->carte);
+    Line *line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], tile);
+    }
+    int proba_plank = 50;
+    int plank_lenght = 0;
+    int cons = 0;
+    for(int i = 0; i < LENGTH; i++){
+        int dice = rand()%100+1;
+        if(dice<proba_plank){
+            game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed,0));
+            if(plank_lenght<3){
+                proba_plank += 10;
+            } else if (plank_lenght<5){
+                proba_plank -= 15;
+            } else {
+                proba_plank -= 30;
+            }
+            cons = 0;
+            plank_lenght++;
+        } else {
+            if(plank_lenght == 0){
+                proba_plank += 10*(cons/2);
+            }else if(plank_lenght<3){
+                proba_plank = 30;
+            } else if (plank_lenght<5){
+                proba_plank = 10;
+            } else {
+                proba_plank = 0;
+            }
+            plank_lenght = 0;
+            cons++;
+        }
+    }
+}
+
+void proba_change_fast_river(Game* game,int nb_line){
+    int proba_change = 10 + (nb_line-1)*(rand()%20+10);
+    if(*((game->proba)+FAST_RIVER) <= proba_change){
+        *((game->proba)+BUSHES) += ((*((game->proba)+FAST_RIVER)))/2 ;
+        *((game->proba)+MAGIC_ROAD) += (*((game->proba)+FAST_RIVER))/4 ;
+        *((game->proba)+BLOCKED_CANON) += (*((game->proba)+FAST_RIVER))/4 ;
+        *((game->proba)+FAST_RIVER) = 0 ;
+    } else {
+        *((game->proba)+FAST_RIVER) -= proba_change ;
+        *((game->proba)+BUSHES) += proba_change/4 ;
+        *((game->proba)+MAGIC_ROAD) += proba_change/2 ;
+        *((game->proba)+BLOCKED_CANON) += proba_change/4 ;
+    }
+    *((game->proba)+MAGIC_ROAD) += check_percent(game, BUSHES, MAGIC_ROAD);
+
+}
+
+void generator_fast_river(Game *game){
+    // explicite
+    int nb_line = rand()%(4)+1;
+    Tile tile;
+    if(nb_line == 1){
+        tile = water;
+    } else {
+        tile = water_down;
+    }
+    int direction = rand()%2;
+    for(int i = 0 ; i < nb_line ; i++){
+        int speed = rand()%4;
+        if(!speed){
+            if(rand()%3){
+                speed++;
+            }
+        }
+        if(direction == i%2){
+            add_fast_plank(game, plank_right,tile,i,speed);
+        } else {
+            add_fast_plank(game,plank_left,tile,i,speed);
+        }
+        if(i==nb_line-2){
+            tile = water_up;
+        }else{
+            tile = water_middle;
+        }
+    }
+    proba_change_fast_river(game,nb_line);
+    
+}
+
+void add_blocked_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int where_can){
+    add_buffer_line(game->carte);
+    Line *line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], plain);
+    }
+    int nb_wall = rand()%(LENGTH/3 - 2);
+    for(int i = 0; i<nb_wall; i++){
+        if(rand()%4){
+            clone(&line->tiles[rand()%(LENGTH)], ruins);
+        } else {
+            clone(&line->tiles[rand()%LENGTH], tree);
+        }
+    }
+    clone(&line->tiles[where_can], plain_block);
+    int delay = (rand()%100 * speed)/100;
+    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/32);
+    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/32);
+    canon_->delay = delay;
+    ball->delay = delay;
+    game->mobs = list_append(game->mobs, canon_);
+    game->mobs = list_append(game->mobs, ball);
+}
+
+void proba_change_blocked_canon(Game* game, int nb_line){
+    int proba_change = 5 + (nb_line-1)*(rand()%10+10);
+    if(*((game->proba)+BLOCKED_CANON) <= proba_change){
+        *((game->proba)+BUSHES) += ((*((game->proba)+BLOCKED_CANON)))/3 ;
+        *((game->proba)+MAGIC_ROAD) += (*((game->proba)+BLOCKED_CANON))/3 ;
+        *((game->proba)+FAST_RIVER) += (*((game->proba)+BLOCKED_CANON))/3 ;
+        *((game->proba)+BLOCKED_CANON) = 0 ;
+    } else {
+        *((game->proba)+BLOCKED_CANON) -= proba_change ;
+        *((game->proba)+BUSHES) += proba_change/3 ;
+        *((game->proba)+MAGIC_ROAD) += proba_change/3 ;
+        *((game->proba)+FAST_RIVER) += proba_change/3 ;   
+    }
+    *((game->proba)+BUSHES) += check_percent(game, BUSHES, MAGIC_ROAD);
+
+}
+
+void generator_blocked_canon(Game *game){
+    // explicite
+    int nb_line = 1;//zzzrand()%(4)+1;
+    for(int i = 0 ; i < nb_line ; i++){
+        int speed = rand()%192+64;
+        int direction = rand()%2;
+        if(direction == 0){
+            add_blocked_canon(game, canon_left,canon_ball_left,i, speed,LENGTH-1);
+        } else {
+            add_blocked_canon(game, canon_right,canon_ball_right,i, speed,0);
+        }
+    }
+    proba_change_blocked_canon(game, nb_line);
+    
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
