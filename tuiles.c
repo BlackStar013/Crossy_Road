@@ -7,7 +7,10 @@
 
 const Tile plain = {false,false,_PLAIN};
 
-const Tile plain_block = {true,false,_PLAIN_BLOCK};
+const Tile plain_block_left = {true,false,_PLAIN_BLOCK_LEFT};
+
+const Tile plain_block_right = {true,false,_PLAIN_BLOCK_RIGHT};
+
 
 const Tile road = {false,false,_ROAD};
 

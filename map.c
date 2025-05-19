@@ -125,6 +125,13 @@ Player* initialise_player(int id, int tot_exp){
             joueur->character_max_delay = 32;
             break;
         
+        case KABI:
+            joueur->character_lvl = 3;
+            joueur->character_value = 0;
+            joueur->inv_frame = 0;
+            joueur->character_max_delay = 1;
+            break;
+
         default:
             joueur->character_lvl = 3;
             joueur->character_value = 3;

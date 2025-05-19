@@ -10,7 +10,9 @@ SDL_Surface** initSurfaceArrayMap(void){
             surfaceArrayMap[i] = IMG_Load("sprites/Buisson.png");
         }else if(i==_ROAD){
             surfaceArrayMap[i] = IMG_Load("sprites/Routes.png");
-        }else if(i==_PLAIN_BLOCK){
+        }else if(i==_PLAIN_BLOCK_LEFT){
+            surfaceArrayMap[i] = IMG_Load("sprites/Plaines.png");
+        }else if(i==_PLAIN_BLOCK_RIGHT){
             surfaceArrayMap[i] = IMG_Load("sprites/Plaines.png");
         }else if(i==_ROAD_UP){
             surfaceArrayMap[i] = IMG_Load("sprites/RoutesLimiteHaut.png");
@@ -71,10 +73,6 @@ SDL_Surface** initSurfaceArrayMob(void){
             surfaceArrayMob[i] = IMG_Load("sprites/Planche.png");
         }else if(i==CANON_MOB){
             surfaceArrayMob[i] = IMG_Load("sprites/Canon.png");
-        }else if(i==CANON_BALL){
-            surfaceArrayMob[i] = IMG_Load("sprites/Boulet.png");
-        }else if(i==FIRE_MOB){
-            surfaceArrayMob[i] = IMG_Load("sprites/FEU.png");
         }else if(i==BUSH){
             surfaceArrayMob[i] = IMG_Load("sprites/Buisson?.png");
         }else if(i==MAGIC_CAR){
@@ -117,9 +115,27 @@ void freeSurfaceExp(SDL_Surface** surfaceExp){
 SDL_Surface** initSurfaceArrayProjectile(void){
     SDL_Surface** surfaceArrayProjectile = malloc(sizeof(SDL_Surface*)*NB_PROJECTILE);
     for(int i = 0; i<NB_PROJECTILE; i++){
-        //if(i==CURSE){              
+        if(i==CURSE){              
             surfaceArrayProjectile[i] = IMG_Load("sprites/ProjectileMaudit.png");
-        //}
+        }else if(i==FIRE_MOB){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/FEU.png");
+        }else if(i==CANON_BALL){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/Boulet.png");
+        }else if(i==ARROW_KABI){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/Fleche.png");
+        }else if(i==SPIKE_GROWTH){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/Epines.png");
+        }else if(i==SMOKE1x1){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part1x1.png");
+        }else if(i==SMOKE1x2){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part1x2.png");
+        }else if(i==SMOKE2x1){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part2x1.png");
+        }else if(i==SMOKE2x2){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part2x2.png");
+        }else{ //if(i==SMOKE4x1){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/Patrouille.png");
+        }
     }
     return surfaceArrayProjectile;
 }

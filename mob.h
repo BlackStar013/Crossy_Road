@@ -21,6 +21,7 @@ typedef struct _Mob {
     int max_action_delay;
     int memory__x;
     int memory__y;
+    int was_smoked;
 } Mob;
 
 
@@ -30,9 +31,7 @@ enum MOB{
     BUS,
     PLANK,
     CANON_MOB,
-    CANON_BALL,
     ////
-    FIRE_MOB,
     MAGIC_CAR,
     BUSH,
     MOB_CULTIST,
@@ -44,6 +43,17 @@ enum MOB{
 
 enum PROJECTILE{
     CURSE,
+    CANON_BALL,
+    FIRE_MOB,
+    ///Good Projectile !
+    ARROW_KABI,
+    SPIKE_GROWTH,
+    SMOKE1x1,
+    SMOKE1x2,
+    SMOKE2x1,
+    SMOKE2x2,   
+    SMOKE4x1,
+    /////////////////
     NB_PROJECTILE
 };
 
@@ -86,6 +96,7 @@ extern const Mob canon_ball_left;
 //Fonction liés à List_Mob
 Liste_Mob* list_create(Mob* mob);
 Liste_Mob *list_append(Liste_Mob* list, Mob* mob);
+Liste_Mob *list_append_list(Liste_Mob* init, Liste_Mob* to_append);
 void print_liste(Liste_Mob* list);
 void move_all_mob(Liste_Mob* list,Player*);
 void switch_mob(Liste_Mob* list);
@@ -162,3 +173,24 @@ void path_still_right(Mob *car, Player*p);
 void path_still_left(Mob *car, Player*p);
 extern const Mob big_bus_right;
 extern const Mob big_bus_left;
+
+////// FOR POWER CHARACTER //////////
+
+bool mob_collide_mob(Mob*,Mob*);
+Liste_Mob* destroy_liste_mob_collide_mob(Liste_Mob *liste, Mob *mob);
+Liste_Mob* add_smoke_liste_mob_collide(Liste_Mob* proj, Liste_Mob *liste, Mob *mob);
+void add_smoke_liste_proj_collide(Liste_Mob *liste_proj,Mob* mob);
+Liste_Mob* destroy_smoke(Liste_Mob* liste_proj);
+Liste_Mob* destroy_on_smoke(Liste_Mob* liste_mob);
+Liste_Mob* Imobilize_liste_mob_collide(Liste_Mob *liste, Mob *mob);
+
+void perfectly_still(Mob*,Player*);
+extern const Mob spike_growth;
+extern const Mob arrow_kabi;
+
+void advance_on_smoke(Mob* mob, Player* player);
+extern const Mob smoke1x1;
+extern const Mob smoke2x1;
+extern const Mob smoke1x2;
+extern const Mob smoke2x2;
+extern const Mob smoke4x1;

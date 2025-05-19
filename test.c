@@ -10,7 +10,7 @@ int main(void){
     printf("les tests sont lancés\n");
     Liste_Mob *l=list_create(clone_mob(car_right,1,1,1,1));
     l=list_append(l,clone_mob(car_left,1,1,1,1));
-    Player* p=initialise_player(3);
+    Player* p=initialise_player(3,0);
     move_all_mob(l,p);
     move_all_mob(l,p);
     assert(l->mob->_x==35);

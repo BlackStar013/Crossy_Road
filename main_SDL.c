@@ -222,6 +222,8 @@ int main(void){
                             counter = 0;
                             switch_game(game);
                             game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
+                            game->exp = destroy_liste_mob_from(-pix_defil/32-1, game->exp);
+                            game->projectile = destroy_liste_mob_from(-pix_defil/32-2*HEIGTH, game->projectile);
                         }
                         //sert à changement l'image du joueur quand il se déplace
                         game->joueur->offset_y = 1;
