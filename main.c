@@ -94,13 +94,32 @@ void draw_background(Game *game){
             switch (line->tiles[j].type) {
 
                 case _PLAIN :
-                case _PLAIN_BLOCK_LEFT :
                     if(hascolor){
                         attron(COLOR_PAIR(ON_GRASS));
                     }
                     mvaddch(i,j,' ');
                     if(hascolor){
                         attroff(COLOR_PAIR(ON_GRASS));
+                    }
+                    break;
+
+                 case _PLAIN_BLOCK_LEFT :
+                    if(hascolor){
+                        attron(COLOR_PAIR(ON_GRASS_CAILLOU));
+                    }
+                    mvaddch(i,j,'}');
+                    if(hascolor){
+                        attroff(COLOR_PAIR(ON_GRASS_CAILLOU));
+                    }
+                    break;
+
+                case _PLAIN_BLOCK_RIGHT:
+                    if(hascolor){
+                        attron(COLOR_PAIR(ON_GRASS_CAILLOU));
+                    }
+                    mvaddch(i,j,'{');
+                    if(hascolor){
+                        attroff(COLOR_PAIR(ON_GRASS_CAILLOU));
                     }
                     break;
 
@@ -522,36 +541,10 @@ void draw_mob(Mob* mob){
             if(hascolor){
                 attron(COLOR_PAIR(ON_CAVE_EVIL));
             }
-            if(mob->offset_y == 3){
-                for(int i = 0; i<mob->length;i++){
-                    for(int j = 0;j<mob->heigth;j++){
-                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'8');
-                        }
-                    }
-                }
-            } else if (mob->offset_y == 2) {
-                for(int i = 0; i<mob->length;i++){
-                    for(int j = 0;j<mob->heigth;j++){
-                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'8');
-                        }
-                    }
-                }
-            } else if (mob->offset_y == 1) {
-                for(int i = 0; i<mob->length;i++){
-                    for(int j = 0;j<mob->heigth;j++){
-                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'8');
-                        }
-                    }
-                }
-            } else {
-                for(int i = 0; i<mob->length;i++){
-                    for(int j = 0;j<mob->heigth;j++){
-                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'8');
-                        }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                        mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'8');
                     }
                 }
             }
@@ -637,6 +630,48 @@ void draw_projectile(Mob* mob){
                 attroff(COLOR_PAIR(ON_PLANKS_EVIL));
             } 
             break;
+
+        case ARROW_KABI:
+            if(hascolor){
+                attron(COLOR_PAIR(PLAYER_KABI));
+            } 
+            if(mob->offset_y == 3){
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'<');
+                        }
+                    }
+                }
+            } else if (mob->offset_y == 2) {
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'>');
+                        }
+                    }
+                }
+            } else if (mob->offset_y == 1) {
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'^');
+                        }
+                    }
+                }
+            } else {
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'v');
+                        }
+                    }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(PLAYER_KABI));
+            } 
+            break;
     }
 }
 
@@ -693,6 +728,9 @@ void draw_power(Game* game){
             break;
 
         case SNITCH:
+        case KABI:
+        case OOGWAAY:
+        case JOLINAR:
             if(game->joueur->character_delay){
                 wmove(stdscr,0,LENGTH+1);
                 printw("Power : Not enough energy");

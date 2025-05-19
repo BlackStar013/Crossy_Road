@@ -105,13 +105,23 @@ void freeSurfaceArrayMob(SDL_Surface** surfaceArrayMob){
 
 
 SDL_Surface** initSurfaceExp(void){
-    SDL_Surface** surfaceExp = malloc(sizeof(SDL_Surface*));
-    *surfaceExp = IMG_Load("sprites/FEU.png");
+    SDL_Surface** surfaceExp = malloc(sizeof(SDL_Surface*)*NB_EXP);
+    for(int i = 0; i<NB_EXP; i++){
+        if(i==EXP){              
+            surfaceExp[i] = IMG_Load("sprites/xp.png");
+        }else if(i==CIBLE){
+            surfaceExp[i] = IMG_Load("sprites/Cible.png");
+        }else {
+            surfaceExp[i] = IMG_Load("sprites/Champignon.png");
+        }
+    }
     return surfaceExp;
 }
 
 void freeSurfaceExp(SDL_Surface** surfaceExp){
-    SDL_FreeSurface(*surfaceExp);
+    for(int i = 0; i < NB_EXP;i++){
+        SDL_FreeSurface(surfaceExp[i]);
+    }
     free(surfaceExp);
 }
 

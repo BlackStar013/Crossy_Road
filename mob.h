@@ -26,6 +26,13 @@ typedef struct _Mob {
 
 
 
+enum EXP {
+    EXP,
+    CIBLE, //Oui oui
+    CHAMPI,
+    NB_EXP
+};
+
 enum MOB{
     CAR,
     BUS,
@@ -62,6 +69,7 @@ typedef struct _List_Mob {
     struct _List_Mob* next;
 } Liste_Mob;
 
+bool not_death_mob_collide(Mob*,Player*);
 bool death_mob_collide(Mob*,Player*);
 bool mob_collide(Mob*,Player*);
 
@@ -101,6 +109,7 @@ void print_liste(Liste_Mob* list);
 void move_all_mob(Liste_Mob* list,Player*);
 void switch_mob(Liste_Mob* list);
 bool a_death_mob_collide(Liste_Mob* list,Player* player);
+bool a_not_death_mob_collide(Liste_Mob* list,Player* player);
 bool a_mob_collide(Liste_Mob* list,Player* player);
 void destroy_mobs(Liste_Mob *liste);
 void destroy_liste_mob(Liste_Mob *liste);
@@ -194,3 +203,7 @@ extern const Mob smoke2x1;
 extern const Mob smoke1x2;
 extern const Mob smoke2x2;
 extern const Mob smoke4x1;
+
+
+
+extern const Mob cible;

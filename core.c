@@ -1181,6 +1181,7 @@ Game *initialise_game(int character_id, int tot_exp){
     game->score = 1;
     game->nb_exp = 0;
     game->exp = NULL;
+    game->exp = list_append(game->exp, clone_mob(cible, -80085, 80085, 0, 0));
     game->mobs = NULL;
     game->projectile = NULL;
     game->projectile = list_append(game->projectile, clone_mob(arrow_kabi, -4242, 6969, 0, 0));
@@ -1232,22 +1233,30 @@ bool move_player(int x, int y, Game* game){
 }
 
 bool move_up(Game* game){
-    return move_player(0,1,game);
+    game->joueur->offset_y = 1;
+    game->joueur->offset_x += 1;
+    game->joueur->offset_x %= 4;
     return move_player(0,1,game);
 }
 
 bool move_right(Game* game){
-    return move_player(1,0,game);
+    game->joueur->offset_y = 2;
+    game->joueur->offset_x += 1;
+    game->joueur->offset_x %= 4;
     return move_player(1,0,game);
 }
 
 bool move_left(Game* game){
-    return move_player(-1,0,game);
+    game->joueur->offset_y = 3;
+    game->joueur->offset_x += 1;
+    game->joueur->offset_x %= 4;
     return move_player(-1,0,game);
 }
 
 bool move_down(Game* game){
-    return move_player(0,-1,game);
+    game->joueur->offset_y = 0;
+    game->joueur->offset_x += 1;
+    game->joueur->offset_x %= 4;
     return move_player(0,-1,game);
 }
 
@@ -1278,6 +1287,46 @@ bool use_power(Game* game){
                 return true;
             }
             break;
+
+        case OOGWAAY:
+            switch(game->joueur->offset_y){
+                case 0:
+                    if(move_player(0, -2, game)){
+                        game->joueur->nb_frame_to_change = 0;
+                        game->joueur->character_delay = game->joueur->character_max_delay;
+                        return true;
+                    } 
+                    return false;
+                    break;
+
+                 case 1:
+                    if(move_player(0, 2, game)){
+                        game->joueur->nb_frame_to_change = 0;
+                        game->joueur->character_delay = game->joueur->character_max_delay;
+                        return true;
+                    } 
+                    return false;
+                    break;
+
+                 case 2:
+                    if(move_player(2, 0, game)){
+                        game->joueur->nb_frame_to_change = 0;
+                        game->joueur->character_delay = game->joueur->character_max_delay;
+                        return true;
+                    } 
+                    return false;
+                    break;
+
+                 case 3:
+                    if(move_player(-2, 0, game)){
+                        game->joueur->nb_frame_to_change = 0;
+                        game->joueur->character_delay = game->joueur->character_max_delay;
+                        return true;
+                    } 
+                    return false;
+                    break;
+            }
+
     }
 }
 
@@ -1292,7 +1341,23 @@ void to_norm(Game* game){
             case KABI:
                 game->joueur->offset_sup=0;
                 break;
+
+            case OOGWAAY:
+                switch(game->joueur->offset_y){
+                case 0:
+                case 1 :
+                    game->joueur->_x += ((2*(rand()%2)) -1) * 16;
+                    break;
+
+                 case 2:
+                 case 3:
+                    game->joueur->_y += 16;
+                    break;
+                    
+            }
+            
         }
+        game->joueur->nb_frame_to_change--;
 
     }
 }
@@ -1354,6 +1419,7 @@ void update_game(Game* game){
         }
         cur = cur->next;
     }
+    move_all_mob(game->exp,game->joueur);
     move_all_mob(game->mobs,game->joueur);
     move_all_mob(game->projectile,game->joueur);
     add_smoke_liste_proj_collide(game->projectile->next, game->projectile->mob);
@@ -1394,9 +1460,10 @@ void update_game(Game* game){
             break;
         }
     }
-    if(a_mob_collide(game->exp, game->joueur)){
+    if(a_not_death_mob_collide(game->exp, game->joueur)){
         game->exp = destroy_liste_mob_collide(game->exp, game->joueur);
-        game->nb_exp++;
+        game->nb_exp += (1+game->biome);
+        game->score += (1+game->biome);
     }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);

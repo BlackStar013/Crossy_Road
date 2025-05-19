@@ -83,6 +83,15 @@ bool a_death_mob_collide(Liste_Mob* list,Player* player){
     }
 }
 
+bool a_not_death_mob_collide(Liste_Mob* list,Player* player){
+    // test la collision avec le joueur pour tous les monstres
+    if(list==NULL){
+        return false;
+    } else {
+        return ((not_death_mob_collide(list->mob, player))||(a_not_death_mob_collide(list->next, player)));
+    }
+}
+
 bool a_mob_collide(Liste_Mob* list,Player* player){
     if(list==NULL){
         return false;
@@ -139,6 +148,19 @@ bool death_mob_collide(Mob* mob, Player* player){
     }
     return false;
 }
+
+bool not_death_mob_collide(Mob* mob, Player* player){
+    if(mob->is_death){
+        return false;
+    }
+    if(((mob->_x -16)<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
+        if(((mob->_y - 16) <=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + (mob->heigth - 1)*32)) {
+         return true;
+        }
+    }
+    return false;
+}
+
 
 bool mob_collide(Mob* mob, Player* player){
     if(((mob->_x)-16<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
@@ -349,7 +371,7 @@ Liste_Mob* destroy_liste_mob_from(int y, Liste_Mob *list){
 Liste_Mob* destroy_liste_mob_collide(Liste_Mob *liste,Player* player){
     if(liste==NULL){
         return NULL;
-    } else if(mob_collide(liste->mob,player)){
+    } else if((!liste->mob->is_death)&&mob_collide(liste->mob,player)){
         Liste_Mob* ret = liste->next;
         destroy_mobs(liste);
         return destroy_liste_mob_collide(ret, player);
@@ -1963,6 +1985,11 @@ const Mob smoke4x1 = {4,1,false,0,0,0,0,0,SMOKE4x1,0,0,get_smoked,0,0,0,0,0,0};
 
 void go_arrow_go(Mob* mob,Player* player){
     if(mob->action_value){
+            mob->delay = 1 - mob->delay;
+            if(mob->delay){
+                mob->offset_x += 1;
+                mob->offset_x %= 4;
+            }
             switch(mob->offset_y){
                 case 0:
                     mob->_y -= 4;
@@ -1994,3 +2021,33 @@ void go_arrow_go(Mob* mob,Player* player){
 
 }
 const Mob arrow_kabi = {1,1,false,0,0,0,0,0,ARROW_KABI,0,0,go_arrow_go,0,0,0,0,0,0};
+
+void get_cibled(Mob* mob, Player* player){
+    if(player->character_id == OOGWAAY){
+            switch(player->offset_y){
+                case 0:
+                    mob->_x = player->_x_dest;
+                    mob->_y = player->_y_dest -64;
+                    break;
+
+                case 1:
+                    mob->_x = player->_x_dest;
+                    mob->_y = player->_y_dest + 64;
+                    break;
+
+                case 2:
+                    mob->_x = player->_x_dest + 64;
+                    mob->_y = player->_y_dest;
+                    break;
+
+                case 3:
+                    mob->_x = player->_x_dest - 64;
+                    mob->_y = player->_y_dest;
+                    break;
+
+        }
+
+    }
+}
+
+const Mob cible = {1,1,true,0,0,0,0,0,CIBLE,0,0,get_cibled,0,0,0,0,0,0};

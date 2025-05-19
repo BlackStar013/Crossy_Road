@@ -172,6 +172,14 @@ int main(void){
                 startTime = SDL_GetTicks();
             }
             // printf("score :%d\n", game->score);
+            if(game->joueur->_y_dest>=3*32){
+                            pix_defil += 32;
+                            counter = 0;
+                            switch_game(game);
+                            game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
+                            game->exp = destroy_liste_mob_from(-pix_defil/32-1, game->exp);
+                            game->projectile = destroy_liste_mob_from(-pix_defil/32-2*HEIGTH, game->projectile);
+            }
             update_game(game);
             if(pix_defil){
                 if(pix_defil>13*32){
@@ -210,37 +218,16 @@ int main(void){
                     game->joueur->delai--;
                 }else{ 
                     // SDL_Delay(1000);
-
                     int directive = eval(game);
                     // printf("directive %d\n", directive);
                     if(directive == 0){
-                        if(move_up(game)&&game->joueur->_y_dest>=3*32){
-                            pix_defil += 32;
-                            counter = 0;
-                            switch_game(game);
-                            game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
-                            game->exp = destroy_liste_mob_from(-pix_defil/32-1, game->exp);
-                            game->projectile = destroy_liste_mob_from(-pix_defil/32-2*HEIGTH, game->projectile);
-                        }
-                        //sert à changement l'image du joueur quand il se déplace
-                        game->joueur->offset_y = 1;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
+                        move_up(game);
                     }else if(directive == 1){
                         move_right(game);
-                        game->joueur->offset_y = 2;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }else if(directive == 2){
                         move_down(game);
-                        game->joueur->offset_y = 0;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }else if(directive == 3){
                         move_left(game);
-                        game->joueur->offset_y = 3;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }
                     game->joueur->delai = DELAI;
                 }
@@ -254,33 +241,13 @@ int main(void){
                     // bouge le joueur dans la direction selon la touche pressée, ZQSD, ou quitte avec M
                     if((event.key.keysym.sym == SDLK_z) || (event.key.keysym.sym == SDLK_UP)){
                         // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
-                        if(move_up(game)&&game->joueur->_y_dest>=3*32){
-                            pix_defil += 32;
-                            counter = 0;
-                            switch_game(game);
-                            game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
-                            game->exp = destroy_liste_mob_from(-pix_defil/32-1, game->exp);
-                            game->projectile = destroy_liste_mob_from(-pix_defil/32-2*HEIGTH, game->projectile);
-                        }
-                        //sert à changement l'image du joueur quand il se déplace
-                        game->joueur->offset_y = 1;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
+                        move_up(game);
                     }else if((event.key.keysym.sym == SDLK_q) || (event.key.keysym.sym == SDLK_LEFT)){
                         move_left(game);
-                        game->joueur->offset_y = 3;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }else if((event.key.keysym.sym == SDLK_s) || (event.key.keysym.sym == SDLK_DOWN)){
                         move_down(game);
-                        game->joueur->offset_y = 0;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }else if((event.key.keysym.sym == SDLK_d) || (event.key.keysym.sym == SDLK_RIGHT)){
                         move_right(game);
-                        game->joueur->offset_y = 2;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }else if(event.key.keysym.sym == SDLK_SPACE){
                         use_power(game);
                     }else if(event.key.keysym.sym == SDLK_TAB){
