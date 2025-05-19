@@ -443,8 +443,8 @@ int eval(Game *game){
         directive = max->chemin[0];
     }
 
-    print_matrice(matrice_eval);
-    printf("%d\n", directive);
+    // print_matrice(matrice_eval);
+    // printf("%d\n", directive);
 
     destroy_file(encours);
     // destroy_liste_mob(liste);

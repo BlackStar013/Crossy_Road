@@ -17,7 +17,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define IA false
+#define IA true
 
 int main(void){
     //globalement beaucoup d'initialisation diverses et variees
