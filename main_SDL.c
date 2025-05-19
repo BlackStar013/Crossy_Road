@@ -211,7 +211,6 @@ int main(void){
                 if(game->joueur->delai){
                     game->joueur->delai--;
                 }else{ 
-                    // SDL_Delay(1000);
 
                     int directive = eval(game);
                     // printf("directive %d\n", directive);
@@ -243,6 +242,7 @@ int main(void){
                         game->joueur->offset_x %= 4;
                     }
                     game->joueur->delai = DELAI;
+                    // SDL_Delay(3000);
                 }
             }else{
                 SDL_PollEvent(&event);
