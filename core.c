@@ -470,47 +470,22 @@ void generator_transition_cave(Game * game){
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave);
-    }
-    add_buffer_line(game->carte);
-    for(int i = 0; i < 2; i++){
-        line = game->carte->head_buffer;
-        for(int i = 0; i<LENGTH; i++){
-            clone(&line->tiles[i], planks);
-        }
-        int nb_Block = rand()%3;
-        for(int i = 0; i<nb_Block; i++){
-            clone(&line->tiles[rand()%LENGTH], brokenplanks);
-        }
+        clone(&line->tiles[i],planks);
     }
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave);
-    }
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], planks);
-    }
-    int nb_Block = rand()%3;
-    for(int i = 0; i<nb_Block; i++){
-        clone(&line->tiles[rand()%LENGTH], brokenplanks);
+        if (i==LENGTH/2 || i==((LENGTH/2)-1) ||i==LENGTH/2+1 || i==((LENGTH/2)-2)) {
+            clone(&line->tiles[i],Porte);
+        }
+        else {
+            clone(&line->tiles[i],MurManoir);
+        }
     }
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave);
-    }
-    for(int i = 0;i<3;i++){
-        add_buffer_line(game->carte);
-        line = game->carte->head_buffer;
-        for(int i = 0; i<LENGTH; i++){
-            clone(&line->tiles[i], cave);//TODO
-        }
-        clone(&line->tiles[LENGTH/2], cave);
-        if(!LENGTH%2){
-            clone(&line->tiles[LENGTH/2+1], cave);
-        }
+        clone(&line->tiles[i],cave);
     }
     proba_change_transition_cave(game);
 
@@ -727,7 +702,7 @@ void add_pebble(Game *game, Mob pebble, Tile cave_, int pos, int speed, int nb_p
     }
     int init_x = -pebble.length+(rand()%3+1)*pos;
     for(int i = 0; i < nb_pebble; i++){
-        game->mobs = list_append(game->mobs, clone_mob(pebble, init_x+(LENGTH/nb_pebble)*i, HEIGTH+pos+1,speed,0));
+        game->mobs = list_append(game->mobs, clone_mob(pebble, init_x+(LENGTH/nb_pebble)*i, HEIGTH+pos,speed,0));
     }
 }
 
@@ -864,34 +839,34 @@ void generator_babel(Game *game){
     switch (type) {
             case 0:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b+2, HEIGTH+2,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b+2, HEIGTH+1,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel12, pos_b+3, HEIGTH+3,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel12, pos_b+3, HEIGTH+2,speed,16));
                 }
                 break;
             case 1:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel21, pos_b+1, HEIGTH+3,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel21, pos_b+1, HEIGTH+2,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel22, pos_b+3, HEIGTH+3,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel22, pos_b+3, HEIGTH+2,speed,16));
                 }
                 break;
             case 2:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel31, pos_b+2, HEIGTH+3,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel31, pos_b+2, HEIGTH+2,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel32, pos_b+1, HEIGTH+2,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel32, pos_b+1, HEIGTH+1,speed,16));
                 }
                 break;
             case 3:
                 if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel41, pos_b+1, HEIGTH+2,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel41, pos_b+1, HEIGTH+1,speed,16));
                 }
                 else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel42, pos_b+3, HEIGTH+2,speed,16));
+                    game->mobs = list_append(game->mobs, clone_mob(babel42, pos_b+3, HEIGTH+1,speed,16));
                 }
                 break;
             default:
@@ -1258,17 +1233,21 @@ bool move_player(int x, int y, Game* game){
 
 bool move_up(Game* game){
     return move_player(0,1,game);
+    return move_player(0,1,game);
 }
 
 bool move_right(Game* game){
+    return move_player(1,0,game);
     return move_player(1,0,game);
 }
 
 bool move_left(Game* game){
     return move_player(-1,0,game);
+    return move_player(-1,0,game);
 }
 
 bool move_down(Game* game){
+    return move_player(0,-1,game);
     return move_player(0,-1,game);
 }
 
@@ -1321,6 +1300,8 @@ void to_norm(Game* game){
 bool test_collide(Game* game){
     // test si le joueur rentre dans un mob, avance sur une case danger
     if(a_death_mob_collide(game->mobs, game->joueur)){
+        return true;
+    }else if(a_death_mob_collide(game->projectile, game->joueur)){
         return true;
     }else if(a_death_mob_collide(game->projectile, game->joueur)){
         return true;

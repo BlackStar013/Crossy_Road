@@ -132,8 +132,8 @@ bool death_mob_collide(Mob* mob, Player* player){
     if(!mob->is_death){
         return false;
     }
-    if(((mob->_x - 16)<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
-        if(((mob->_y - 16)<=player->_y_dest)&&(player->_y_dest <= mob->_y + 16 + (mob->heigth - 1))*32) {
+    if(((mob->_x -16)<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
+        if(((mob->_y - 16) <=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + (mob->heigth - 1)*32)) {
          return true;
         }
     }
@@ -141,8 +141,8 @@ bool death_mob_collide(Mob* mob, Player* player){
 }
 
 bool mob_collide(Mob* mob, Player* player){
-    if(((mob->_x-16)<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
-        if(((mob->_y -16 )<=player->_y_dest)&&(player->_y_dest <= mob->_y + 16 + (mob->heigth - 1)*32)) {
+    if(((mob->_x)-16<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
+        if(((mob->_y -16 )<=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + (mob->heigth - 1)*32)) {
          return true;
         }
     }
@@ -188,9 +188,9 @@ void path_right(Mob *car, Player*p){
     }
 }
 
-const Mob car_right = {1,2,true,0,0,0,0,0,CAR,0,0,path_right,0,0,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici
+const Mob car_right = {2,1,true,0,0,0,0,0,CAR,0,0,path_right,0,0,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici
 const Mob plank_right = {1,1,false,3,0,0,0,0,PLANK,0,0,path_right,0,0,0,0,0,0}; 
-const Mob bus_right = {1,4,true,0,0,0,0,0,BUS,0,0,path_right,0,0,0,0,0,0};
+const Mob bus_right = {4,1,true,0,0,0,0,0,BUS,0,0,path_right,0,0,0,0,0,0};
 
 void path_left(Mob *car, Player*p){
     if(!car->delay){
@@ -210,9 +210,9 @@ void path_left(Mob *car, Player*p){
     }
 }
 
-const Mob car_left = {1,2,true,0,0,0,0,0,CAR,0,1,path_left,0,0,0,0,0,0};
+const Mob car_left = {2,1,true,0,0,0,0,0,CAR,0,1,path_left,0,0,0,0,0,0};
 const Mob plank_left = {1,1,false,-3,0,0,0,0,PLANK,0,1,path_left,0,0,0,0,0,0};
-const Mob bus_left = {1,4,true,0,0,0,0,0,BUS,0,1,path_left,0,0,0,0,0,0};
+const Mob bus_left = {4,1,true,0,0,0,0,0,BUS,0,1,path_left,0,0,0,0,0,0};
 
 void canon_idle(Mob* mob, Player *p){
     switch (mob->action_value) {
@@ -1785,14 +1785,14 @@ void babel4_2(Mob *mob,Player* Joueur){
     }
 }
 
-const Mob babel11 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel1_1,1,16,0,0,0,0};
-const Mob babel12 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel1_2,5,16,0,0,0,0};
-const Mob babel21 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel2_1,1,16,0,0,0,0};
-const Mob babel22 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel2_2,5,16,0,0,0,0};
-const Mob babel31 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel3_1,0,16,0,0,0,0};
-const Mob babel32 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel3_2,0,16,0,0,0,0};
-const Mob babel41 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel4_1,2,16,0,0,0,0};
-const Mob babel42 = {2,1,true,0,0,0,0,0,BEBERT,0,0,babel4_2,1,16,0,0,0,0};
+const Mob babel11 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_1,1,16,0,0,0};
+const Mob babel12 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_2,5,16,0,0,0};
+const Mob babel21 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_1,1,16,0,0,0};
+const Mob babel22 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_2,5,16,0,0,0};
+const Mob babel31 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_1,0,16,0,0,0};
+const Mob babel32 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_2,0,16,0,0,0};
+const Mob babel41 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_1,2,16,0,0,0};
+const Mob babel42 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_2,1,16,0,0,0};
 
 
 
@@ -1834,7 +1834,7 @@ void path_hard_right(Mob *car, Player*p){
     }
 }
 
-const Mob magic_car_right = {1,2,true,0,0,0,0,0,MAGIC_CAR,0,0,path_hard_right,0,0,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici 
+const Mob magic_car_right = {2,1,true,0,0,0,0,0,MAGIC_CAR,0,0,path_hard_right,0,0,0,0,0,0}; //Note : x et y ini ne veulent rien dire ici 
 
 void path_hard_left(Mob *car, Player*p){
     if(car->action_value==2){
@@ -1872,7 +1872,7 @@ void path_hard_left(Mob *car, Player*p){
     }
 }
 
-const Mob magic_car_left = {1,2,true,0,0,0,0,0,MAGIC_CAR,0,1,path_hard_left,0,0,0,0,0,0};
+const Mob magic_car_left = {2,1,true,0,0,0,0,0,MAGIC_CAR,0,1,path_hard_left,0,0,0,0,0,0};
 
 void path_still_right(Mob *car, Player*p){
     if(car->action_value==0){
@@ -1904,7 +1904,7 @@ void path_still_right(Mob *car, Player*p){
     }
 }
 
-const Mob big_bus_right = {1,4,true,0,0,0,0,0,BUS,0,0,path_still_right,0,0,0,0,0,0};
+const Mob big_bus_right = {4,1,true,0,0,0,0,0,BUS,0,0,path_still_right,0,0,0,0,0,0};
 
 
 void path_still_left(Mob *car, Player*p){
@@ -1937,7 +1937,7 @@ void path_still_left(Mob *car, Player*p){
     }
 }
 
-const Mob big_bus_left = {1,4,true,0,0,0,0,0,BUS,0,1,path_still_left,0,0,0,0,0,0};
+const Mob big_bus_left = {4,1,true,0,0,0,0,0,BUS,0,1,path_still_left,0,0,0,0,0,0};
 
 
 void perfectly_still(Mob* mob,Player* player){

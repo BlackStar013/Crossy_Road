@@ -94,7 +94,7 @@ void draw_background(Game *game){
             switch (line->tiles[j].type) {
 
                 case _PLAIN :
-                case _PLAIN_BLOCK :
+                case _PLAIN_BLOCK_LEFT :
                     if(hascolor){
                         attron(COLOR_PAIR(ON_GRASS));
                     }
@@ -448,39 +448,6 @@ void draw_mob(Mob* mob){
             }
             break;
 
-        case CANON_BALL :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_GRASS_EVIL));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'o');
-                        }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_GRASS_EVIL));
-            }
-            break;
-
-
-        case FIRE_MOB :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_PLANKS_EVIL));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'*');
-                        }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_PLANKS_EVIL));
-            } 
-            break;
-
         case BUSH :
             if(hascolor){
                 if(mob->offset_y==1){
@@ -635,6 +602,39 @@ void draw_projectile(Mob* mob){
             }
             if(hascolor){
                 attroff(COLOR_PAIR(ON_CAVE_EVIL));
+            } 
+            break;
+        
+        case CANON_BALL :
+            if(hascolor){
+                attron(COLOR_PAIR(ON_GRASS_EVIL));
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'o');
+                        }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_GRASS_EVIL));
+            }
+            break;
+
+
+        case FIRE_MOB :
+            if(hascolor){
+                attron(COLOR_PAIR(ON_PLANKS_EVIL));
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'*');
+                        }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_PLANKS_EVIL));
             } 
             break;
     }

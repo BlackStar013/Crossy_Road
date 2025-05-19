@@ -4,8 +4,8 @@
 #include <stdbool.h>
 
 typedef struct _Mob {
-    int heigth;
     int length;
+    int heigth;
     bool is_death;
     int move_x;
     int _x; //new x = ans x/32;
