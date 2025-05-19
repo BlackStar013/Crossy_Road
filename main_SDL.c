@@ -1,14 +1,12 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_image.h>
 #include "map.h"
 #include "tuiles.h"
 #include "ia.h"
-#include "ia.h"
 #include "core.h"
-#include "menu.h"
 #include "menu.h"
 #include "mob.h"
 #include "SDLdisplay.h"
@@ -19,7 +17,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define IA true
+#define IA false
 
 int main(void){
     //globalement beaucoup d'initialisation diverses et variees
@@ -121,7 +119,7 @@ int main(void){
     int fps = 0;
     int cursor = 0;
     int chara = AESIR;
-    Game* game = initialise_game(chara);
+    Game* game = initialise_game(chara,0);
     Uint32 startTime = SDL_GetTicks();
     Uint32 currentTime;
     Uint32 endframeTime;
@@ -158,7 +156,7 @@ int main(void){
         }
         if(!main_menu){
             destroy_game(game);
-            game = initialise_game(chara);
+            game = initialise_game(chara,0);
         }
         while(!quit && !main_menu){
             cursor = 0;
@@ -220,6 +218,8 @@ int main(void){
                             counter = 0;
                             switch_game(game);
                             game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
+                            game->exp = destroy_liste_mob_from(-pix_defil/32-1, game->exp);
+                            game->projectile = destroy_liste_mob_from(-pix_defil/32-2*HEIGTH, game->projectile);
                         }
                         //sert à changement l'image du joueur quand il se déplace
                         game->joueur->offset_y = 1;
@@ -281,6 +281,8 @@ int main(void){
                         game->joueur->offset_y = 2;
                         game->joueur->offset_x += 1;
                         game->joueur->offset_x %= 4;
+                    }else if(event.key.keysym.sym == SDLK_SPACE){
+                        use_power(game);
                     }else if(event.key.keysym.sym == SDLK_TAB){
                         pauseMenu(&main_menu, &quit, renderer, &event, font, game, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp);
                     }else if(event.key.keysym.sym == SDLK_m){

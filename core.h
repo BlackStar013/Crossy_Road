@@ -39,6 +39,8 @@ enum Obstacle {
     CANON,
     /////////
     BUSHES,
+    FAST_RIVER,
+    BLOCKED_CANON,
     MAGIC_ROAD,
     ////////
     ENTRANCE,
@@ -48,6 +50,8 @@ enum Obstacle {
     CAVE,
     CULTIST,
     MAGE,
+    STONE,
+    BABEL,
     //CAVE_CANON,
     NB_OBSTACLE
 };
@@ -61,6 +65,8 @@ void generator_road(Game*);
 void generator_river(Game*);
 void generator_canon(Game*);
 void generator_bushes(Game*);
+void generator_fast_river(Game*);
+void generator_blocked_canon(Game*);
 void generator_magic_road(Game*);
 void generator_entrance(Game*);
 void generator_fire(Game*);
@@ -68,6 +74,8 @@ void generator_transition_cave(Game * game);
 void generator_cave(Game*);
 void generator_cultist(Game*);
 void generator_mage(Game*);
+void generator_pebble(Game*);
+void generator_babel(Game*);
 void generator_obstacle(Game*);
 
 //Initialise les générateurs
@@ -75,7 +83,7 @@ void (*initialise_generator(void))(Game*);
 
 
 //Initialise une partie
-Game *initialise_game(int character_id);
+Game *initialise_game(int character_id, int tot_exp);
 void update_game(Game* game);
 
 void switch_game(Game *game);
@@ -89,6 +97,7 @@ bool move_up(Game*);
 bool move_left(Game*);
 bool move_right(Game*);
 bool move_down(Game*);
+bool use_power(Game*);
 
 //Fait déplacer la giga mab et les mobs dedans et les joueurs dedans.
 bool test_death(Game*);

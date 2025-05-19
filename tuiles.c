@@ -7,7 +7,10 @@
 
 const Tile plain = {false,false,_PLAIN};
 
-const Tile plain_block = {true,false,_PLAIN_BLOCK};
+const Tile plain_block_left = {true,false,_PLAIN_BLOCK_LEFT};
+
+const Tile plain_block_right = {true,false,_PLAIN_BLOCK_RIGHT};
+
 
 const Tile road = {false,false,_ROAD};
 
@@ -60,3 +63,7 @@ const Tile stalagmite = {true,false,_STALAGMITE};
 const Tile channel = {false,false,_CHANNEL};
 
 const Tile base = {false,false,_BASE};
+
+const Tile MurManoir = {true,false,_MANOR_WALL};
+
+const Tile Porte = {false,false,_DOOR};
