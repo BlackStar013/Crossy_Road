@@ -465,47 +465,22 @@ void generator_transition_cave(Game * game){
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave);
-    }
-    add_buffer_line(game->carte);
-    for(int i = 0; i < 2; i++){
-        line = game->carte->head_buffer;
-        for(int i = 0; i<LENGTH; i++){
-            clone(&line->tiles[i], planks);
-        }
-        int nb_Block = rand()%3;
-        for(int i = 0; i<nb_Block; i++){
-            clone(&line->tiles[rand()%LENGTH], brokenplanks);
-        }
+        clone(&line->tiles[i],planks);
     }
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave);
-    }
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], planks);
-    }
-    int nb_Block = rand()%3;
-    for(int i = 0; i<nb_Block; i++){
-        clone(&line->tiles[rand()%LENGTH], brokenplanks);
+        if (i==LENGTH/2 || i==((LENGTH/2)-1) ||i==LENGTH/2+1 || i==((LENGTH/2)-2)) {
+            clone(&line->tiles[i],Porte);
+        }
+        else {
+            clone(&line->tiles[i],MurManoir);
+        }
     }
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave);
-    }
-    for(int i = 0;i<3;i++){
-        add_buffer_line(game->carte);
-        line = game->carte->head_buffer;
-        for(int i = 0; i<LENGTH; i++){
-            clone(&line->tiles[i], cave);//TODO
-        }
-        clone(&line->tiles[LENGTH/2], cave);
-        if(!LENGTH%2){
-            clone(&line->tiles[LENGTH/2+1], cave);
-        }
+        clone(&line->tiles[i],cave);
     }
     proba_change_transition_cave(game);
 

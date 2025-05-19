@@ -60,3 +60,7 @@ const Tile stalagmite = {true,false,_STALAGMITE};
 const Tile channel = {false,false,_CHANNEL};
 
 const Tile base = {false,false,_BASE};
+
+const Tile MurManoir = {true,false,_MANOR_WALL};
+
+const Tile Porte = {false,false,_DOOR};
