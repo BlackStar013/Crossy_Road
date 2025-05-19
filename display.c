@@ -11,9 +11,9 @@ SDL_Surface** initSurfaceArrayMap(void){
         }else if(i==_ROAD){
             surfaceArrayMap[i] = IMG_Load("sprites/Routes.png");
         }else if(i==_PLAIN_BLOCK_LEFT){
-            surfaceArrayMap[i] = IMG_Load("sprites/Plaines.png");
+            surfaceArrayMap[i] = IMG_Load("sprites/PlainesBlockLeft.png");
         }else if(i==_PLAIN_BLOCK_RIGHT){
-            surfaceArrayMap[i] = IMG_Load("sprites/Plaines.png");
+            surfaceArrayMap[i] = IMG_Load("sprites/PlainesBlockRight.png");
         }else if(i==_ROAD_UP){
             surfaceArrayMap[i] = IMG_Load("sprites/RoutesLimiteHaut.png");
         }else if(i==_ROAD_DOWN){
@@ -134,7 +134,7 @@ SDL_Surface** initSurfaceArrayProjectile(void){
         }else if(i==SMOKE2x2){
             surfaceArrayProjectile[i] = IMG_Load("sprites/part2x2.png");
         }else{ //if(i==SMOKE4x1){
-            surfaceArrayProjectile[i] = IMG_Load("sprites/Patrouille.png");
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part4x1.png");
         }
     }
     return surfaceArrayProjectile;
