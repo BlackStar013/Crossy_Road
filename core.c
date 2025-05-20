@@ -1334,6 +1334,16 @@ bool use_power(Game* game){
                     return false;
                     break;
             }
+            break;
+        
+        case JOLINAR:
+            for(int i = 0;i<game->joueur->character_lvl;i++){
+                game->projectile = list_append(game->projectile, clone_mob(spike_growth, -2, game->joueur->_y_dest/32 + game->joueur->character_value + i, 0, 0));
+            }
+            game->joueur->character_delay = game->joueur->character_max_delay;
+            return true;
+            break;
+            
 
     }
 }
@@ -1373,8 +1383,6 @@ void to_norm(Game* game){
 bool test_collide(Game* game){
     // test si le joueur rentre dans un mob, avance sur une case danger
     if(a_death_mob_collide(game->mobs, game->joueur)){
-        return true;
-    }else if(a_death_mob_collide(game->projectile, game->joueur)){
         return true;
     }else if(a_death_mob_collide(game->projectile, game->joueur)){
         return true;
@@ -1437,11 +1445,22 @@ void update_game(Game* game){
     move_all_mob(game->exp,game->joueur);
     move_all_mob(game->mobs,game->joueur);
     move_all_mob(game->projectile,game->joueur);
-    add_smoke_liste_proj_collide(game->projectile->next, game->projectile->mob);
-    game->projectile->next = add_smoke_liste_mob_collide(game->projectile->next, game->mobs, game->projectile->mob);
-    //game->projectile->next = destroy_smoke(game->projectile->next);
-    game->projectile->next = destroy_on_smoke(game->projectile->next);
-    game->mobs = destroy_on_smoke(game->mobs);
+    if(game->joueur->character_id == KABI){
+        add_smoke_liste_proj_collide(game->projectile->next, game->projectile->mob);
+        game->projectile->next = add_smoke_liste_mob_collide(game->projectile->next, game->mobs, game->projectile->mob);
+        //game->projectile->next = destroy_smoke(game->projectile->next);
+        game->projectile->next = destroy_on_smoke(game->projectile->next);
+        game->mobs = destroy_on_smoke(game->mobs);
+    } else if(game->joueur->character_id == JOLINAR){
+        Liste_Mob* act = game->projectile->next;
+        while(act!=NULL){
+            if(act->mob->id_mob == SPIKE_GROWTH){
+                imobilize_liste_mob_collide(game->projectile->next, act->mob);
+                imobilize_liste_mob_collide(game->mobs, act->mob);
+            }
+            act = act->next;
+        }
+    }
     game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
     game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
     //SDL_Delay(1000);

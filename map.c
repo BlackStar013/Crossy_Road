@@ -146,9 +146,16 @@ Player* initialise_player(int id, int tot_exp){
             joueur->character_max_delay = 0;
             break;
 
+        case JOLINAR:
+            joueur->character_lvl = 3;
+            joueur->character_value = 2;
+            joueur->inv_frame = 0;
+            joueur->character_max_delay = 0;
+
         default:
             joueur->character_lvl = 3;
             joueur->character_value = 3;
+            joueur->character_max_delay = 0;
             joueur->inv_frame = 0;
             break;
     }

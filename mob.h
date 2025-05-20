@@ -191,7 +191,7 @@ Liste_Mob* add_smoke_liste_mob_collide(Liste_Mob* proj, Liste_Mob *liste, Mob *m
 void add_smoke_liste_proj_collide(Liste_Mob *liste_proj,Mob* mob);
 Liste_Mob* destroy_smoke(Liste_Mob* liste_proj);
 Liste_Mob* destroy_on_smoke(Liste_Mob* liste_mob);
-Liste_Mob* Imobilize_liste_mob_collide(Liste_Mob *liste, Mob *mob);
+void imobilize_liste_mob_collide(Liste_Mob *liste, Mob *mob);
 
 void perfectly_still(Mob*,Player*);
 extern const Mob spike_growth;

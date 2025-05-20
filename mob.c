@@ -171,7 +171,7 @@ bool mob_collide(Mob* mob, Player* player){
     return false;
 }
 
-bool mob_collide_mob(Mob* mob, Mob* mob2){
+bool mob_collide_mob_2(Mob* mob, Mob* mob2){
     if(((mob->_x-16)<=mob2->_x)&&(mob2->_x <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
         if(((mob->_y -16 )<=mob2->_y)&&(mob2->_y <= mob->_y + 16 + (mob->heigth - 1)*32)) {
          return true;
@@ -179,6 +179,16 @@ bool mob_collide_mob(Mob* mob, Mob* mob2){
     }
     return false;
 }
+
+bool mob_collide_mob(Mob* mob, Mob* mob2){
+    if(((mob->_x-16)<=mob2->_x)&&(mob2->_x <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
+        if(((mob->_y -16 )<=mob2->_y)&&(mob2->_y <= mob->_y + 16 + (mob->heigth - 1)*32)) {
+         return true;
+        }
+    }
+    return mob_collide_mob_2(mob2,mob);
+}
+
 
 bool mob_collide_mob_on_memory(Mob* mob, Mob* mob2){
     if(((mob->memory__x-16)<=mob2->_x)&&(mob2->_x <= mob->memory__x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
@@ -283,6 +293,7 @@ void canon_right_fast(Mob* mob, Player *p){
                 mob->_x = 32;
             } else {
                 mob->delay--;
+                mob->_x = -32;
             }
             break;
 
@@ -308,6 +319,7 @@ void canon_left_fast(Mob* mob, Player *p){
                 mob->_x = LENGTH*32-64;
             } else {
                 mob->delay--;
+                mob->_x = LENGTH*32;
             }
             break;
 
@@ -434,6 +446,7 @@ Liste_Mob* add_smoke_liste_mob_collide(Liste_Mob* proj, Liste_Mob *liste_mob,Mob
     }
 }
 
+
 void add_smoke_liste_proj_collide(Liste_Mob *liste_proj,Mob* mob){ // !! La liste retour est la liste de projectile
     if(liste_proj==NULL){
         return;
@@ -481,6 +494,21 @@ Liste_Mob* destroy_on_smoke(Liste_Mob* liste){
     } else {
         liste->next = destroy_on_smoke(liste->next);
         return liste;
+    }
+}
+
+void imobilize_liste_mob_collide(Liste_Mob *liste_mob,Mob* mob){ // !! La liste retour est la liste de projectile
+    if(liste_mob==NULL){
+        return;
+    } else if((mob_collide_mob(liste_mob->mob,mob))){
+        liste_mob->mob->path = perfectly_still;
+        liste_mob->mob->delay++;
+        Mob* smoky;
+        imobilize_liste_mob_collide(liste_mob->next, mob);
+        return;
+    } else {
+        imobilize_liste_mob_collide(liste_mob->next, mob);
+        return;
     }
 }
 
@@ -2016,6 +2044,7 @@ void go_arrow_go(Mob* mob,Player* player){
     } else {
          mob->_x = -4242;
          mob->_y = 6969;
+         mob->memory__y = 6969;
     }
 
 
@@ -2047,7 +2076,12 @@ void get_cibled(Mob* mob, Player* player){
 
         }
 
+    } else if(player->character_id == JOLINAR){
+        mob->_x = ((LENGTH-1)/2)*32;
+        mob->_y = player->_y_dest + player->character_value*32;
+
     }
+    mob->memory__y = 80085;
 }
 
 const Mob cible = {1,1,true,0,0,0,0,0,CIBLE,0,0,get_cibled,0,0,0,0,0,0};
@@ -2115,3 +2149,5 @@ void xped(Mob* mob, Player* player){
 const Mob xp = {1,1,false, 0,0,0,0,0,EXP,0,0,xped,0,0,0,0,0,0};
 
 const Mob champi = {1,1,false, 0,0,0,0,0,CHAMPI,0,0,champiped,0,0,0,0,0,0};
+
+const Mob spike_growth = {20,1,false, 0,0,0,0,0,SPIKE_GROWTH,0,0,perfectly_still,0,0,0,0,0,0};

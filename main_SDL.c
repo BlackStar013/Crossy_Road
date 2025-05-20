@@ -254,6 +254,13 @@ int main(void){
                         pauseMenu(&main_menu, &quit, renderer, &event, font, game, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp);
                     }else if(event.key.keysym.sym == SDLK_m){
                         quit = SDL_TRUE;
+                    }else if(game->joueur->character_id==JOLINAR){
+                         if((event.key.keysym.sym == SDLK_n) || (event.key.keysym.sym == SDLK_e)){
+                        // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
+                            game->joueur->character_value++;
+                        }else if((event.key.keysym.sym == SDLK_b) || (event.key.keysym.sym == SDLK_a)){
+                             game->joueur->character_value--;
+                         }
                     }
                 }
             }
