@@ -4,8 +4,8 @@
 #include <stdbool.h>
 
 typedef struct _Mob {
-    int heigth;
     int length;
+    int heigth;
     bool is_death;
     int move_x;
     int _x; //new x = ans x/32;
@@ -21,6 +21,7 @@ typedef struct _Mob {
     int max_action_delay;
     int memory__x;
     int memory__y;
+    int was_smoked;
 } Mob;
 
 
@@ -30,20 +31,29 @@ enum MOB{
     BUS,
     PLANK,
     CANON_MOB,
-    CANON_BALL,
     ////
     MAGIC_CAR,
-    FIRECLOCK,
-    FIRECOUNTER,
     BUSH,
     MOB_CULTIST,
     HIGHCULTIST,
-    //CURSE,
+    PEBBLE,
+    BEBERT,
     NB_MOB
 };
 
 enum PROJECTILE{
     CURSE,
+    CANON_BALL,
+    FIRE_MOB,
+    ///Good Projectile !
+    ARROW_KABI,
+    SPIKE_GROWTH,
+    SMOKE1x1,
+    SMOKE1x2,
+    SMOKE2x1,
+    SMOKE2x2,   
+    SMOKE4x1,
+    /////////////////
     NB_PROJECTILE
 };
 
@@ -85,9 +95,8 @@ extern const Mob canon_ball_left;
 
 //Fonction liés à List_Mob
 Liste_Mob* list_create(Mob* mob);
-void list_destroy(Liste_Mob* list);
-bool list_is_empty(Liste_Mob* list);
 Liste_Mob *list_append(Liste_Mob* list, Mob* mob);
+Liste_Mob *list_append_list(Liste_Mob* init, Liste_Mob* to_append);
 void print_liste(Liste_Mob* list);
 void move_all_mob(Liste_Mob* list,Player*);
 void switch_mob(Liste_Mob* list);
@@ -113,12 +122,20 @@ extern const Mob fire_counter;
 void ambush(Mob *bush,Player* player);
 extern const Mob bush;
 
-void patrol_clock4x2(Mob *fire, Player* player);
-void patrol_clock5x2(Mob *fire, Player* player);
 void patrol_clock4x3(Mob *fire, Player* player);
-void patrol_counter4x2(Mob *fire, Player* player);
-void patrol_counter5x2(Mob *fire, Player* player);
+void patrol_clock5x3(Mob *fire, Player* player);
+void patrol_clock4x4(Mob *fire, Player* player);
 void patrol_counter4x3(Mob *fire, Player* player);
+void patrol_counter5x3(Mob *fire, Player* player);
+void patrol_counter4x4(Mob *fire, Player* player);
+void babel1_1(Mob *mob,Player* player);
+void babel2_1(Mob *mob,Player* player);
+void babel3_1(Mob *mob,Player* player);
+void babel4_1(Mob *mob,Player* player);
+void babel1_2(Mob *mob,Player* player);
+void babel2_2(Mob *mob,Player* player);
+void babel3_2(Mob *mob,Player* player);
+void babel4_2(Mob *mob,Player* player);
 
 extern const Mob cult_clock1;
 extern const Mob cult_clock2;
@@ -134,9 +151,46 @@ extern const Mob mage;
 extern const Mob curse_arrow;
 //extern const Mob curse_arrow_bis_1;
 //extern const Mob curse_arrow_bis_2;
+extern const Mob pebble_left;
+extern const Mob pebble_right;
+
+extern const Mob babel11;
+extern const Mob babel12;
+extern const Mob babel21;
+extern const Mob babel22;
+extern const Mob babel31;
+extern const Mob babel32;
+extern const Mob babel41;
+extern const Mob babel42;
 
 //
 void path_hard_right(Mob *car, Player*p);
 void path_hard_left(Mob *car, Player*p);
 extern const Mob magic_car_right;
 extern const Mob magic_car_left;
+
+void path_still_right(Mob *car, Player*p);
+void path_still_left(Mob *car, Player*p);
+extern const Mob big_bus_right;
+extern const Mob big_bus_left;
+
+////// FOR POWER CHARACTER //////////
+
+bool mob_collide_mob(Mob*,Mob*);
+Liste_Mob* destroy_liste_mob_collide_mob(Liste_Mob *liste, Mob *mob);
+Liste_Mob* add_smoke_liste_mob_collide(Liste_Mob* proj, Liste_Mob *liste, Mob *mob);
+void add_smoke_liste_proj_collide(Liste_Mob *liste_proj,Mob* mob);
+Liste_Mob* destroy_smoke(Liste_Mob* liste_proj);
+Liste_Mob* destroy_on_smoke(Liste_Mob* liste_mob);
+Liste_Mob* Imobilize_liste_mob_collide(Liste_Mob *liste, Mob *mob);
+
+void perfectly_still(Mob*,Player*);
+extern const Mob spike_growth;
+extern const Mob arrow_kabi;
+
+void advance_on_smoke(Mob* mob, Player* player);
+extern const Mob smoke1x1;
+extern const Mob smoke2x1;
+extern const Mob smoke1x2;
+extern const Mob smoke2x2;
+extern const Mob smoke4x1;

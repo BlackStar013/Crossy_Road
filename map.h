@@ -29,6 +29,13 @@ typedef struct _Player{
     int offset_y;
     int character_id;
     int delai;
+    int character_lvl;
+    int nb_frame_to_change;
+    int offset_sup;
+    int character_value;
+    int character_max_delay;
+    int character_delay;
+    int inv_frame;
 }Player;
 
 enum Personnages {
@@ -39,10 +46,13 @@ enum Personnages {
     OOGWAAY,
     JOLINAR,
     RANTON,
+    DEDE,
     NB_PERSO
 };
 
 #define DELAI 10
+
+Line* create_empty_line(Line* prev, Line* next);
 
 //fonctions souhaités (Louan)
 Map* create_empty_map(void); //Done
@@ -50,7 +60,7 @@ bool carte_vide(Map *map); //Done
 Tile tile_map(Map *carte,int x,int y); //Elle renvoie qu'elle est la tile (x,y) , done
 void switch_map(Map *carte);
 
-Player* initialise_player(int);
+Player* initialise_player(int, int tot_exp);
 
 //fonctions bonus
 void add_buffer_line(Map* map);

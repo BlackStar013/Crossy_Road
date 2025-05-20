@@ -10,8 +10,10 @@ SDL_Surface** initSurfaceArrayMap(void){
             surfaceArrayMap[i] = IMG_Load("sprites/Buisson.png");
         }else if(i==_ROAD){
             surfaceArrayMap[i] = IMG_Load("sprites/Routes.png");
-        }else if(i==_PLAIN_BLOCK){
-            surfaceArrayMap[i] = IMG_Load("sprites/Plaines.png");
+        }else if(i==_PLAIN_BLOCK_LEFT){
+            surfaceArrayMap[i] = IMG_Load("sprites/PlainesBlockLeft.png");
+        }else if(i==_PLAIN_BLOCK_RIGHT){
+            surfaceArrayMap[i] = IMG_Load("sprites/PlainesBlockRight.png");
         }else if(i==_ROAD_UP){
             surfaceArrayMap[i] = IMG_Load("sprites/RoutesLimiteHaut.png");
         }else if(i==_ROAD_DOWN){
@@ -46,6 +48,10 @@ SDL_Surface** initSurfaceArrayMap(void){
             surfaceArrayMap[i] = IMG_Load("sprites/Grotte.png");
         }else if(i==_STALAGMITE){   
             surfaceArrayMap[i] = IMG_Load("sprites/Stalagmite.png");
+        }else if(i==_MANOR_WALL){   
+            surfaceArrayMap[i] = IMG_Load("sprites/MurSecret.png");
+        }else if(i==_DOOR){   
+            surfaceArrayMap[i] = IMG_Load("sprites/TransitionGrotte.png");
         }else{ //if(i==_WATER_MIDDLE){
             surfaceArrayMap[i] = IMG_Load("sprites/Eaumilieu.png");
         }
@@ -71,20 +77,18 @@ SDL_Surface** initSurfaceArrayMob(void){
             surfaceArrayMob[i] = IMG_Load("sprites/Planche.png");
         }else if(i==CANON_MOB){
             surfaceArrayMob[i] = IMG_Load("sprites/Canon.png");
-        }else if(i==CANON_BALL){
-            surfaceArrayMob[i] = IMG_Load("sprites/Boulet.png");
-        }else if(i==FIRECLOCK){
-            surfaceArrayMob[i] = IMG_Load("sprites/FEU.png");
-        }else if(i==FIRECOUNTER){
-            surfaceArrayMob[i] = IMG_Load("sprites/FEU.png");
         }else if(i==BUSH){
             surfaceArrayMob[i] = IMG_Load("sprites/Buisson?.png");
         }else if(i==MAGIC_CAR){
             surfaceArrayMob[i] = IMG_Load("sprites/ChariotArcanique.png");
         }else if(i==MOB_CULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/Cultiste.png");
-        }else{ //if(i==HIGHCULTIST){   
+        }else if(i==HIGHCULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/HautCultiste.png");
+        }else if(i==PEBBLE){   
+            surfaceArrayMob[i] = IMG_Load("sprites/GrosRocher.png");
+        }else if(i==BEBERT){   
+            surfaceArrayMob[i] = IMG_Load("sprites/Babelien.png");
         }//else{ //if(i==CURSE){
          //   surfaceArrayMob[i] = IMG_Load("sprites/ProjectileMaudit.png");
         // }
@@ -115,9 +119,27 @@ void freeSurfaceExp(SDL_Surface** surfaceExp){
 SDL_Surface** initSurfaceArrayProjectile(void){
     SDL_Surface** surfaceArrayProjectile = malloc(sizeof(SDL_Surface*)*NB_PROJECTILE);
     for(int i = 0; i<NB_PROJECTILE; i++){
-        //if(i==CURSE){              
+        if(i==CURSE){              
             surfaceArrayProjectile[i] = IMG_Load("sprites/ProjectileMaudit.png");
-        //}
+        }else if(i==FIRE_MOB){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/FEU.png");
+        }else if(i==CANON_BALL){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/Boulet.png");
+        }else if(i==ARROW_KABI){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/Fleche.png");
+        }else if(i==SPIKE_GROWTH){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/Epines.png");
+        }else if(i==SMOKE1x1){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part1x1.png");
+        }else if(i==SMOKE1x2){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part1x2.png");
+        }else if(i==SMOKE2x1){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part2x1.png");
+        }else if(i==SMOKE2x2){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part2x2.png");
+        }else{ //if(i==SMOKE4x1){
+            surfaceArrayProjectile[i] = IMG_Load("sprites/part4x1.png");
+        }
     }
     return surfaceArrayProjectile;
 }
@@ -132,7 +154,7 @@ void freeSurfaceArrayProjectile(SDL_Surface** surfaceArrayProjectile){
 //IMG_Load("sprites/Kairon.png");
 
 SDL_Surface** initSurfaceArrayPlayer(void){
-    SDL_Surface** surfaceArrayPlayer = malloc(sizeof(SDL_Surface*)*NB_TILE);
+    SDL_Surface** surfaceArrayPlayer = malloc(sizeof(SDL_Surface*)*NB_PERSO);
     for(int i = 0; i<NB_PERSO; i++){
         if(i==KAIRON){              
             surfaceArrayPlayer[i] = IMG_Load("sprites/Kairon.png");
@@ -146,8 +168,10 @@ SDL_Surface** initSurfaceArrayPlayer(void){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Oogwaay.png");
         }else if(i==RANTON){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Rantons.png");
-        }else{ //if(i==JOLINAR){
+        }else if(i==JOLINAR){
             surfaceArrayPlayer[i] = IMG_Load("sprites/Jolinar.png");
+        }else{
+            surfaceArrayPlayer[i] = IMG_Load("sprites/DeTruque.png");
         }
     }
     return surfaceArrayPlayer;

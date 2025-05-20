@@ -6,55 +6,150 @@
 -contient l'intégralité des textures de jeu pour la version SDL
 
 
-    menu_zone?
-
-    main_memory
--contient une ancienne version de la boucle faisant tourner le jeu dans le terminal, au tour par tour.
-
     main
--contient la boucle faisant tourner le jeu dans le terminal, en temps réel. (à finir)
+-contient la boucle faisant tourner le jeu dans le terminal, en temps réel.
 
     main_SDL
 -contient la boucle faisant tourner le jeu dans une interface graphique via SDL, en temps réel.
+        main: void->int
 -gère les changements d'état des sprites
 
     display
--charges les différentes texture qu'utilise main_SDL selon les objets recherchés.
+-charges les différentes texture qu'utilise main_SDL selon les objets recherchés, et les détruits.
+        fonctions init:void->SDL_Surface**
+        fonctions destroy:SDL_Surface**->void
 
     tuiles
 -définit le type "Tuile" servant à la représentation du terrain du jeu
+        composants d'une tuile:
+            booléen :la tuile est-elle bloquante?
+            booléen :la tuile est-elle dangeureuse?
+            int: le type de la tuile (pour afficher la bonne tuile) -> valeur lié à un enum
 -définit les Macros liés à la taille du jeu ainsi qu'à l'utilisation des tuiles 
--définit la fonction permettant de cloner les tuiles   
--définit les différentes tuiles pouvant etre utilisés par le jeu
+-définit la fonction permettant de cloner les tuiles  
+        clone: Tile* "dest",Tile "src"-> void      met la tuile "src" dans la cible de "dest" 
+-définit les différentes tuiles pouvant etre utilisés par le jeu qui sont stockés comme constantes pour éviter de les redéfinir.
 
     map
 -Définit la structure de la carte
+        structure d'une ligne:
+            tableau de tuiles (Tile*)
+            pointeurs vers la ligne suivante et la précédente
+        structure de la carte:
+            4 pointeurs vers des lignes
+            head_map->le bout visible de la carte opposé au joueur
+            head_buffer->le bout généré de la carte opposé au joueur
+            tail->le bout visible de la carte coté joueur
+            tail_buffer->le bout généré de la carte coté joueur (encore utilisé?)
+            int : la longueur de la partie de la carte non affichée
 -Définit les fonctions de création, destruction, défilement et ajout et retrait de lignes à la carte
+        create_empty_map: void->Map*
+        create_empty_line: Line* prev, Line* next ->Line*           Crée une ligne, remplie de tuiles servant de placeholder, et lui indique les lignes la suivant et la précedant
+        carte_vide: Map*->bool                  vérifie si la carte est vide.
+        tile_map: Map*,int x,int y->Tile        renvoie la tuile en (x,y)
+        switch_map: Map*->void                  fait défiler la carte, enlevant la ligne sortant de l'écran
+        add_buffer_line: Map*->void             ajoute une ligne à la carte, à l'extrémité opposé du joueur
+        remove_buffer_line: Map*->void          détruit la ligne du buffer en bout de carte opposé au joueur
+        destroy_line: Line*->void               détruit la ligne et libère l'espace alloué
+        destroy_tail_buffer: Map*->void         détruit les lignes étant sorties de l'affichage après le joueur
+        destroy_last_buffer: Map*->void         détruit la plus vielle ligne de la carte si elle n'est pas affichée
+        destroy_map: Map*->void                 détruit la carte et libère l'espace alloué
 -Définit la structure du joueur ainsi que les personnages jouables
+        int _x: indique la position en abscisse en terme de pixels sur le rendu SDL (1 tuiles=32 pixels)
+        int _y: de même en ordonné
+        int _x_dest: position en x de la destination du personnage pour avoir un mouvement fluide (utilisé?)
+        int _y_dest: idem en y
+        int offset_x: état d'animation du joueur sur l'abscisse du sprite 
+        int offset_y: état d'animation du joueur sur l'ordonnée du sprite
+        int charcter_id: personnage du joueur (lié à un enum)
+
+        initialise_player:int id->Player*       crée le joueur à partir de l'id du personnage utilisé 
 
     mob
 -Définit les "mobs", objets sur la carte pouvant interagir avec le jeu diverses manières
--Définit les fonctions d'intercation avec le joueur en cas de collision
--Définit la liste servant à stocker les mobs
+        Structure d'un mob:
+            int heigth: hauteur du mob en nombre de tuiles
+            int length: largeur du mob en nombre de tuiles
+            bool is_death: la mob tue-t-il le joueur au contact? sinon il protège des tuiles dangeureuses.
+            int move_x: de combien de pixels le mob déplace-t-il le joueur au contact
+            int _x: indique la position en abscisse en terme de pixels sur le rendu SDL.
+            int _y: idem en ordonné
+            int speed: le délai entre chaque déplacement du mob (si sa fonction le déplace)
+            int delay: le délai actuel avant le prochain déplacement
+            int id_mob: identificateur permettant l'affichage
+            int offset_x: état d'animation sur l'abscisse du sprite
+            int offset_y: état d'animation sur l'ordonnée du sprite
+            void (*path)(struct _Mob*,Player*):     pointeur vers une fonction "path" indiquant comment le mob se déplace
+            int action_value ,int action_delay et int max_action_delay: valeurs servant les actions spécifiques de certains mobs les delay étant modifiables à l'identique au clonage
+            int memory__x: _x initial
+            int memory__y: _y initial
+-Définit les fonctions d'interaction avec le joueur en cas de collision
+        death_mob_collide: Mob*,Player*-> bool      le joueur meurt t-il de la collision avec le mob
+        mob_collide: Mob*,Player*-> bool            le joueur est-t-il en collision avec le mob
+-Définit la liste servant à stocker les mobs, liste chainée simple
 -Définit les fonctions de gestion de cette liste
+        list_create: Mob* mob->Liste_Mob*                        créé une liste contenant le mob en entrée
+        list_append: Liste_Mob* liste, Mob* mob->Liste_Mob*      ajoute à la liste le mob en entrée
+        print_liste: Liste_Mob* liste ->void                     affiche la liste des mobs en renvoyant leurs identifiants  
+        destroy_mobs:Liste_Mob *liste ->void                     détruit un élément de la liste des mobs
+        destroy_liste_mob:Liste_Mob *->void                      détruit la liste des mobs
+        destroy_liste_mob_from:int y, Liste_Mob *                détruit les mobs au dela de y (en dessous) tout en gardant l'intégrité de la liste
+        destroy_liste_mob_collide:Liste_Mob *liste,Player* player->Liste_Mob*       détruit les mobs en collision avec le joueur
 -Définit les fonctions de mise à jour des mobs lors des boucles de jeu et lors du défilement de la carte
+        move_all_mob: Liste_Mob* list,Player* -> void            fait se déplacer tout les mobs selon leur delai et chemin
+        switch_mob: Liste_Mob* list -> void                      fait se déplacer tout les mob d'une tuile vers le bas (pour le défilement de la carte)
 -Définit les différentes fonctions definissant le parcours des mobs
+        fonctions de parcours: Mob*, Player* ->void             déplace le mob et modifie ses compteurs selon son état
 -Définit les différents mobs utilisés par le jeu ainsi que des macros simplifiant leur appel
 
     Core
 -Définit la structure du jeu, contenant l'intégralité des objets utilisés par ce dernier
--Définit les biomes, gérant l'évolution des types d'obstacles au fur à mesure que la partie avance
+    ->Définit les biomes, gérant l'évolution des types d'obstacles au fur à mesure que la partie avance
+    ->Définit les probabilités d'apparitions des obstacles au cours d'une partie
+        structure jeu:
+            Map* carte: la carte du jeu
+            Player* joueur: le joueur
+            Liste_Mob* exp: contient l'exp, monnaie de metaprogression
+            Liste_Mob* mobs: les mobs, variés
+            Liste_Mob* projectile: les projectiles
+                les 3 listes fonctionnent comme des mobs, la différentiation se fait sur l'ordre d'affichage
+            int score: le score du joueur
+            int nb_exp: la quantité d'exp obtenue
+            int* proba: les probabilités d'apparitions des différents obstacles à un moment donné
+            void (*generator)(struct _Game*): le tableau de pointeurs vers les fonctions de génération des différents obstacles (utilisé?)
+            int biome: l'identifiant du biome actuel
+            int until_next: le nombre de défilement de la carte (augmentation du score) avant la génération du prochain biome
 -Définit les fonctions servant à faire appairaitre les différents obstacles
--Définit les probabilités d'apparitions des obstacles au cours d'une partie
+        fonction generation: Game*->void         ajoute l'obstacle associé à la carte
+        add_obstacle: Game*->void                génére un obstacle aléatoire selon les probabilités actuelles
 -Définit les fonctions altérant les probabilités d'apparitions des divers obstacles lors de la création d'un obstacle
+        fonction proba_change: Game* (parfois d'autres)->void       altère les probabilité de génération selon l'obstacle précédent
 -Définit l'initialisation du jeu
+        initialise_proba: void->int*            crée la tableau de probabilités de génération initiales
+        initialise_map: Game*->void             met à jour le début du jeu pour qu'il ne soit pas vide
+        initialise_game: int->Game*             crée le jeu selon l'id de personnage joueur utilisé
 -Définit la fonction d'update du jeu (à chaque boucle)
+        update_game: Game*->void                met l'état du jeu à jour (déplacement mobs et génération si nécéssaire)
 -Définit la fonction assurant le défilement global (map, mob et joueur)
--Définit la fonction faisant apparaitre un obstacle selon l'état global du jeu
+        switch_game: Game*->void                fait défiler tout les éléments du jeu
 -Définit les fonctions de déplacement du joueur 
+        move:int x,int y,Game*->bool            fait se déplacer le joueur de x à l'horizontal et y à la verticale et renvoie true s'il peut, sinon renvoie false
+        fonctions move annexes:Game*->bool      fait se déplacer le joueur de même, mais avec x et y prédéfinis                 
     ->les inputs appelant ses dernières se situent dans les boucles principales des fichiers main
--Définit la fonction de fin de partie 
+-Définit la fonction vérifiant pour la fin de partie
+        test_death:Game*->bool                  renvoie true si le joueur meurt
 -Définit la fonction effacant les donnés de la partie
+        destroy_game:Game*->void                détruit la partie
 
     test
 Fichier contenant les tests sur le fonctionnement de fonctions.
+
+
+
+        Choix effectués:
+carte comme liste doublement chainée de lignes de tuiles avec des pointeurs vers les diverses lignes notables
+mobs divers stockées via des listes différentes selon l'ordre d'affichage
+chaque mobs a un pointeur vers sa fonction de déplacement
+structure jeu contenant tout les éléments utilisés
+structures modifiés en place dans les fonctions,pour ne pas avoir à libérer l'escpace des clones
+mobs n'ayant que besoin de la position du joueur pour savoir ou aller

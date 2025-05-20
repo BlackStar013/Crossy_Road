@@ -61,7 +61,7 @@ void ncursesInit(void){
 	noecho(); 
 	keypad(stdscr, TRUE);
 	cbreak();
-    timeout(10);
+    timeout(15);
     if(has_colors() ==FALSE){
         hascolor = false;
     } else {
@@ -94,7 +94,7 @@ void draw_background(Game *game){
             switch (line->tiles[j].type) {
 
                 case _PLAIN :
-                case _PLAIN_BLOCK :
+                case _PLAIN_BLOCK_LEFT :
                     if(hascolor){
                         attron(COLOR_PAIR(ON_GRASS));
                     }
@@ -261,6 +261,9 @@ void draw_background(Game *game){
 
 
 void draw_character(Game* game){
+    if((game->joueur->inv_frame%2)){
+        return;
+    }
     switch(game->joueur->character_id){
         case KAIRON:
             if(hascolor){
@@ -445,40 +448,6 @@ void draw_mob(Mob* mob){
             }
             break;
 
-        case CANON_BALL :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_GRASS_EVIL));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'o');
-                        }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_GRASS_EVIL));
-            }
-            break;
-
-
-        case FIRECLOCK :
-        case FIRECOUNTER :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_PLANKS_EVIL));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'*');
-                        }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_PLANKS_EVIL));
-            } 
-            break;
-
         case BUSH :
             if(hascolor){
                 if(mob->offset_y==1){
@@ -505,6 +474,7 @@ void draw_mob(Mob* mob){
 
 
         case MOB_CULTIST :
+        case BEBERT :
             if(hascolor){
                 attron(COLOR_PAIR(ON_CAVE_EVIL));
             }
@@ -590,6 +560,26 @@ void draw_mob(Mob* mob){
             } 
             break;
 
+         case PEBBLE :
+            if(hascolor){
+                attron(COLOR_PAIR(ON_CAVE_EVIL));
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                        if(i){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,')');
+                        } else {
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'(');
+                        }
+                    }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_CAVE_EVIL));
+            } 
+            break;
+
 
     }
 
@@ -612,6 +602,39 @@ void draw_projectile(Mob* mob){
             }
             if(hascolor){
                 attroff(COLOR_PAIR(ON_CAVE_EVIL));
+            } 
+            break;
+        
+        case CANON_BALL :
+            if(hascolor){
+                attron(COLOR_PAIR(ON_GRASS_EVIL));
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'o');
+                        }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_GRASS_EVIL));
+            }
+            break;
+
+
+        case FIRE_MOB :
+            if(hascolor){
+                attron(COLOR_PAIR(ON_PLANKS_EVIL));
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'*');
+                        }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_PLANKS_EVIL));
             } 
             break;
     }
@@ -661,10 +684,35 @@ void draw_all_mob_game(Game* game){
 }
 
 
+
+void draw_power(Game* game){
+    switch(game->joueur->character_id){
+        case KAIRON :
+            wmove(stdscr,0,LENGTH);
+            printw("Life : %d",game->joueur->character_value);
+            break;
+
+        case SNITCH:
+            if(game->joueur->character_delay){
+                wmove(stdscr,0,LENGTH+1);
+                printw("Power : Not enough energy");
+                wmove(stdscr,1,LENGTH+1);
+                printw("(%d step to go) ",game->joueur->character_delay);
+            } else {
+                wmove(stdscr,0,LENGTH+1);
+                printw("Power : Ready !              ");
+                wmove(stdscr,1,LENGTH+1);
+                printw("                             ");
+            }
+            break;
+    }
+}
+
 void draw_all(Game* game){
     draw_background(game);
     draw_all_mob_game(game);
     draw_character(game);
+    draw_power(game);
     wmove(stdscr,HEIGTH,0);
     printw("Score : %d",game->score);
     refresh();
@@ -735,17 +783,17 @@ int main(void){
             quit_game = false;
         } else if(ch=='m'||ch=='M'){
             quit = true;
-        } else if(ch==KEY_RIGHT){
+        } else if((ch == KEY_RIGHT) || (ch == 'd') || (ch == 'D')){
             character++;
             character%=NB_PERSO;
-        } else if(ch==KEY_LEFT){
+        } else if((ch == KEY_LEFT) || (ch == 'q') || (ch == 'Q')){
             character--;
             if(character<0){
                 character = NB_PERSO-1;
             }
         }
         if(!quit_game){
-            Game *game = initialise_game(character);
+            Game *game = initialise_game(character,0);
             while(!quit_game){
                 while(pause){
                     ch = getch();
@@ -782,6 +830,8 @@ int main(void){
                         quit_game = true;
                     }else if(ch == '\n'){
                         pause = true;
+                    }else if(ch == ' '){
+                        use_power(game);
                     }
 
             }

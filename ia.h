@@ -21,7 +21,7 @@ typedef struct _File{
     Point *sommet;
 }File;
 
-#define PROFONDEUR 9
+#define PROFONDEUR 13
 //vraie profondeur = 5/2 car 5 == taille du tableau pour l'evaluation, mais donc pour profondeur 2 => PROFONDEUR = 2*2+1; 3=> PROFONDEUR = 3*2+1; ...
 
 
@@ -34,7 +34,7 @@ bool move_IA(int x, int y, Player *joueur, Map *map);
 bool test_death_IA(Player *joueur, Map *map, Liste_Mob *liste, Liste_Mob *projectiles);
 Liste_Mob *clone_listemob(Liste_Mob *liste);
 Mob *clone_mob_IA(Mob *mob);
-void update_game_IA(Liste_Mob *liste, Player *joueur);
+void update_game_IA(Liste_Mob *liste, Liste_Mob *projectiles, Player *joueur);
 Point *create_point(int i, int j, int val);
 Point ***matrice_evaluation(void);
 void print_matrice(Point ***evaluation);
