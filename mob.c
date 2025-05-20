@@ -1906,7 +1906,7 @@ void spike_timer(Mob* mob, Player*p){
         mob->delay--;
     }
 }
-void spike_trigger_left(Mob* mob, Player*p){
+void spike_trigger(Mob* mob, Player*p){
     if(!mob->delay){
         if(mob->action_value==0){
             if (mob_collide(mob,p)){
@@ -2056,6 +2056,7 @@ void dropping_path(Mob* mob,Player*p){
             mob->action_delay--;
             mob->_x -= 2; 
         } else {
+            mob->_y=mob->memory__y;
             mob->_x=mob->memory__x;
             mob->action_delay=mob->max_action_delay;
         }
@@ -2065,17 +2066,20 @@ void dropping_path(Mob* mob,Player*p){
     }
 }
 
-const Mob shooter;
-const Mob shooter_trap_left;
-const Mob shooter_trap_right;
-const Mob spike;
-const Mob spike_trap;
-const Mob bone_arrow_left;
-const Mob bone_arrow_right;
-const Mob bone_arrow_left_trap;
-const Mob bone_arrow_right_trap;
-const Mob eye;
-const Mob eye_wall;
-const Mob eye_drop;
-const Mob eye_blast;
-const Mob shift;
+const Mob shooter={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_timer_still,0,0,0,0,0};
+const Mob shooter_trap_left={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_trigger_still_left,0,0,0,0,0};
+const Mob shooter_trap_right={1,1,true,0,0,0,0,0,SHOOT,0,1,shooter_trigger_still_right,0,0,0,0,0};
+const Mob spike={1,1,true,0,0,0,0,0,SHOOT,0,0,spike_trigger,0,0,0,0,0};
+const Mob spike_trap={1,1,true,0,0,0,0,0,SHOOT,0,0,spike_trigger,0,0,0,0,0};
+const Mob bone_arrow_left={1,1,true,0,0,0,0,0,SHOOT,0,0,path_offset_left,0,0,0,0,0};
+const Mob bone_arrow_right={1,1,true,0,0,0,0,0,SHOOT,0,1,path_offset_right,0,0,0,0,0};
+const Mob bone_arrow_left_trap={1,1,true,0,0,0,0,0,SHOOT,0,0,path_offset_trigger_left,0,0,0,0,0};
+const Mob bone_arrow_right_trap={1,1,true,0,0,0,0,0,SHOOT,0,1,path_offset_trigger_right,0,0,0,0,0};
+const Mob eye={1,1,true,0,0,0,0,0,SHOOT,0,0,still_eye,0,0,0,0,0};
+const Mob eye_wall={1,2,true,0,0,0,0,0,SHOOT,0,0,still_eyewall,0,0,0,0,0};
+const Mob eye_drop={1,1,true,0,0,0,0,0,SHOOT,0,0,dropping_path,0,0,0,0,0};
+const Mob eye_blast={1,1,true,0,0,0,0,0,SHOOT,0,0,sight_blast,0,0,0,0,0};
+const Mob shift_left={1,1,false,-3,0,0,0,0,SHOOT,0,0,path_left,0,0,0,0,0};
+const Mob shift_right={1,1,false,3,0,0,0,0,SHOOT,0,0,path_left,0,0,0,0,0};
+const Mob bone_left={1,1,false,-3,0,0,0,0,SHOOT,0,0,path_left,0,0,0,0,0};
+const Mob bone_right={1,1,false,3,0,0,0,0,SHOOT,0,0,path_right,0,0,0,0,0};

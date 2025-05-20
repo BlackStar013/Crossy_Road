@@ -43,6 +43,15 @@ enum TILE{
     _STALAGMITE,
     _MANOR_WALL,
     _DOOR,
+    _FLESH,
+    _ACID,
+    _ACID_UP,
+    _ACID_DOWN,
+    _ACID_MIDDLE,
+    _MAW,
+    _SHOOTER_BLOCK_LEFT,
+    _SHOOTER_BLOCK_RIGHT,
+    _TRANSITION_HEART,
     NB_TILE
 
 };
@@ -100,3 +109,13 @@ extern const Tile base;
 extern const Tile MurManoir;
 
 extern const Tile Porte;
+
+extern const Tile Flesh;
+extern const Tile Acid;
+extern const Tile Acid_up;
+extern const Tile Acid_down;
+extern const Tile Acid_middle;
+extern const Tile Maw;
+extern const Tile Shooter_block_right;
+extern const Tile Shooter_block_left;
+extern const Tile transition_finale;

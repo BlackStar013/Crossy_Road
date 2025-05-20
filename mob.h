@@ -187,7 +187,8 @@ void still_eyewall(Mob* mob,Player*p);
 void dropping_path(Mob* mob,Player*p);
 
 extern const Mob shooter;
-extern const Mob shooter_trap;
+extern const Mob shooter_trap_left;
+extern const Mob shooter_trap_right;
 extern const Mob spike;
 extern const Mob spike_trap;
 extern const Mob bone_arrow_left;
@@ -198,4 +199,7 @@ extern const Mob eye;
 extern const Mob eye_wall;
 extern const Mob eye_drop;
 extern const Mob eye_blast;
-extern const Mob shift;
+const Mob shift_left;
+const Mob shift_right;
+const Mob bone_left;
+const Mob bone_right;

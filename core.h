@@ -28,6 +28,7 @@ enum Biome {
     HARD_CROSSY_ROAD,
     FLAMING_MANOR,
     CULTIST_CAVE,
+    WITHIN_THE_BEAST,
     NB_BIOME
 };
 
@@ -52,7 +53,15 @@ enum Obstacle {
     MAGE,
     STONE,
     BABEL,
-    //CAVE_CANON,
+    //////
+    TRANSITION_FINAL,
+    ACID_RIVER,
+    FLESH_MAW,
+    FLESH_SPIKES,
+    BONESHOOTER,
+    BARRAGE,
+    SENTINEL_EYE,
+    LABYRINTH,
     NB_OBSTACLE
 };
 
@@ -76,6 +85,14 @@ void generator_cultist(Game*);
 void generator_mage(Game*);
 void generator_pebble(Game*);
 void generator_babel(Game*);
+void generator_transition_heart(Game*);
+void generator_f_maw(Game*);
+void generator_f_spike(Game*);
+void generator_boneshooter(Game*);
+void generator_acid_river(Game*);
+void generator_barrage(Game*);
+void generator_sentinel_eye(Game*);
+void generator_labyrinth(Game*);
 void generator_obstacle(Game*);
 
 //Initialise les générateurs

@@ -1146,6 +1146,474 @@ void generator_blocked_canon(Game *game){
     proba_change_blocked_canon(game, nb_line);
     
 }
+
+
+void proba_change_transition_heart(Game* game){
+        for(int i = 0; i<NB_OBSTACLE; i++){
+        *(game->proba+i) = 0;
+    }
+    *((game->proba)+FLESH_MAW) = 100;
+}
+
+void generator_transition_heart(Game*game){
+    Line* line;
+
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i],transition_finale);
+    }
+    proba_change_transition_heart(game);
+}
+
+void proba_change_maw(Game* game){
+    int proba_change = rand()%10+15;
+    if(*((game->proba)+FLESH_MAW) <= proba_change){
+        *((game->proba)+FLESH_SPIKES)+= ((*((game->proba)+FLESH_MAW)))/5 ;
+        *((game->proba)+BONESHOOTER) += (*((game->proba)+FLESH_MAW))/5 ;
+        *((game->proba)+ACID_RIVER) += (*((game->proba)+FLESH_MAW))/5 ;
+        *((game->proba)+BARRAGE)+= ((*((game->proba)+FLESH_MAW)))/5 ;
+        *((game->proba)+SENTINEL_EYE) += (*((game->proba)+FLESH_MAW))/5 ;
+        *((game->proba)+FLESH_MAW) = 0 ;
+    } else {
+        *((game->proba)+FLESH_MAW) -= proba_change ;
+        *((game->proba)+FLESH_SPIKES)+= proba_change/5 ;
+        *((game->proba)+BONESHOOTER) += proba_change/5 ;
+        *((game->proba)+ACID_RIVER) += proba_change/5 ;
+        *((game->proba)+BARRAGE)+= proba_change/5 ;
+        *((game->proba)+SENTINEL_EYE) += proba_change/5 ;
+    }
+    *((game->proba)+LABYRINTH) += check_percent(game, ACID_RIVER, LABYRINTH);
+
+}
+
+void generator_f_maw(Game*game){
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    int nb_danger = rand()%(LENGTH/2)+1;
+    for(int i = 0; i<nb_danger; i++){
+        clone(&line->tiles[rand()%LENGTH], Maw);
+    }
+    proba_change_maw(game);
+}
+
+void proba_change_spikes(Game* game){
+    int proba_change = rand()%10+10;
+    if(*((game->proba)+FLESH_SPIKES) <= proba_change){
+        *((game->proba)+FLESH_MAW)+= ((*((game->proba)+FLESH_SPIKES)))/5 ;
+        *((game->proba)+BONESHOOTER) += (*((game->proba)+FLESH_SPIKES))/5 ;
+        *((game->proba)+ACID_RIVER) += (*((game->proba)+FLESH_SPIKES))/5 ;
+        *((game->proba)+BARRAGE)+= ((*((game->proba)+FLESH_SPIKES)))/5 ;
+        *((game->proba)+SENTINEL_EYE) += (*((game->proba)+FLESH_SPIKES))/5 ;
+        *((game->proba)+FLESH_SPIKES) = 0 ;
+    } else {
+        *((game->proba)+FLESH_SPIKES) -= proba_change ;
+        *((game->proba)+FLESH_MAW)+= proba_change/5 ;
+        *((game->proba)+BONESHOOTER) += proba_change/5 ;
+        *((game->proba)+ACID_RIVER) += proba_change/5 ;
+        *((game->proba)+BARRAGE)+= proba_change/5 ;
+        *((game->proba)+SENTINEL_EYE) += proba_change/5 ;
+    }
+    *((game->proba)+LABYRINTH) += check_percent(game, ACID_RIVER, LABYRINTH);
+
+}
+
+void generator_f_spike(Game*game){
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    int nb_spikes = rand()%(LENGTH/2);
+    for(int i = 0; i<nb_spikes; i++){
+        int pos = rand()%LENGTH;
+        if (rand()%3){
+            game->mobs = list_append(game->mobs, clone_mob(spike, pos, HEIGTH,rand()%3+1,rand()%5+1));
+        } else {
+            game->mobs = list_append(game->mobs, clone_mob(spike_trap, pos, HEIGTH,rand()%3+1,0));
+        }
+    }
+    int nb_shifts = rand()%3+1;
+    int speed=rand()%4;
+    if (rand()%2){
+        for(int i = 0; i <nb_shifts; i++){
+            game->mobs = list_append(game->mobs, clone_mob(shift_left, (LENGTH/nb_shifts)*i, HEIGTH,speed,0));
+        }
+    } else {
+        for(int i = 0; i <nb_shifts; i++){
+            game->mobs = list_append(game->mobs, clone_mob(shift_right, (LENGTH/nb_shifts)*i, HEIGTH,speed,0));
+        }
+    }
+    proba_change_spikes(game);
+}
+
+void proba_change_bones(Game* game,int nb_lines){
+    int proba_change = (rand()%10+5)*nb_lines;
+    if(*((game->proba)+BONESHOOTER) <= proba_change){
+        *((game->proba)+FLESH_MAW)+= ((*((game->proba)+BONESHOOTER)))/5 ;
+        *((game->proba)+FLESH_SPIKES) += (*((game->proba)+BONESHOOTER))/5 ;
+        *((game->proba)+ACID_RIVER) += (*((game->proba)+BONESHOOTER))/5 ;
+        *((game->proba)+BARRAGE)+= ((*((game->proba)+BONESHOOTER)))/5 ;
+        *((game->proba)+SENTINEL_EYE) += (*((game->proba)+BONESHOOTER))/5 ;
+        *((game->proba)+BONESHOOTER) = 0 ;
+    } else {
+        *((game->proba)+BONESHOOTER) -= proba_change ;
+        *((game->proba)+FLESH_MAW)+= proba_change/5 ;
+        *((game->proba)+FLESH_SPIKES) += proba_change/5 ;
+        *((game->proba)+ACID_RIVER) += proba_change/5 ;
+        *((game->proba)+BARRAGE)+= proba_change/5 ;
+        *((game->proba)+SENTINEL_EYE) += proba_change/5 ;
+    }
+    *((game->proba)+LABYRINTH) += check_percent(game, ACID_RIVER, LABYRINTH);
+
+}
+
+
+void add_shooter(Game *game, int pos){
+    add_buffer_line(game->carte);
+    Mob *mob;
+    Line *line = game->carte->head_buffer;
+    int x = rand()%LENGTH-1;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    if (rand()%3){ 
+        game->mobs = list_append(game->mobs, clone_mob(shooter, x, HEIGTH+pos,rand()%4,10+8*x));
+        game->projectile=list_append(game->projectile, clone_mob(bone_arrow_left, x, HEIGTH+pos,rand()%4,10));
+    }
+    else { 
+        game->mobs = list_append(game->mobs, clone_mob(shooter_trap_left, x, HEIGTH+pos,rand()%3+1,0));
+        game->projectile=list_append(game->projectile, clone_mob(bone_arrow_left_trap, x, HEIGTH+pos,rand()%3+1,0));
+    }
+    if (rand()%3){ 
+        mob=clone_mob(shooter, x, HEIGTH+pos,rand()%4,0);
+        mob->offset_y=1;
+        game->mobs = list_append(game->mobs, mob);
+        mob=clone_mob(bone_arrow_right, x, HEIGTH+pos,rand()%4,10+8*(LENGTH-x-1));
+        mob->offset_y=1;
+        game->projectile=list_append(game->projectile, mob);
+    }
+    else { 
+        mob=clone_mob(shooter_trap_right, x, HEIGTH+pos,rand()%3+1,0);
+        mob->offset_y=1;
+        game->mobs = list_append(game->mobs, mob);
+        mob=clone_mob(bone_arrow_right_trap, x, HEIGTH+pos,rand()%3+1,0);
+        mob->offset_y=1;
+        game->projectile=list_append(game->projectile, mob);
+    }
+    
+}
+void generator_boneshooter(Game*game){
+    int nb_line = rand()%3+1;
+    for(int i = 0 ; i < nb_line ; i++){
+        add_shooter(game, i);
+    }
+    proba_change_road(game, nb_line);
+}
+
+void proba_change_acid(Game* game,int nb_line){
+    int proba_change = 10 + (nb_line-1)*(rand()%20+10);
+    if(*((game->proba)+ACID_RIVER) <= proba_change){
+        *((game->proba)+FLESH_MAW)+= ((*((game->proba)+ACID_RIVER)))/5 ;
+        *((game->proba)+FLESH_SPIKES) += (*((game->proba)+ACID_RIVER))/5 ;
+        *((game->proba)+BONESHOOTER) += (*((game->proba)+ACID_RIVER))/5 ;
+        *((game->proba)+BARRAGE)+= ((*((game->proba)+ACID_RIVER)))/5 ;
+        *((game->proba)+SENTINEL_EYE) += (*((game->proba)+ACID_RIVER))/5 ;
+        *((game->proba)+ACID_RIVER) = 0 ;
+    } else {
+        *((game->proba)+ACID_RIVER) -= proba_change ;
+        *((game->proba)+FLESH_MAW)+= proba_change/5 ;
+        *((game->proba)+FLESH_SPIKES) += proba_change/5 ;
+        *((game->proba)+BONESHOOTER) += proba_change/5 ;
+        *((game->proba)+BARRAGE)+= proba_change/5 ;
+        *((game->proba)+SENTINEL_EYE) += proba_change/5 ;
+    }
+    *((game->proba)+LABYRINTH) += check_percent(game, ACID_RIVER, LABYRINTH);
+
+}
+
+void add_bone(Game *game, Mob plank,Tile tile, int pos, int speed){
+    add_buffer_line(game->carte);
+    Line *line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], tile);
+    }
+    int proba_plank = 50;
+    int plank_lenght = 0;
+    int cons = 0;
+    for(int i = 0; i < LENGTH; i++){
+        int dice = rand()%100+1;
+        if(dice<proba_plank){
+            game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed,0));
+            if(plank_lenght<3){
+                proba_plank -= 10;
+            } else if (plank_lenght<5){
+                proba_plank -= 20;
+            } else {
+                proba_plank -= 30;
+            }
+            cons = 0;
+            plank_lenght++;
+        } else {
+            if(plank_lenght == 0){
+                proba_plank += 10*(cons/2);
+            }else if(plank_lenght<3){
+                proba_plank = 50;
+            } else if (plank_lenght<5){
+                proba_plank = 30;
+            } else {
+                proba_plank = 10;
+            }
+            plank_lenght = 0;
+            cons++;
+        }
+    }
+}
+
+void generator_acid_river(Game*game){
+    int nb_line = rand()%(4)+1;
+    Tile tile;
+    if(nb_line == 1){
+        tile = Acid;
+    } else {
+        tile = Acid_down;
+    }
+    int direction = rand()%2;
+    for(int i = 0 ; i < nb_line ; i++){
+        int speed = rand()%3+1;
+        if(direction == i%2){
+            add_bone(game, bone_right,tile,i,speed);
+        } else {
+            add_bone(game,bone_left,tile,i,speed);
+        }
+        if(i==nb_line-2){
+            tile = water_up;
+        }else{
+            tile = water_middle;
+        }
+    }
+    proba_change_acid(game,nb_line);
+    
+}
+
+void proba_change_barrage(Game* game){
+    int proba_change = 15 + (rand()%20);
+    if(*((game->proba)+BARRAGE) <= proba_change){
+        *((game->proba)+FLESH_MAW)+= ((*((game->proba)+BARRAGE)))/5 ;
+        *((game->proba)+FLESH_SPIKES) += (*((game->proba)+BARRAGE))/5 ;
+        *((game->proba)+BONESHOOTER) += (*((game->proba)+BARRAGE))/5 ;
+        *((game->proba)+ACID_RIVER)+= ((*((game->proba)+BARRAGE)))/5 ;
+        *((game->proba)+SENTINEL_EYE) += (*((game->proba)+BARRAGE))/5 ;
+        *((game->proba)+BARRAGE) = 0 ;
+    } else {
+        *((game->proba)+BARRAGE) -= proba_change ;
+        *((game->proba)+FLESH_MAW)+= proba_change/5 ;
+        *((game->proba)+FLESH_SPIKES) += proba_change/5 ;
+        *((game->proba)+BONESHOOTER) += proba_change/5 ;
+        *((game->proba)+ACID_RIVER)+= proba_change/5 ;
+        *((game->proba)+SENTINEL_EYE) += proba_change/5 ;
+    }
+    *((game->proba)+LABYRINTH) += check_percent(game, ACID_RIVER, LABYRINTH);
+
+}
+
+void generator_barrage(Game*game){
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    int nb_danger = rand()%(LENGTH/2)+1;
+    for(int i = 0; i<nb_danger; i++){
+        clone(&line->tiles[rand()%LENGTH], Maw);
+    }    
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    nb_danger=rand()%2+1;
+    int x;
+    int speed;
+    Mob* Proj;
+    if (nb_danger==1){
+        speed=rand()%3+1;
+        x=rand()%(LENGTH-1);
+        game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+        Proj->action_delay=16;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+        Proj->action_delay=32;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+        Proj->action_delay=48;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+        Proj->action_delay=64;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+    }else {
+        x=rand()%(LENGTH/2-1);
+        speed=rand()%3+1;
+        game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+        Proj->action_delay=16;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+        Proj->action_delay=32;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+        Proj->action_delay=48;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+        Proj->action_delay=64;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        x=rand()%(LENGTH/2-1)+LENGTH/2;
+        speed=rand()%3+1;
+        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+        Proj->action_delay=16;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+        Proj->action_delay=32;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+        Proj->action_delay=48;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+        Proj->action_delay=64;
+        Proj->_x=-32;
+        game->projectile=list_append(game->projectile,Proj);
+        game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+    }
+    proba_change_barrage(game);
+}
+
+void proba_change_eye(Game* game){
+    int proba_change = 10 + rand()%30;
+    if(*((game->proba)+SENTINEL_EYE) <= proba_change){
+        *((game->proba)+FLESH_MAW)+= ((*((game->proba)+SENTINEL_EYE)))/5 ;
+        *((game->proba)+FLESH_SPIKES) += (*((game->proba)+SENTINEL_EYE))/5 ;
+        *((game->proba)+BONESHOOTER) += (*((game->proba)+SENTINEL_EYE))/5 ;
+        *((game->proba)+ACID_RIVER)+= ((*((game->proba)+SENTINEL_EYE)))/5 ;
+        *((game->proba)+BARRAGE) += (*((game->proba)+SENTINEL_EYE))/5 ;
+        *((game->proba)+SENTINEL_EYE) = 0 ;
+    } else {
+        *((game->proba)+SENTINEL_EYE) -= proba_change ;
+        *((game->proba)+FLESH_MAW)+= proba_change/5 ;
+        *((game->proba)+FLESH_SPIKES) += proba_change/5 ;
+        *((game->proba)+BONESHOOTER) += proba_change/5 ;
+        *((game->proba)+ACID_RIVER)+= proba_change/5 ;
+        *((game->proba)+BARRAGE) += proba_change/5 ;
+    }
+    *((game->proba)+LABYRINTH) += check_percent(game, ACID_RIVER, LABYRINTH);
+
+}
+
+void generator_sentinel_eye(Game*game){
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    int nb_danger = rand()%(LENGTH/2)+1;
+    for(int i = 0; i<nb_danger; i++){
+        clone(&line->tiles[rand()%LENGTH], Maw);
+    } 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    int x = rand()%(LENGTH-2);
+    int speed=rand()%3+1;
+    game->mobs=list_append(game->mobs,clone_mob(eye,x,HEIGTH+1,speed,0));
+    game->projectile=list_append(game->projectile,clone_mob(eye_blast,x,HEIGTH+1,speed,0));
+    clone(&line->tiles[x], Maw);         
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    nb_danger = rand()%(LENGTH/2)+1;
+    for(int i = 0; i<nb_danger; i++){
+        clone(&line->tiles[rand()%LENGTH], Maw);
+    }    
+}
+
+void proba_change_labyrinth(Game* game){
+    *((game->proba)+FLESH_MAW)+= ((*((game->proba)+LABYRINTH))) ;
+    *((game->proba)+LABYRINTH) = 0 ;
+    *((game->proba)+LABYRINTH) += check_percent(game, ACID_RIVER, LABYRINTH);
+}
+void generator_labyrinth(Game*game){
+    if (LENGTH!=12){
+        add_buffer_line(game->carte);
+        Line* line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Flesh);
+        }
+    } else {
+        add_buffer_line(game->carte);
+        Line *line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Maw);
+            if (i==2){
+                clone(&line->tiles[i], Flesh);
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH,2,0));
+            }
+        }
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Maw);
+            if (i==0||i==1||i==3||i==4||i==5){
+                clone(&line->tiles[i], Flesh);
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+1,2,0));
+            }
+        }
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Maw);
+            if (i==0||i==3||i==5||i==7||i==8||i==9||i==10){
+                clone(&line->tiles[i], Flesh);
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+2,2,0));
+            }
+        }
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Maw);
+            if (i==0||i==1||i==2||i==3||i==5||i==6||i==7||i==10){
+                clone(&line->tiles[i], Flesh);
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+3,2,0));
+            }
+        }
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Maw);
+            if (i==10){
+                clone(&line->tiles[i], Flesh);
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+4,2,0));
+            }
+        }
+    }
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
