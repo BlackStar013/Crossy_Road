@@ -294,7 +294,7 @@ void generator_canon(Game *game){
 
 void generator_obstacle(Game*game){
     // calcule l'obstacle a généré selon les probas
-    int nb = rand()%100;
+    int nb = rand()%100+1;
     int obstacle = -1; 
     while(nb>0){
         obstacle++;
@@ -1370,22 +1370,22 @@ void update_game(Game* game){
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 10;
+            game->until_next = 50;
             break;
 
             case HARD_CROSSY_ROAD:
             proba_change_game(game, BUSHES);
-            game->until_next = 10;
+            game->until_next = 50;
             break;
 
             case FLAMING_MANOR:
             proba_change_game(game, ENTRANCE);
-            game->until_next = 10;
+            game->until_next = 50;
             break;
 
             case CULTIST_CAVE:
             proba_change_game(game, TRANSITION_CAVE);
-            game->until_next = 45;
+            game->until_next = 50;
             break;
 
             default:
