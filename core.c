@@ -8,6 +8,18 @@
 
 ////Partie Création d'obstacles !///
 
+void add_exp(int x, int y, Game *game){
+    //speed = 0 -> Pas sur rivière
+    //+ -> sur rivière normale de droite à gauche
+    //- sur rivière normale de gauche à droite
+    // Pour autre type de rivière, voir Yovhann.
+    if(game->joueur->character_id == RANTON){
+        game->exp = list_append(game->exp,clone_mob(champi, x, y, 4, 4));
+    } else {
+        game->exp = list_append(game->exp,clone_mob(xp, x, y, 4, 4));
+    }
+}
+
 
 void proba_change_game(Game* game, int obstacle){
     for(int i = 0; i<NB_OBSTACLE; i++){
@@ -294,7 +306,7 @@ void generator_canon(Game *game){
 
 void generator_obstacle(Game*game){
     // calcule l'obstacle a généré selon les probas
-    int nb = rand()%100;
+    int nb = rand()%100+1;
     int obstacle = -1; 
     while(nb>0){
         obstacle++;
@@ -1162,12 +1174,8 @@ void generator_blocked_canon(Game *game){
 void initialise_map(Game* game){
     for(int i=0;i<HEIGTH-4;i++){
         update_game(game);
-        if(game->carte->head_buffer!=game->carte->head_map){
-             move_up(game);
-             switch_game(game);
-        } else {
-            update_game(game);
-        }
+        move_up(game);
+        switch_game(game);
         game->score--;
     }
 }
@@ -1410,6 +1418,13 @@ void update_game(Game* game){
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
         if(cur->mob->move_x){
+            Liste_Mob* now = game->exp->next;
+            while(now!=NULL){
+                if(mob_collide_mob(cur->mob,now->mob)&&(!cur->mob->delay)){
+                    now->mob->_x += cur->mob->move_x;
+                }
+                now = now->next;
+            }
             if(mob_collide(cur->mob, game->joueur)){
                 if(cur->mob->delay==0){
                     game->joueur->_x += cur->mob->move_x;
@@ -1462,8 +1477,13 @@ void update_game(Game* game){
     }
     if(a_not_death_mob_collide(game->exp, game->joueur)){
         game->exp = destroy_liste_mob_collide(game->exp, game->joueur);
-        game->nb_exp += (1+game->biome);
-        game->score += (1+game->biome);
+        if(game->joueur->character_id == RANTON){
+            game->nb_exp += (1+game->biome)*2;
+            game->score += (1+game->biome)*(game->joueur->character_value);
+        } else {
+            game->nb_exp += (1+game->biome);
+            game->score += (1+game->biome);
+        }
     }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);

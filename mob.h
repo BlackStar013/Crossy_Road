@@ -207,3 +207,5 @@ extern const Mob smoke4x1;
 
 
 extern const Mob cible;
+extern const Mob xp;
+extern const Mob champi;

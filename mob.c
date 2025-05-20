@@ -2051,3 +2051,67 @@ void get_cibled(Mob* mob, Player* player){
 }
 
 const Mob cible = {1,1,true,0,0,0,0,0,CIBLE,0,0,get_cibled,0,0,0,0,0,0};
+
+
+void champiped(Mob* mob, Player* player){
+    if((player->character_id == RANTON)&&(player->character_lvl>=2)){
+        if(((mob->_x)-16 -64  <=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 +  64 + (mob->length - 1)*32)){ //Dépassement supérieur
+            if(((mob->_y -16 -64 )<=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + 64 +  (mob->heigth - 1)*32)) {
+                    if(!mob->delay){
+                        if (player->_x>mob->_x){
+                            mob->_x+=2;
+                        } 
+                        if (player->_x<mob->_x){
+                            mob->_x-=2;
+
+                        }
+                        if (player->_y>mob->_y){
+                            mob->_y+=2;
+                        } 
+                        if (player->_y<mob->_y){
+                            mob->_y-=2;
+                        }
+                        mob->delay = mob->speed;
+                    } else {
+                        mob->delay--;
+                    }
+            }
+        }
+    }
+}
+
+void xped(Mob* mob, Player* player){
+    if((player->character_id == RANTON)&&(player->character_lvl>=2)){
+        if(((mob->_x)-16 -64  <=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 +  64 + (mob->length - 1)*32)){ //Dépassement supérieur
+            if(((mob->_y -16 -64 )<=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + 64 +  (mob->heigth - 1)*32)) {
+                    if(!mob->delay){
+                        if (player->_x>mob->_x){
+                            mob->_x+=2;
+                        } 
+                        if (player->_x<mob->_x){
+                            mob->_x-=2;
+
+                        }
+                        if (player->_y>mob->_y){
+                            mob->_y+=2;
+                        } 
+                        if (player->_y<mob->_y){
+                            mob->_y-=2;
+                        }
+                        mob->delay = mob->speed;
+                    } else {
+                        mob->delay--;
+                    }
+            }
+        }
+    }
+    mob->action_value = 1 - mob->action_value;
+    if(!mob->action_value){
+        mob->offset_x++;
+        mob->offset_x %= 4;
+    }
+}
+
+const Mob xp = {1,1,false, 0,0,0,0,0,EXP,0,0,xped,0,0,0,0,0,0};
+
+const Mob champi = {1,1,false, 0,0,0,0,0,CHAMPI,0,0,champiped,0,0,0,0,0,0};
