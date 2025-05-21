@@ -1302,7 +1302,7 @@ void generator_f_spike(Game*game){
     proba_change_spikes(game);
 }
 
-void proba_change_bones(Game* game,int nb_lines){
+void proba_change_shooter(Game* game,int nb_lines){
     int proba_change = (rand()%10+5)*nb_lines;
     if(*((game->proba)+BONESHOOTER) <= proba_change){
         *((game->proba)+FLESH_MAW)+= ((*((game->proba)+BONESHOOTER)))/5 ;
