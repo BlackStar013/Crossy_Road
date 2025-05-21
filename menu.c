@@ -269,7 +269,7 @@ void displayCharaMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
 
     SDL_Texture* titleTexture = strToTexture("CHARACTERS", font, renderer);
 
-    SDL_Texture* textTextures[] = {strToTexture("KAIRON", font, renderer), strToTexture("SNITCH", font, renderer), strToTexture("AESIR", font, renderer), strToTexture("KABI", font, renderer), strToTexture("OOGWAAY", font, renderer), strToTexture("JOLINAR", font, renderer), strToTexture("RANTON", font, renderer), strToTexture("DEDE", font, renderer)};
+    SDL_Texture* textTextures[] = {strToTexture("KAIRON", font, renderer), strToTexture("SNITCH", font, renderer), strToTexture("AESIR", font, renderer), strToTexture("KABI", font, renderer), strToTexture("OOGWAAY", font, renderer), strToTexture("JOLINAR", font, renderer), strToTexture("RANTON", font, renderer), strToTexture("LEDE", font, renderer)};
 
     //SDL_Rect backRect = {0, 0, width, heigth};
     //SDL_RenderCopy(renderer, backTexture, NULL, &backRect);
@@ -355,8 +355,8 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
                 }if(cursor == RANTON){
                     *pchara = RANTON;
                     quit2 = SDL_TRUE;
-                }if(cursor == DEDE){
-                    *pchara = DEDE;
+                }if(cursor == LEDE){
+                    *pchara = LEDE;
                     quit2 = SDL_TRUE;
                 }
             }else if(pevent->key.keysym.sym == SDLK_TAB){

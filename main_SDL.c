@@ -18,8 +18,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#define IA false
-
 int main(void){
     //globalement beaucoup d'initialisation diverses et variees
     if(SDL_Init(SDL_INIT_EVERYTHING)){
@@ -121,6 +119,7 @@ int main(void){
     int cursor = 0;
     int chara = AESIR;
     int highscore;
+    bool ia = false;
     Game* game = initialise_game(chara,0);
     load(&(game->nb_exp), &highscore);
     printf("exp: %d,highscore: %d\n", game->nb_exp, highscore);
@@ -147,6 +146,12 @@ int main(void){
                 }
                 if(cursor == CHANGECHARA){
                     charaMenu(&quit, &chara, renderer, &event, font);
+                    if(chara == LEDE){
+                        ia = true;
+                    }
+                    else{
+                        ia = false
+                    }
                 }
                 if(cursor == MMOPTIONS){
                     //printf("maybe later");
@@ -209,7 +214,7 @@ int main(void){
             display_all(game, renderer,pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp,font);
 
             // une fois l'affichage fait, on regarde si le joueur se déplace
-            if(IA){
+            if(ia){
                 if(game->joueur->delai){
                     game->joueur->delai--;
                 }else{ 
