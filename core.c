@@ -1343,18 +1343,18 @@ void add_shooter(Game *game, int pos){
     clone(&line->tiles[x], Shooter_block_left);
     clone(&line->tiles[x+1], Shooter_block_right);
     if (rand()%3){ 
-        mob=clone_mob(shooter, x, HEIGTH+pos,rand()%4,0);
+        mob=clone_mob(shooter, x+1, HEIGTH+pos,rand()%4,0);
         mob->offset_y=1;
         game->mobs = list_append(game->mobs, mob);
-        mob=clone_mob(bone_arrow_right, x, HEIGTH+pos,rand()%4,10+8*(LENGTH-x-1));
+        mob=clone_mob(bone_arrow_right, x+1, HEIGTH+pos,rand()%4,10+8*(LENGTH-x-1));
         mob->offset_y=1;
         game->projectile=list_append(game->projectile, mob);
     }
     else { 
-        mob=clone_mob(shooter_trap_right, x, HEIGTH+pos,rand()%3+1,0);
+        mob=clone_mob(shooter_trap_right, x+1, HEIGTH+pos,rand()%3+1,0);
         mob->offset_y=1;
         game->mobs = list_append(game->mobs, mob);
-        mob=clone_mob(bone_arrow_right_trap, x, HEIGTH+pos,rand()%3+1,0);
+        mob=clone_mob(bone_arrow_right_trap, x+1, HEIGTH+pos,rand()%3+1,0);
         mob->offset_y=1;
         game->projectile=list_append(game->projectile, mob);
     }
@@ -1480,7 +1480,16 @@ void generator_barrage(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_danger = rand()%(LENGTH/2)+1;
+    int nb_danger = rand()%(LENGTH/2-1);
+    for(int i = 0; i<nb_danger; i++){
+        clone(&line->tiles[rand()%LENGTH], Maw);
+    }    
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    nb_danger = rand()%(LENGTH/2-1);
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }    
@@ -1612,7 +1621,7 @@ void generator_sentinel_eye(Game*game){
 void proba_change_labyrinth(Game* game){
     *((game->proba)+FLESH_MAW)+= ((*((game->proba)+LABYRINTH))) ;
     *((game->proba)+LABYRINTH) = 0 ;
-    *((game->proba)+LABYRINTH) += check_percent(game, ACID_RIVER, LABYRINTH);
+    *((game->proba)+FLESH_SPIKES) += check_percent(game, ACID_RIVER, LABYRINTH);
 }
 void generator_labyrinth(Game*game){
     if (LENGTH!=12){
@@ -1662,10 +1671,15 @@ void generator_labyrinth(Game*game){
         line = game->carte->head_buffer;
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Maw);
-            if (i==10){
+            if (i==10||i==9||i==8){
                 clone(&line->tiles[i], Flesh);
                 game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+4,5,0));
             }
+        }
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Flesh);
         }
     }
 }

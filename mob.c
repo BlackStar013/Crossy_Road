@@ -210,7 +210,7 @@ void path_right(Mob *car, Player*p){
             car->_x += 3; 
         }
         car->action_value = 1-car->action_value;
-        if(car->action_value&&((car->id_mob!=PLANK)||(car->id_mob!=BONE)||(car->id_mob!=SHIFT))){
+        if(car->action_value&&(!(car->id_mob==PLANK||car->id_mob==BONE||car->id_mob==SHIFT))){
             car->offset_x ++;
             car->offset_x %= 2;
         }
@@ -232,7 +232,7 @@ void path_left(Mob *car, Player*p){
             car->_x -=3; //À remplacer par move_mob (?)
         }
         car->action_value = 1-car->action_value;
-        if(car->action_value&&((car->id_mob!=PLANK)||(car->id_mob!=BONE)||(car->id_mob!=SHIFT))){
+        if(car->action_value&&(!(car->id_mob==PLANK||car->id_mob==BONE||car->id_mob==SHIFT))){
             car->offset_x ++;
             car->offset_x %= 2;
         }
@@ -2152,7 +2152,7 @@ void shooter_timer_still(Mob* mob, Player*p){
         mob->delay--;
     }
 }
-void still_eye(Mob* mob, Player*p){
+void still_eye(Mob* mob, Player*p){//TODO
     if(!mob->delay){
         if (mob->action_value==0){
             if (p->_x<=mob->memory__x+64&&p->_x>=mob->memory__x-64&&p->_y<=mob->memory__y+64&&p->_y>=mob->memory__y-64){
@@ -2185,7 +2185,7 @@ void still_eye(Mob* mob, Player*p){
         mob->delay--;
     }
 }
-void sight_blast(Mob* mob,Player*p){
+void sight_blast(Mob* mob,Player*p){//TODO
     if(!mob->delay){
         if (mob->action_value==0){
             if (p->_x<=mob->memory__x+64&&p->_x>=mob->memory__x-64&&p->_y<=mob->memory__y+64&&p->_y>=mob->memory__y-64){
@@ -2263,7 +2263,7 @@ const Mob eye_wall={1,2,true,0,0,0,0,0,EYEWALL,0,0,still_eyewall,0,0,0,0,0,0};
 const Mob eye_drop={1,1,true,0,0,0,0,0,BLOOD,0,0,dropping_path,0,0,0,0,0,0};
 const Mob eye_blast={1,1,true,0,0,0,0,0,EYE_BLAST,0,0,sight_blast,0,0,0,0,0,0};
 const Mob shift_left={1,1,false,-3,0,0,0,0,SHIFT,0,0,path_left,0,0,0,0,0,0};
-const Mob shift_right={1,1,false,3,0,0,0,0,SHIFT,0,0,path_left,0,0,0,0,0,0};
+const Mob shift_right={1,1,false,3,0,0,0,0,SHIFT,0,0,path_right,0,0,0,0,0,0};
 const Mob bone_left={1,1,false,-3,0,0,0,0,BONE,0,0,path_left,0,0,0,0,0,0};
 const Mob bone_right={1,1,false,3,0,0,0,0,BONE,0,0,path_right,0,0,0,0,0,0};
 
