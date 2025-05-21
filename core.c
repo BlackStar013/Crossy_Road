@@ -1625,7 +1625,7 @@ void generator_labyrinth(Game*game){
         Line *line = game->carte->head_buffer;
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Maw);
-            if (i==2){
+            if (i==1||i==2){
                 clone(&line->tiles[i], Flesh);
                 game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH,2,0));
             }
@@ -1989,7 +1989,7 @@ void update_game(Game* game){
             break;
 
             case WITHIN_THE_BEAST:
-            proba_change_game(game, _TRANSITION_HEART);
+            proba_change_game(game, TRANSITION_FINAL);
             game->until_next = 60;
             break;
 

@@ -118,7 +118,7 @@ int main(void){
     const int frameDelay = 1000 / desired_fps;
     int fps = 0;
     int cursor = 0;
-    int chara = AESIR;
+    int chara = KAIRON;
     Game* game = initialise_game(chara,0);
     Uint32 startTime = SDL_GetTicks();
     Uint32 currentTime;

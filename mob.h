@@ -45,6 +45,7 @@ enum MOB{
     HIGHCULTIST,
     PEBBLE,
     BEBERT,
+    ///////
     SPIKE,
     SHOOT,
     BONE,
