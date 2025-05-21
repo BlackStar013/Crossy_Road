@@ -8,6 +8,18 @@
 
 ////Partie Création d'obstacles !///
 
+void add_exp(int x, int y, Game *game){
+    //speed = 0 -> Pas sur rivière
+    //+ -> sur rivière normale de droite à gauche
+    //- sur rivière normale de gauche à droite
+    // Pour autre type de rivière, voir Yovhann.
+    if(game->joueur->character_id == RANTON){
+        game->exp = list_append(game->exp,clone_mob(champi, x, y, 4, 4));
+    } else {
+        game->exp = list_append(game->exp,clone_mob(xp, x, y, 4, 4));
+    }
+}
+
 
 void proba_change_game(Game* game, int obstacle){
     for(int i = 0; i<NB_OBSTACLE; i++){
@@ -239,7 +251,11 @@ void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int wher
     Line *line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         if(i==where_can){
-            clone(&line->tiles[i], plain_block);
+            if(where_can){
+                clone(&line->tiles[where_can], plain_block_right);
+            } else {
+                clone(&line->tiles[where_can], plain_block_left);
+            };
         } else {
             clone(&line->tiles[i], plain);
         }
@@ -247,10 +263,11 @@ void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int wher
     int delay = (rand()%100 * speed)/100;
     Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/32);
     Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/32);
+    ball->memory__x = where_can*32;
     canon_->delay = delay;
     ball->delay = delay;
     game->mobs = list_append(game->mobs, canon_);
-    game->mobs = list_append(game->mobs, ball);
+    game->projectile = list_append(game->projectile, ball);
 }
 
 void proba_change_canon(Game* game, int nb_line){
@@ -289,7 +306,7 @@ void generator_canon(Game *game){
 
 void generator_obstacle(Game*game){
     // calcule l'obstacle a généré selon les probas
-    int nb = rand()%100;
+    int nb = rand()%100+1;
     int obstacle = -1; 
     while(nb>0){
         obstacle++;
@@ -458,19 +475,19 @@ void generator_fire(Game *game){
         switch (pattern){
         case 0:
             pos=rand()%(LENGTH-2);
-            game->mobs = list_append(game->mobs, clone_mob(fire_clock, pos, HEIGTH,(rand()%3)+1,16));
+            game->projectile = list_append(game->projectile, clone_mob(fire_clock, pos, HEIGTH,(rand()%3)+1,16));
             break;
         case 1:
             pos=rand()%(LENGTH-3);
-            game->mobs = list_append(game->mobs, clone_mob(fire_clock, pos, HEIGTH,(rand()%3)+1,32));
+            game->projectile = list_append(game->projectile, clone_mob(fire_clock, pos, HEIGTH,(rand()%3)+1,32));
             break;
         case 2:
             pos=rand()%(LENGTH-2);
-            game->mobs = list_append(game->mobs, clone_mob(fire_counter, pos, HEIGTH,(rand()%3)+1,16));
+            game->projectile = list_append(game->projectile, clone_mob(fire_counter, pos, HEIGTH,(rand()%3)+1,16));
             break;
         case 3:
             pos=rand()%(LENGTH-3);
-            game->mobs = list_append(game->mobs, clone_mob(fire_counter, pos, HEIGTH,(rand()%3)+1,32));
+            game->projectile = list_append(game->projectile, clone_mob(fire_counter, pos, HEIGTH,(rand()%3)+1,32));
             break;
         default:
             break;
@@ -1134,14 +1151,19 @@ void add_blocked_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,
             clone(&line->tiles[rand()%LENGTH], tree);
         }
     }
-    clone(&line->tiles[where_can], plain_block);
+    if(where_can){
+        clone(&line->tiles[where_can], plain_block_right);
+    } else {
+        clone(&line->tiles[where_can], plain_block_left);
+    }
     int delay = (rand()%100 * speed)/100;
     Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/32);
     Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/32);
+    ball->memory__x = where_can*32;
     canon_->delay = delay;
     ball->delay = delay;
     game->mobs = list_append(game->mobs, canon_);
-    game->mobs = list_append(game->mobs, ball);
+    game->projectile = list_append(game->projectile, ball);
 }
 
 void proba_change_blocked_canon(Game* game, int nb_line){
@@ -1654,22 +1676,23 @@ void initialise_map(Game* game){
         update_game(game);
         move_up(game);
         switch_game(game);
-        update_game(game);
         game->score--;
     }
 }
 
-Game *initialise_game(int character_id){
+Game *initialise_game(int character_id, int tot_exp){
     // explicite
     srand( time( NULL ) );
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
-    game->joueur = initialise_player(character_id); //0 for now
+    game->joueur = initialise_player(character_id,tot_exp); //0 for now
     game->score = 1;
     game->nb_exp = 0;
     game->exp = NULL;
+    game->exp = list_append(game->exp, clone_mob(cible, -80085, 80085, 0, 0));
     game->mobs = NULL;
     game->projectile = NULL;
+    game->projectile = list_append(game->projectile, clone_mob(arrow_kabi, -4242, 6969, 0, 0));
     game->proba = initialise_proba();
     game->biome = CROSSY_ROAD;
     game->until_next = 10;
@@ -1687,6 +1710,9 @@ void switch_game(Game* game){
     switch_mob(game->projectile);
     game->joueur->_y -= 32;
     game->joueur->_y_dest -= 32;
+    if(game->joueur->character_delay){
+        game->joueur->character_delay--;
+    }
 }
 
 
@@ -1715,22 +1741,146 @@ bool move_player(int x, int y, Game* game){
 }
 
 bool move_up(Game* game){
+    game->joueur->offset_y = 1;
+    game->joueur->offset_x += 1;
+    game->joueur->offset_x %= 4;
     return move_player(0,1,game);
 }
 
 bool move_right(Game* game){
+    game->joueur->offset_y = 2;
+    game->joueur->offset_x += 1;
+    game->joueur->offset_x %= 4;
     return move_player(1,0,game);
 }
 
 bool move_left(Game* game){
+    game->joueur->offset_y = 3;
+    game->joueur->offset_x += 1;
+    game->joueur->offset_x %= 4;
     return move_player(-1,0,game);
 }
 
 bool move_down(Game* game){
+    game->joueur->offset_y = 0;
+    game->joueur->offset_x += 1;
+    game->joueur->offset_x %= 4;
     return move_player(0,-1,game);
 }
 
-bool test_death(Game* game){
+
+bool use_power(Game* game){
+    if(game->joueur->character_delay){
+        return false;
+    } 
+    switch(game->joueur->character_id){
+        case SNITCH:
+            game->joueur->inv_frame = game->joueur->character_value;
+            game->joueur->offset_sup += 4;
+            game->joueur->nb_frame_to_change = game->joueur->inv_frame;
+            game->joueur->character_delay = game->joueur->character_max_delay;
+            return true;
+            break;
+        case KABI:
+            if(game->projectile->mob->action_value){
+                return false;
+            } else {
+                game->joueur->offset_sup += 4;
+                game->joueur->nb_frame_to_change = 8;
+                game->joueur->character_delay = game->joueur->character_max_delay;
+                game->projectile->mob->action_value = 1;
+                game->projectile->mob->_x = game->joueur->_x;
+                game->projectile->mob->_y = game->joueur->_y;
+                game->projectile->mob->offset_y = game->joueur->offset_y;
+                return true;
+            }
+            break;
+
+        case OOGWAAY:
+            switch(game->joueur->offset_y){
+                case 0:
+                    if(move_player(0, -2, game)){
+                        game->joueur->nb_frame_to_change = 0;
+                        game->joueur->character_delay = game->joueur->character_max_delay;
+                        return true;
+                    } 
+                    return false;
+                    break;
+
+                 case 1:
+                    if(move_player(0, 2, game)){
+                        game->joueur->nb_frame_to_change = 0;
+                        game->joueur->character_delay = game->joueur->character_max_delay;
+                        return true;
+                    } 
+                    return false;
+                    break;
+
+                 case 2:
+                    if(move_player(2, 0, game)){
+                        game->joueur->nb_frame_to_change = 0;
+                        game->joueur->character_delay = game->joueur->character_max_delay;
+                        return true;
+                    } 
+                    return false;
+                    break;
+
+                 case 3:
+                    if(move_player(-2, 0, game)){
+                        game->joueur->nb_frame_to_change = 0;
+                        game->joueur->character_delay = game->joueur->character_max_delay;
+                        return true;
+                    } 
+                    return false;
+                    break;
+            }
+            break;
+        
+        case JOLINAR:
+            for(int i = 0;i<game->joueur->character_lvl;i++){
+                game->projectile = list_append(game->projectile, clone_mob(spike_growth, -2, game->joueur->_y_dest/32 + game->joueur->character_value + i, 0, 0));
+            }
+            game->joueur->character_delay = game->joueur->character_max_delay;
+            return true;
+            break;
+            
+
+    }
+}
+
+void to_norm(Game* game){
+    if(game->joueur->nb_frame_to_change == -1){
+        return;
+    }else if(game->joueur->nb_frame_to_change){
+        game->joueur->nb_frame_to_change--;
+    } else {
+        switch(game->joueur->character_id){
+            case SNITCH:
+            case KABI:
+                game->joueur->offset_sup=0;
+                break;
+
+            case OOGWAAY:
+                switch(game->joueur->offset_y){
+                case 0:
+                case 1 :
+                    game->joueur->_x += ((2*(rand()%2)) -1) * 16;
+                    break;
+
+                 case 2:
+                 case 3:
+                    game->joueur->_y += 16;
+                    break;
+                    
+            }
+            
+        }
+        game->joueur->nb_frame_to_change--;
+
+    }
+}
+
+bool test_collide(Game* game){
     // test si le joueur rentre dans un mob, avance sur une case danger
     if(a_death_mob_collide(game->mobs, game->joueur)){
         return true;
@@ -1742,6 +1892,25 @@ bool test_death(Game* game){
         return IS_DANGER(tile_map(game->carte, game->joueur->_x_dest/32, game->joueur->_y_dest/32));
     }
 }
+
+bool test_death(Game* game){
+    if(game->joueur->inv_frame){
+        game->joueur->inv_frame--;
+        return false;
+    } else if(test_collide(game)) {
+        if(game->joueur->character_id == KAIRON){
+            if(game->joueur->character_value){
+                game->joueur->character_value--;
+                game->joueur->inv_frame = 64;
+                return false;
+            } 
+        } 
+        return true;
+    } else {
+        return false;
+    }
+}
+
 
 void print_percent(Game* game){
     int tot = 0;
@@ -1757,6 +1926,13 @@ void update_game(Game* game){
     Liste_Mob* cur = game->mobs;
     while(cur!=NULL){
         if(cur->mob->move_x){
+            Liste_Mob* now = game->exp->next;
+            while(now!=NULL){
+                if(mob_collide_mob(cur->mob,now->mob)&&(!cur->mob->delay)){
+                    now->mob->_x += cur->mob->move_x;
+                }
+                now = now->next;
+            }
             if(mob_collide(cur->mob, game->joueur)){
                 if(cur->mob->delay==0){
                     game->joueur->_x += cur->mob->move_x;
@@ -1766,8 +1942,25 @@ void update_game(Game* game){
         }
         cur = cur->next;
     }
+    move_all_mob(game->exp,game->joueur);
     move_all_mob(game->mobs,game->joueur);
     move_all_mob(game->projectile,game->joueur);
+    if(game->joueur->character_id == KABI){
+        add_smoke_liste_proj_collide(game->projectile->next, game->projectile->mob);
+        game->projectile->next = add_smoke_liste_mob_collide(game->projectile->next, game->mobs, game->projectile->mob);
+        //game->projectile->next = destroy_smoke(game->projectile->next);
+        game->projectile->next = destroy_on_smoke(game->projectile->next);
+        game->mobs = destroy_on_smoke(game->mobs);
+    } else if(game->joueur->character_id == JOLINAR){
+        Liste_Mob* act = game->projectile->next;
+        while(act!=NULL){
+            if(act->mob->id_mob == SPIKE_GROWTH){
+                imobilize_liste_mob_collide(game->projectile->next, act->mob);
+                imobilize_liste_mob_collide(game->mobs, act->mob);
+            }
+            act = act->next;
+        }
+    }
     game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
     game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
     //SDL_Delay(1000);
@@ -1777,17 +1970,17 @@ void update_game(Game* game){
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 30;
+            game->until_next = 10;
             break;
 
             case HARD_CROSSY_ROAD:
             proba_change_game(game, BUSHES);
-            game->until_next = 30;
+            game->until_next = 10;
             break;
 
             case FLAMING_MANOR:
             proba_change_game(game, ENTRANCE);
-            game->until_next = 30;
+            game->until_next = 10;
             break;
 
             case CULTIST_CAVE:
@@ -1806,14 +1999,21 @@ void update_game(Game* game){
             break;
         }
     }
-    if(a_mob_collide(game->exp, game->joueur)){
+    if(a_not_death_mob_collide(game->exp, game->joueur)){
         game->exp = destroy_liste_mob_collide(game->exp, game->joueur);
-        game->nb_exp++;
+        if(game->joueur->character_id == RANTON){
+            game->nb_exp += (1+game->biome)*2;
+            game->score += (1+game->biome)*(game->joueur->character_value);
+        } else {
+            game->nb_exp += (1+game->biome);
+            game->score += (1+game->biome);
+        }
     }
     if(game->carte->head_buffer==game->carte->head_map){
         generator_obstacle(game);
         //print_percent(game);
     }
+    to_norm(game);
 }
 
 

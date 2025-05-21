@@ -1,14 +1,12 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_image.h>
 #include "map.h"
 #include "tuiles.h"
 #include "ia.h"
-#include "ia.h"
 #include "core.h"
-#include "menu.h"
 #include "menu.h"
 #include "mob.h"
 #include "SDLdisplay.h"
@@ -19,7 +17,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define IA true
+#define IA false
 
 int main(void){
     //globalement beaucoup d'initialisation diverses et variees
@@ -121,7 +119,7 @@ int main(void){
     int fps = 0;
     int cursor = 0;
     int chara = AESIR;
-    Game* game = initialise_game(chara);
+    Game* game = initialise_game(chara,0);
     Uint32 startTime = SDL_GetTicks();
     Uint32 currentTime;
     Uint32 endframeTime;
@@ -158,7 +156,7 @@ int main(void){
         }
         if(!main_menu){
             destroy_game(game);
-            game = initialise_game(chara);
+            game = initialise_game(chara,0);
         }
         while(!quit && !main_menu){
             cursor = 0;
@@ -174,6 +172,14 @@ int main(void){
                 startTime = SDL_GetTicks();
             }
             // printf("score :%d\n", game->score);
+            if(game->joueur->_y_dest>=3*32){
+                            pix_defil += 32;
+                            counter = 0;
+                            switch_game(game);
+                            game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
+                            game->exp = destroy_liste_mob_from(-pix_defil/32-1, game->exp);
+                            game->projectile = destroy_liste_mob_from(-pix_defil/32-2*HEIGTH, game->projectile);
+            }
             update_game(game);
             if(pix_defil){
                 if(pix_defil>13*32){
@@ -212,35 +218,16 @@ int main(void){
                     game->joueur->delai--;
                 }else{ 
                     // SDL_Delay(1000);
-
                     int directive = eval(game);
                     // printf("directive %d\n", directive);
                     if(directive == 0){
-                        if(move_up(game)&&game->joueur->_y_dest>=3*32){
-                            pix_defil += 32;
-                            counter = 0;
-                            switch_game(game);
-                            game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
-                        }
-                        //sert à changement l'image du joueur quand il se déplace
-                        game->joueur->offset_y = 1;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
+                        move_up(game);
                     }else if(directive == 1){
                         move_right(game);
-                        game->joueur->offset_y = 2;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }else if(directive == 2){
                         move_down(game);
-                        game->joueur->offset_y = 0;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }else if(directive == 3){
                         move_left(game);
-                        game->joueur->offset_y = 3;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }
                     game->joueur->delai = DELAI;
                 }
@@ -254,37 +241,26 @@ int main(void){
                     // bouge le joueur dans la direction selon la touche pressée, ZQSD, ou quitte avec M
                     if((event.key.keysym.sym == SDLK_z) || (event.key.keysym.sym == SDLK_UP)){
                         // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
-                        if(move_up(game)&&game->joueur->_y_dest>=3*32){
-                            pix_defil += 32;
-                            counter = 0;
-                            switch_game(game);
-                            game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
-                            game->exp = destroy_liste_mob_from(-pix_defil/32-1, game->exp);
-                            game->projectile = destroy_liste_mob_from(-pix_defil/32-2*HEIGTH, game->projectile);
-                        }
-                        //sert à changement l'image du joueur quand il se déplace
-                        game->joueur->offset_y = 1;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
+                        move_up(game);
                     }else if((event.key.keysym.sym == SDLK_q) || (event.key.keysym.sym == SDLK_LEFT)){
                         move_left(game);
-                        game->joueur->offset_y = 3;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }else if((event.key.keysym.sym == SDLK_s) || (event.key.keysym.sym == SDLK_DOWN)){
                         move_down(game);
-                        game->joueur->offset_y = 0;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
                     }else if((event.key.keysym.sym == SDLK_d) || (event.key.keysym.sym == SDLK_RIGHT)){
                         move_right(game);
-                        game->joueur->offset_y = 2;
-                        game->joueur->offset_x += 1;
-                        game->joueur->offset_x %= 4;
+                    }else if(event.key.keysym.sym == SDLK_SPACE){
+                        use_power(game);
                     }else if(event.key.keysym.sym == SDLK_TAB){
                         pauseMenu(&main_menu, &quit, renderer, &event, font, game, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp);
                     }else if(event.key.keysym.sym == SDLK_m){
                         quit = SDL_TRUE;
+                    }else if(game->joueur->character_id==JOLINAR){
+                         if((event.key.keysym.sym == SDLK_n) || (event.key.keysym.sym == SDLK_e)){
+                        // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
+                            game->joueur->character_value++;
+                        }else if((event.key.keysym.sym == SDLK_b) || (event.key.keysym.sym == SDLK_a)){
+                             game->joueur->character_value--;
+                         }
                     }
                 }
             }

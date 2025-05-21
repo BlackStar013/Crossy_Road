@@ -4,8 +4,8 @@
 #include <stdbool.h>
 
 typedef struct _Mob {
-    int heigth;
     int length;
+    int heigth;
     bool is_death;
     int move_x;
     int _x; //new x = ans x/32;
@@ -21,18 +21,24 @@ typedef struct _Mob {
     int max_action_delay;
     int memory__x;
     int memory__y;
+    int was_smoked;
 } Mob;
 
 
+
+enum EXP {
+    EXP,
+    CIBLE, //Oui oui
+    CHAMPI,
+    NB_EXP
+};
 
 enum MOB{
     CAR,
     BUS,
     PLANK,
     CANON_MOB,
-    CANON_BALL,
     ////
-    FIRE_MOB,
     MAGIC_CAR,
     BUSH,
     MOB_CULTIST,
@@ -50,9 +56,20 @@ enum MOB{
 
 enum PROJECTILE{
     CURSE,
+    CANON_BALL,
+    FIRE_MOB,
     BONEARROW,
     BLOOD,
     EYE_BLAST,
+    ///Good Projectile !
+    ARROW_KABI,
+    SPIKE_GROWTH,
+    SMOKE1x1,
+    SMOKE1x2,
+    SMOKE2x1,
+    SMOKE2x2,   
+    SMOKE4x1,
+    /////////////////
     NB_PROJECTILE
 };
 
@@ -61,6 +78,7 @@ typedef struct _List_Mob {
     struct _List_Mob* next;
 } Liste_Mob;
 
+bool not_death_mob_collide(Mob*,Player*);
 bool death_mob_collide(Mob*,Player*);
 bool mob_collide(Mob*,Player*);
 
@@ -95,10 +113,12 @@ extern const Mob canon_ball_left;
 //Fonction liés à List_Mob
 Liste_Mob* list_create(Mob* mob);
 Liste_Mob *list_append(Liste_Mob* list, Mob* mob);
+Liste_Mob *list_append_list(Liste_Mob* init, Liste_Mob* to_append);
 void print_liste(Liste_Mob* list);
 void move_all_mob(Liste_Mob* list,Player*);
 void switch_mob(Liste_Mob* list);
 bool a_death_mob_collide(Liste_Mob* list,Player* player);
+bool a_not_death_mob_collide(Liste_Mob* list,Player* player);
 bool a_mob_collide(Liste_Mob* list,Player* player);
 void destroy_mobs(Liste_Mob *liste);
 void destroy_liste_mob(Liste_Mob *liste);
@@ -203,3 +223,30 @@ const Mob shift_left;
 const Mob shift_right;
 const Mob bone_left;
 const Mob bone_right;
+
+////// FOR POWER CHARACTER //////////
+
+bool mob_collide_mob(Mob*,Mob*);
+Liste_Mob* destroy_liste_mob_collide_mob(Liste_Mob *liste, Mob *mob);
+Liste_Mob* add_smoke_liste_mob_collide(Liste_Mob* proj, Liste_Mob *liste, Mob *mob);
+void add_smoke_liste_proj_collide(Liste_Mob *liste_proj,Mob* mob);
+Liste_Mob* destroy_smoke(Liste_Mob* liste_proj);
+Liste_Mob* destroy_on_smoke(Liste_Mob* liste_mob);
+void imobilize_liste_mob_collide(Liste_Mob *liste, Mob *mob);
+
+void perfectly_still(Mob*,Player*);
+extern const Mob spike_growth;
+extern const Mob arrow_kabi;
+
+void advance_on_smoke(Mob* mob, Player* player);
+extern const Mob smoke1x1;
+extern const Mob smoke2x1;
+extern const Mob smoke1x2;
+extern const Mob smoke2x2;
+extern const Mob smoke4x1;
+
+
+
+extern const Mob cible;
+extern const Mob xp;
+extern const Mob champi;
