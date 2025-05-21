@@ -65,12 +65,12 @@ const Tile MurManoir = {true,false,_MANOR_WALL};
 
 const Tile Porte = {false,false,_DOOR};
 
-extern const Tile Flesh= {false,false,_FLESH};
-extern const Tile Acid= {false,true,_ACID};
-extern const Tile Acid_up= {false,true,_ACID_UP};
-extern const Tile Acid_down= {false,true,_ACID_DOWN};
-extern const Tile Acid_middle= {false,true,_ACID_MIDDLE};
-extern const Tile Maw= {false,true,_MAW};
-extern const Tile Shooter_block_right= {true,false,_SHOOTER_BLOCK_RIGHT};
-extern const Tile Shooter_block_left= {true,false,_SHOOTER_BLOCK_LEFT};
-extern const Tile transition_finale= {true,false,_TRANSITION_HEART};
+const Tile Flesh= {false,false,_FLESH};
+const Tile Acid= {false,true,_ACID};
+const Tile Acid_up= {false,true,_ACID_UP};
+const Tile Acid_down= {false,true,_ACID_DOWN};
+const Tile Acid_middle= {false,true,_ACID_MIDDLE};
+const Tile Maw= {false,true,_MAW};
+const Tile Shooter_block_right= {true,false,_SHOOTER_BLOCK_RIGHT};
+const Tile Shooter_block_left= {true,false,_SHOOTER_BLOCK_LEFT};
+const Tile transition_finale= {true,false,_TRANSITION_HEART};

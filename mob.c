@@ -1812,7 +1812,7 @@ void path_offset_left(Mob* mob, Player*p) {
     if(!mob->delay){
         if(!mob_in_map(mob)){
             if (mob->action_delay==0){
-                mob->action_delay==mob->max_action_delay;
+                mob->action_delay=mob->max_action_delay;
                 mob->_x=mob->memory__x;
                 mob->_y=mob->memory__y;
             } else {
@@ -1831,7 +1831,7 @@ void path_offset_right(Mob* mob, Player*p) {
     if(!mob->delay){
         if(!mob_in_map(mob)){
             if (mob->action_delay==0){
-                mob->action_delay==mob->max_action_delay;
+                mob->action_delay=mob->max_action_delay;
                 mob->_x=mob->memory__x;
                 mob->_y=mob->memory__y;
             } else {
@@ -1958,7 +1958,7 @@ void shooter_trigger_still_right(Mob* mob, Player*p){
 void shooter_timer_still(Mob* mob, Player*p){
     if(!mob->delay){
         if (mob->action_delay==0){
-            mob->action_delay==mob->max_action_delay;
+            mob->action_delay=mob->max_action_delay;
             mob->offset_x=1;
         } else {
             mob->action_delay--;
@@ -2052,7 +2052,7 @@ void still_eyewall(Mob* mob,Player*p){
 }
 void dropping_path(Mob* mob,Player*p){
     if(!mob->delay){
-        if(!mob->action_delay==0){
+        if(mob->action_delay!=0){
             mob->action_delay--;
             mob->_x -= 2; 
         } else {

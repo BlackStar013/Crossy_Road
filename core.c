@@ -359,7 +359,37 @@ void generator_obstacle(Game*game){
         generator_babel(game);
         break;
 
+        case TRANSITION_FINAL:
+        generator_transition_heart(game);
+        break;
 
+        case ACID_RIVER:
+        generator_acid_river(game);
+        break;
+
+        case FLESH_MAW:
+        generator_f_maw(game);
+        break;
+
+        case FLESH_SPIKES:
+        generator_f_spike(game);
+        break;
+
+        case BONESHOOTER:
+        generator_boneshooter(game);
+        break;
+
+        case BARRAGE:
+        generator_barrage(game);
+        break;
+        
+        case SENTINEL_EYE:
+        generator_sentinel_eye(game);
+        break;
+
+        case LABYRINTH:
+        generator_labyrinth(game);
+        break;
     }
 
 }
@@ -1288,6 +1318,8 @@ void add_shooter(Game *game, int pos){
         game->mobs = list_append(game->mobs, clone_mob(shooter_trap_left, x, HEIGTH+pos,rand()%3+1,0));
         game->projectile=list_append(game->projectile, clone_mob(bone_arrow_left_trap, x, HEIGTH+pos,rand()%3+1,0));
     }
+    clone(&line->tiles[x], Shooter_block_left);
+    clone(&line->tiles[x+1], Shooter_block_right);
     if (rand()%3){ 
         mob=clone_mob(shooter, x, HEIGTH+pos,rand()%4,0);
         mob->offset_y=1;
@@ -1761,6 +1793,11 @@ void update_game(Game* game){
             case CULTIST_CAVE:
             proba_change_game(game, TRANSITION_CAVE);
             game->until_next = 45;
+            break;
+
+            case WITHIN_THE_BEAST:
+            proba_change_game(game, _TRANSITION_HEART);
+            game->until_next = 60;
             break;
 
             default:
