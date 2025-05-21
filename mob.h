@@ -220,10 +220,10 @@ extern const Mob eye;
 extern const Mob eye_wall;
 extern const Mob eye_drop;
 extern const Mob eye_blast;
-const Mob shift_left;
-const Mob shift_right;
-const Mob bone_left;
-const Mob bone_right;
+extern const Mob shift_left;
+extern const Mob shift_right;
+extern const Mob bone_left;
+extern const Mob bone_right;
 
 ////// FOR POWER CHARACTER //////////
 

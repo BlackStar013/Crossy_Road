@@ -1365,7 +1365,7 @@ void generator_boneshooter(Game*game){
     for(int i = 0 ; i < nb_line ; i++){
         add_shooter(game, i);
     }
-    proba_change_road(game, nb_line);
+    proba_change_shooter(game, nb_line);
 }
 
 void proba_change_acid(Game* game,int nb_line){
@@ -1606,6 +1606,7 @@ void generator_sentinel_eye(Game*game){
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }    
+    proba_change_eye(game);
 }
 
 void proba_change_labyrinth(Game* game){
