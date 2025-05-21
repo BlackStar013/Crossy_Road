@@ -326,7 +326,7 @@ int main(void){
             //}
             //SDL_Delay(50);
         }
-        if((game->score > highscore) && (!IA)){
+        if((game->score > highscore) && (!ia)){
             save(game->nb_exp, game->score);
         }
         else{
