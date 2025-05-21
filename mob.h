@@ -123,6 +123,10 @@ void clockwise_cycle(Mob *fire,Player* player);
 extern const Mob fire_clock;
 void counterclock_cycle(Mob *fire,Player* player);
 extern const Mob fire_counter;
+
+extern const Mob fire_right;
+extern const Mob fire_left;
+extern const Mob fire_still;
 // void clockwise_cycle_3(Mob *fire,Player* player);
 // extern const Mob fire_3_clock;
 // void counterclock_cycle_3(Mob *fire,Player* player);

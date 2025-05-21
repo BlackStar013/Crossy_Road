@@ -596,6 +596,58 @@ void counterclock_cycle(Mob *fire,Player* Joueur){
 
 const Mob fire_counter = {1,1,true,0,0,0,0,0,FIRE_MOB,0,0,counterclock_cycle,0,16,0,0,0,0};
 
+void path_right_4(Mob *car, Player*p){
+    if(!car->delay){
+        if(car->_x/32 >= LENGTH){
+            car->_x = -car->length*32;
+        } else {
+            car->_x += 3; 
+        }
+        car->action_value = 1-car->action_value;
+        if(car->action_value){
+            car->offset_x ++;
+            car->offset_x %= 4;
+        }
+        car->delay = car->speed;
+    } else {
+        car->delay--;
+    }
+} 
+
+
+const Mob fire_right = {1,1,true,0,0,0,0,0,FIRE_MOB,0,0,path_right_4,0,16,0,0,0,0};
+
+
+void path_left_4(Mob *car, Player*p){
+    if(!car->delay){
+        if(car->_x/32 < -car->length+1){
+            car->_x = LENGTH*32;
+        } else {
+            car->_x -=3; //À remplacer par move_mob (?)
+        }
+        car->action_value = 1-car->action_value;
+        if(car->action_value){
+            car->offset_x ++;
+            car->offset_x %= 4;
+        }
+        car->delay = car->speed;
+    } else {
+        car->delay--;
+    }
+}
+
+const Mob fire_left = {1,1,true,0,0,0,0,0,FIRE_MOB,0,0,path_left_4,0,16,0,0,0,0};
+
+void fast_still(Mob* mob, Player* joueur){
+    mob->action_value = 1 - mob->action_value;
+    if(!mob->action_value){
+        mob->offset_x++;
+        mob->offset_x %= 4;
+    }
+}
+
+const Mob fire_still = {1,1,true,0,0,0,0,0,FIRE_MOB,0,0,fast_still,0,16,0,0,0,0};
+
 // void clockwise_cycle_3(Mob *fire,Player* Joueur){
 //     //fait des tours dans le sens horaire d'une zone de 3*3 cases
 //     if(!fire->delay){
@@ -1220,8 +1272,8 @@ const Mob mage={1,1,true,0,0,0,0,0,HIGHCULTIST,0,0,still,12,0,0,0,0,0};
 const Mob curse_arrow={1,1,true,0,0,0,0,0,CURSE,0,0,follow,12,0,0,0,0,0};
 //const Mob curse_arrow_bis_1={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,100,0,0,0};
 //const Mob curse_arrow_bis_2={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,200,0,0,0};
-const Mob pebble_left = {2,2,true,0,0,0,0,0,PEBBLE,0,1,path_left,0,0,0,0,0,0};
-const Mob pebble_right = {2,2,true,0,0,0,0,0,PEBBLE,0,1,path_right,0,0,0,0,0,0};
+const Mob pebble_left = {2,2,true,0,0,0,0,0,PEBBLE,0,1,path_left,0,0,0,0,0,0}; //TO_MODIFY
+const Mob pebble_right = {2,2,true,0,0,0,0,0,PEBBLE,0,1,path_right,0,0,0,0,0,0}; //TO_MODIFY
 
 
 void babel1_1(Mob *mob,Player* Joueur){
