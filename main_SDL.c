@@ -11,13 +11,14 @@
 #include "mob.h"
 #include "SDLdisplay.h"
 #include "display.h"
+#include "save_load.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
-#define IA true
+#define IA false
 
 int main(void){
     //globalement beaucoup d'initialisation diverses et variees
@@ -119,7 +120,10 @@ int main(void){
     int fps = 0;
     int cursor = 0;
     int chara = AESIR;
+    int highscore;
     Game* game = initialise_game(chara,0);
+    load(&(game->nb_exp), &highscore);
+    printf("exp: %d,highscore: %d\n", game->nb_exp, highscore);
     Uint32 startTime = SDL_GetTicks();
     Uint32 currentTime;
     Uint32 endframeTime;
@@ -316,6 +320,12 @@ int main(void){
             //    baaaaaa = false;    
             //}
             //SDL_Delay(50);
+        }
+        if((game->score > highscore) && (!IA)){
+            save(game->nb_exp, game->score);
+        }
+        else{
+            save(game->nb_exp, highscore);
         }
     }
     destroy_game(game);
