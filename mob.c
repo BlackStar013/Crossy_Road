@@ -2237,7 +2237,7 @@ void dropping_path(Mob* mob,Player*p){
     if(!mob->delay){
         if(mob->action_delay!=0){
             mob->action_delay--;
-            mob->_x -= 2; 
+            mob->_y -= 2; 
         } else {
             mob->_y=mob->memory__y;
             mob->_x=mob->memory__x;
