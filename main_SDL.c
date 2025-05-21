@@ -150,7 +150,7 @@ int main(void){
                         ia = true;
                     }
                     else{
-                        ia = false
+                        ia = false;
                     }
                 }
                 if(cursor == MMOPTIONS){
