@@ -16,10 +16,18 @@ void add_exp(int x, int y, Game *game){
     if(game->joueur->character_id == RANTON){
         game->exp = list_append(game->exp,clone_mob(champi, x, y, 4, 4));
     } else {
-        game->exp = list_append(game->exp,clone_mob(xp, x, y, 4, 4));
+        Mob* exp = clone_mob(xp, x, y, 4, 4);
+        exp->offset_x = rand()%4;
+        game->exp = list_append(game->exp,exp);
     }
 }
 
+void add_row_exp(Game* game, int max_exp, int pos, int min_x, int max_x){
+    int nb = rand()%(max_exp+1);
+    for(int i = 0; i<nb; i++){
+            add_exp(rand()%(max_x+1-min_x) + min_x, HEIGTH+pos, game);
+    }
+}
 
 void proba_change_game(Game* game, int obstacle){
     for(int i = 0; i<NB_OBSTACLE; i++){
@@ -87,6 +95,7 @@ void generator_forest(Game *game){
 }
 
 void add_road(Game *game, Mob car, Tile road_, int pos, int speed, int nb_car){
+    add_row_exp(game, rand()%2+1, pos,1,LENGTH-2);
     add_buffer_line(game->carte);
     Line *line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -247,6 +256,7 @@ void generator_river(Game *game){
 }
 
 void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int where_can){
+    add_row_exp(game, rand()%2+1, pos,1,LENGTH-2);
     add_buffer_line(game->carte);
     Line *line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -1527,12 +1537,12 @@ void update_game(Game* game){
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 10;
+            game->until_next = 35;
             break;
 
             case HARD_CROSSY_ROAD:
             proba_change_game(game, BUSHES);
-            game->until_next = 10;
+            game->until_next = 35;
             break;
 
             case FLAMING_MANOR:
