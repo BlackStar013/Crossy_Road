@@ -116,7 +116,7 @@ SDL_Surface** initSurfaceArrayMob(void){
         }else if(i==EYE){   
             surfaceArrayMob[i] = IMG_Load("sprites/Eye.png");
         }else if(i==EYEWALL){   
-            surfaceArrayMob[i] = IMG_Load("sprites/Eyewall.png");
+            surfaceArrayMob[i] = IMG_Load("sprites/EyeWall.png");
         }else if(i==SHIFT){   
             surfaceArrayMob[i] = IMG_Load("sprites/Shift.png");
         }//else{ //if(i==CURSE){
