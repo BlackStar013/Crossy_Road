@@ -1444,9 +1444,9 @@ void generator_acid_river(Game*game){
             add_bone(game,bone_left,tile,i,speed);
         }
         if(i==nb_line-2){
-            tile = water_up;
+            tile = Acid_up;
         }else{
-            tile = water_middle;
+            tile = Acid_middle;
         }
     }
     proba_change_acid(game,nb_line);

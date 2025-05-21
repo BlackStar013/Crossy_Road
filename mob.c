@@ -232,7 +232,7 @@ void path_left(Mob *car, Player*p){
             car->_x -=3; //À remplacer par move_mob (?)
         }
         car->action_value = 1-car->action_value;
-        if(car->action_value&&(car->id_mob!=PLANK)){
+        if(car->action_value&&(car->id_mob!=PLANK)&&(car->id_mob!=BONE)){
             car->offset_x ++;
             car->offset_x %= 2;
         }
