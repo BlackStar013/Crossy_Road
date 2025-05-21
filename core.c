@@ -1178,7 +1178,7 @@ Game *initialise_game(int character_id, int tot_exp){
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
     game->joueur = initialise_player(character_id,tot_exp); //0 for now
-    game->score = 1;
+    game->score = 0;
     game->nb_exp = 0;
     game->exp = NULL;
     game->mobs = NULL;
@@ -1300,8 +1300,6 @@ void to_norm(Game* game){
 bool test_collide(Game* game){
     // test si le joueur rentre dans un mob, avance sur une case danger
     if(a_death_mob_collide(game->mobs, game->joueur)){
-        return true;
-    }else if(a_death_mob_collide(game->projectile, game->joueur)){
         return true;
     }else if(a_death_mob_collide(game->projectile, game->joueur)){
         return true;
