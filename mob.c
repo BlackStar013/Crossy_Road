@@ -1835,14 +1835,14 @@ void babel4_2(Mob *mob,Player* Joueur){
     }
 }
 
-const Mob babel11 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_1,1,16,0,0,0};
-const Mob babel12 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_2,5,16,0,0,0};
-const Mob babel21 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_1,1,16,0,0,0};
-const Mob babel22 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_2,5,16,0,0,0};
-const Mob babel31 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_1,0,16,0,0,0};
-const Mob babel32 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_2,0,16,0,0,0};
-const Mob babel41 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_1,2,16,0,0,0};
-const Mob babel42 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_2,1,16,0,0,0};
+const Mob babel11 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_1,1,16,0,0,0,0};
+const Mob babel12 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_2,5,16,0,0,0,0};
+const Mob babel21 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_1,1,16,0,0,0,0};
+const Mob babel22 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_2,5,16,0,0,0,0};
+const Mob babel31 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_1,0,16,0,0,0,0};
+const Mob babel32 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_2,0,16,0,0,0,0};
+const Mob babel41 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_1,2,16,0,0,0,0};
+const Mob babel42 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_2,1,16,0,0,0,0};
 
 
 
@@ -2249,23 +2249,23 @@ void dropping_path(Mob* mob,Player*p){
     }
 }
 
-const Mob shooter={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_timer_still,0,0,0,0,0};
-const Mob shooter_trap_left={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_trigger_still_left,0,0,0,0,0};
-const Mob shooter_trap_right={1,1,true,0,0,0,0,0,SHOOT,0,1,shooter_trigger_still_right,0,0,0,0,0};
-const Mob spike={1,1,true,0,0,0,0,0,SHOOT,0,0,spike_trigger,0,0,0,0,0};
-const Mob spike_trap={1,1,true,0,0,0,0,0,SHOOT,0,0,spike_trigger,0,0,0,0,0};
-const Mob bone_arrow_left={1,1,true,0,0,0,0,0,SHOOT,0,0,path_offset_left,0,0,0,0,0};
-const Mob bone_arrow_right={1,1,true,0,0,0,0,0,SHOOT,0,1,path_offset_right,0,0,0,0,0};
-const Mob bone_arrow_left_trap={1,1,true,0,0,0,0,0,SHOOT,0,0,path_offset_trigger_left,0,0,0,0,0};
-const Mob bone_arrow_right_trap={1,1,true,0,0,0,0,0,SHOOT,0,1,path_offset_trigger_right,0,0,0,0,0};
-const Mob eye={1,1,true,0,0,0,0,0,SHOOT,0,0,still_eye,0,0,0,0,0};
-const Mob eye_wall={1,2,true,0,0,0,0,0,SHOOT,0,0,still_eyewall,0,0,0,0,0};
-const Mob eye_drop={1,1,true,0,0,0,0,0,SHOOT,0,0,dropping_path,0,0,0,0,0};
-const Mob eye_blast={1,1,true,0,0,0,0,0,SHOOT,0,0,sight_blast,0,0,0,0,0};
-const Mob shift_left={1,1,false,-3,0,0,0,0,SHOOT,0,0,path_left,0,0,0,0,0};
-const Mob shift_right={1,1,false,3,0,0,0,0,SHOOT,0,0,path_left,0,0,0,0,0};
-const Mob bone_left={1,1,false,-3,0,0,0,0,SHOOT,0,0,path_left,0,0,0,0,0};
-const Mob bone_right={1,1,false,3,0,0,0,0,SHOOT,0,0,path_right,0,0,0,0,0};
+const Mob shooter={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_timer_still,0,0,0,0,0,0};
+const Mob shooter_trap_left={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_trigger_still_left,0,0,0,0,0,0};
+const Mob shooter_trap_right={1,1,true,0,0,0,0,0,SHOOT,0,1,shooter_trigger_still_right,0,0,0,0,0,0};
+const Mob spike={1,1,true,0,0,0,0,0,SHOOT,0,0,spike_trigger,0,0,0,0,0,0};
+const Mob spike_trap={1,1,true,0,0,0,0,0,SHOOT,0,0,spike_trigger,0,0,0,0,0,0};
+const Mob bone_arrow_left={1,1,true,0,0,0,0,0,SHOOT,0,0,path_offset_left,0,0,0,0,0,0};
+const Mob bone_arrow_right={1,1,true,0,0,0,0,0,SHOOT,0,1,path_offset_right,0,0,0,0,0,0};
+const Mob bone_arrow_left_trap={1,1,true,0,0,0,0,0,SHOOT,0,0,path_offset_trigger_left,0,0,0,0,0,0};
+const Mob bone_arrow_right_trap={1,1,true,0,0,0,0,0,SHOOT,0,1,path_offset_trigger_right,0,0,0,0,0,0};
+const Mob eye={1,1,true,0,0,0,0,0,SHOOT,0,0,still_eye,0,0,0,0,0,0};
+const Mob eye_wall={1,2,true,0,0,0,0,0,SHOOT,0,0,still_eyewall,0,0,0,0,0,0};
+const Mob eye_drop={1,1,true,0,0,0,0,0,SHOOT,0,0,dropping_path,0,0,0,0,0,0};
+const Mob eye_blast={1,1,true,0,0,0,0,0,SHOOT,0,0,sight_blast,0,0,0,0,0,0};
+const Mob shift_left={1,1,false,-3,0,0,0,0,SHOOT,0,0,path_left,0,0,0,0,0,0};
+const Mob shift_right={1,1,false,3,0,0,0,0,SHOOT,0,0,path_left,0,0,0,0,0,0};
+const Mob bone_left={1,1,false,-3,0,0,0,0,SHOOT,0,0,path_left,0,0,0,0,0,0};
+const Mob bone_right={1,1,false,3,0,0,0,0,SHOOT,0,0,path_right,0,0,0,0,0,0};
 
 /// @brief CHARCTER POWERS
 /// @param mob 
