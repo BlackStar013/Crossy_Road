@@ -1328,7 +1328,7 @@ void add_shooter(Game *game, int pos){
     add_buffer_line(game->carte);
     Mob *mob;
     Line *line = game->carte->head_buffer;
-    int x = rand()%LENGTH-1;
+    int x = rand()%(LENGTH-2);
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
