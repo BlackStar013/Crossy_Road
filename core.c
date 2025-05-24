@@ -1245,7 +1245,7 @@ void generator_f_maw(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_danger = rand()%(LENGTH/2)+1;
+    int nb_danger = rand()%(LENGTH/2)+3;
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }
@@ -1279,13 +1279,13 @@ void generator_f_spike(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_spikes = rand()%(LENGTH/2);
+    int nb_spikes = rand()%(LENGTH/2)+5;
     for(int i = 0; i<nb_spikes; i++){
         int pos = rand()%LENGTH;
         if (rand()%3){
-            game->mobs = list_append(game->mobs, clone_mob(spike, pos, HEIGTH,rand()%3+3,rand()%5+1));
+            game->mobs = list_append(game->mobs, clone_mob(spike, pos, HEIGTH,(rand()%3+3)*5,rand()%5+3));
         } else {
-            game->mobs = list_append(game->mobs, clone_mob(spike_trap, pos, HEIGTH,rand()%3+3,0));
+            game->mobs = list_append(game->mobs, clone_mob(spike_trap, pos, HEIGTH,(rand()%3+3)*5,0));
         }
     }
     int nb_shifts = rand()%3+1;
@@ -1328,17 +1328,21 @@ void add_shooter(Game *game, int pos){
     add_buffer_line(game->carte);
     Mob *mob;
     Line *line = game->carte->head_buffer;
-    int x = rand()%(LENGTH-2);
+    int x = rand()%(LENGTH-8)+3;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
+    }
+    int nb_danger = 4;
+    for(int i = 0; i<nb_danger; i++){
+        clone(&line->tiles[rand()%LENGTH], Maw);
     }
     if (rand()%3){ 
         game->mobs = list_append(game->mobs, clone_mob(shooter, x, HEIGTH+pos,rand()%4,10+8*x));
         game->projectile=list_append(game->projectile, clone_mob(bone_arrow_left, x, HEIGTH+pos,rand()%4,10));
     }
     else { 
-        game->mobs = list_append(game->mobs, clone_mob(shooter_trap_left, x, HEIGTH+pos,rand()%3+1,0));
-        game->projectile=list_append(game->projectile, clone_mob(bone_arrow_left_trap, x, HEIGTH+pos,rand()%3+1,0));
+        game->mobs = list_append(game->mobs, clone_mob(shooter_trap_left, x, HEIGTH+pos,rand()%3,0));
+        game->projectile=list_append(game->projectile, clone_mob(bone_arrow_left_trap, x, HEIGTH+pos,rand()%2,0));
     }
     clone(&line->tiles[x], Shooter_block_left);
     clone(&line->tiles[x+1], Shooter_block_right);
@@ -1351,10 +1355,10 @@ void add_shooter(Game *game, int pos){
         game->projectile=list_append(game->projectile, mob);
     }
     else { 
-        mob=clone_mob(shooter_trap_right, x+1, HEIGTH+pos,rand()%3+1,0);
+        mob=clone_mob(shooter_trap_right, x+1, HEIGTH+pos,rand()%2,0);
         mob->offset_y=1;
         game->mobs = list_append(game->mobs, mob);
-        mob=clone_mob(bone_arrow_right_trap, x+1, HEIGTH+pos,rand()%3+1,0);
+        mob=clone_mob(bone_arrow_right_trap, x+1, HEIGTH+pos,rand()%2,0);
         mob->offset_y=1;
         game->projectile=list_append(game->projectile, mob);
     }
@@ -1480,7 +1484,7 @@ void generator_barrage(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_danger = rand()%(LENGTH/2-1);
+    int nb_danger = rand()%(LENGTH/2)+1;
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }    
@@ -1489,7 +1493,7 @@ void generator_barrage(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    nb_danger = rand()%(LENGTH/2-1);
+    nb_danger = rand()%(LENGTH/2)+1;
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }    
@@ -1602,7 +1606,7 @@ void generator_sentinel_eye(Game*game){
         clone(&line->tiles[i], Flesh);
     }
     int x = rand()%(LENGTH-2);
-    int speed=rand()%3+1;
+    int speed=(rand()%3+5)*4;
     game->mobs=list_append(game->mobs,clone_mob(eye,x,HEIGTH+1,speed,0));
     game->projectile=list_append(game->projectile,clone_mob(eye_blast,x,HEIGTH+1,speed,0));
     clone(&line->tiles[x], Maw);         
@@ -1631,13 +1635,27 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Flesh);
         }
     } else {
+            add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], Flesh);
+    }
+    int nb_spikes = rand()%(LENGTH/2);
+    for(int i = 0; i<nb_spikes; i++){
+            int pos = rand()%LENGTH;
+            if (rand()%3){
+                game->mobs = list_append(game->mobs, clone_mob(spike, pos, HEIGTH,(rand()%3+3)*5,rand()%5+1));
+            } else {
+                game->mobs = list_append(game->mobs, clone_mob(spike_trap, pos, HEIGTH,(rand()%3+3)*5,0));
+            }
+        }
         add_buffer_line(game->carte);
-        Line *line = game->carte->head_buffer;
+        line = game->carte->head_buffer;
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Maw);
             if (i==1||i==2){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH,5,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+1,25,0));
             }
         }
         add_buffer_line(game->carte);
@@ -1646,7 +1664,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Maw);
             if (i==0||i==1||i==3||i==4||i==5){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+1,5,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+2,25,0));
             }
         }
         add_buffer_line(game->carte);
@@ -1655,7 +1673,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Maw);
             if (i==0||i==3||i==5||i==7||i==8||i==9||i==10){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+2,5,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+3,25,0));
             }
         }
         add_buffer_line(game->carte);
@@ -1664,7 +1682,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Maw);
             if (i==0||i==1||i==2||i==3||i==5||i==6||i==7||i==10){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+3,5,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+4,25,0));
             }
         }
         add_buffer_line(game->carte);
@@ -1673,7 +1691,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Maw);
             if (i==10||i==9||i==8){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+4,5,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+5,25,0));
             }
         }
         add_buffer_line(game->carte);
@@ -1682,6 +1700,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Flesh);
         }
     }
+    proba_change_labyrinth(game);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

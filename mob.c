@@ -2070,10 +2070,13 @@ void spike_timer(Mob* mob, Player*p){
                 mob->action_value=1;
                 mob->offset_x++;
             }
+            else{
+                mob->action_delay--;
+            }
         }
         else if (mob->action_value==1){
             mob->action_value=2;
-            mob->action_delay=mob->speed;
+            mob->action_delay=3;
             mob->offset_x++;
             mob->is_death=true;
         } else {
@@ -2082,6 +2085,9 @@ void spike_timer(Mob* mob, Player*p){
                 mob->offset_x=0;
                 mob->is_death=false;
                 mob->action_delay=mob->max_action_delay;
+            }
+            else{
+                mob->action_delay--;
             }
         }
         mob->delay = mob->speed;
@@ -2099,7 +2105,7 @@ void spike_trigger(Mob* mob, Player*p){
         }
         else if (mob->action_value==1){
             mob->action_value=2;
-            mob->action_delay=mob->speed;
+            mob->action_delay=2;
             mob->offset_x++;
             mob->is_death=true;
         } else {
@@ -2108,56 +2114,24 @@ void spike_trigger(Mob* mob, Player*p){
                 mob->offset_x=0;
                 mob->is_death=false;
             }
+            else{
+                mob->action_delay--;
+            }
         }
         mob->delay = mob->speed;
     } else {
         mob->delay--;
     }
 }
-void shooter_trigger_still_left(Mob* mob, Player*p){
-    if(!mob->delay){
-        if(p->_y==mob->memory__y && p->_x<mob->memory__x){
-            mob->offset_x=1;
-        } else {
-             mob->offset_x=0;
-        }
-        mob->delay = mob->speed;
-    } else {
-        mob->delay--;
-    }
-}
-void shooter_trigger_still_right(Mob* mob, Player*p){
-    if(!mob->delay){
-        if(p->_y==mob->memory__y && p->_x>mob->memory__x){
-            mob->offset_x=1;
-        } else {
-             mob->offset_x=0;
-        }
-        mob->delay = mob->speed;
-    } else {
-        mob->delay--;
-    }
-}
-void shooter_timer_still(Mob* mob, Player*p){
-    if(!mob->delay){
-        if (mob->action_delay==0){
-            mob->action_delay=mob->max_action_delay;
-            mob->offset_x=1;
-        } else {
-            mob->action_delay--;
-            mob->offset_x=0;
-        }
-        mob->delay = mob->speed;
-    } else {
-        mob->delay--;
-    }
-}
+void shooter_still(Mob* mob, Player*p){}
+
 void still_eye(Mob* mob, Player*p){//TODO
     if(!mob->delay){
         if (mob->action_value==0){
             if (p->_x<=mob->memory__x+64&&p->_x>=mob->memory__x-64&&p->_y<=mob->memory__y+64&&p->_y>=mob->memory__y-64){
                 mob->offset_x=0;
                 mob->offset_y=1;
+                mob->action_value++;
                 mob->delay = mob->speed;
             }
             else{
@@ -2194,6 +2168,7 @@ void sight_blast(Mob* mob,Player*p){//TODO
                 mob->_x=p->_x;
                 mob->_y=p->_y;
                 mob->delay = mob->speed;
+                mob->action_value++;
             }
         }
         else if(mob->action_value==1||mob->action_value==2){
@@ -2237,7 +2212,7 @@ void dropping_path(Mob* mob,Player*p){
     if(!mob->delay){
         if(mob->action_delay!=0){
             mob->action_delay--;
-            mob->_y -= 2; 
+            mob->_y -= 4; 
         } else {
             mob->_y=mob->memory__y;
             mob->_x=mob->memory__x;
@@ -2249,10 +2224,10 @@ void dropping_path(Mob* mob,Player*p){
     }
 }
 
-const Mob shooter={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_timer_still,0,0,0,0,0,0};
-const Mob shooter_trap_left={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_trigger_still_left,0,0,0,0,0,0};
-const Mob shooter_trap_right={1,1,true,0,0,0,0,0,SHOOT,0,1,shooter_trigger_still_right,0,0,0,0,0,0};
-const Mob spike={1,1,true,0,0,0,0,0,SPIKE,0,0,spike_trigger,0,0,0,0,0,0};
+const Mob shooter={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_still,0,0,0,0,0,0};
+const Mob shooter_trap_left={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_still,0,0,0,0,0,0};
+const Mob shooter_trap_right={1,1,true,0,0,0,0,0,SHOOT,0,1,shooter_still,0,0,0,0,0,0};
+const Mob spike={1,1,true,0,0,0,0,0,SPIKE,0,0,spike_timer,0,0,0,0,0,0};
 const Mob spike_trap={1,1,true,0,0,0,0,0,SPIKE,0,0,spike_trigger,0,0,0,0,0,0};
 const Mob bone_arrow_left={1,1,true,0,0,0,0,0,BONEARROW,0,0,path_offset_left,0,0,0,0,0,0};
 const Mob bone_arrow_right={1,1,true,0,0,0,0,0,BONEARROW,0,1,path_offset_right,0,0,0,0,0,0};
