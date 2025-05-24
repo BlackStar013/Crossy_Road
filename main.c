@@ -553,26 +553,6 @@ void draw_mob(Mob* mob){
             } 
             break;
 
-         case PEBBLE :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_CAVE_EVIL));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                        if(i){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,')');
-                        } else {
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'(');
-                        }
-                    }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_CAVE_EVIL));
-            } 
-            break;
-
 
     }
 
@@ -595,6 +575,54 @@ void draw_projectile(Mob* mob){
             }
             if(hascolor){
                 attroff(COLOR_PAIR(ON_CAVE_EVIL));
+            } 
+            break;
+        
+        case PEBBLE :
+            if(hascolor){
+                attron(COLOR_PAIR(ON_CAVE_EVIL));
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                        if(i){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,')');
+                        } else {
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'(');
+                        }
+                    }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_CAVE_EVIL));
+            } 
+            break;
+
+        case LEVER :
+            if(hascolor){
+                if(mob->offset_x ==1){
+                    attron(COLOR_PAIR(ON_CAVE_EVIL));
+                }else {
+                    attron(COLOR_PAIR(ON_CAVE));
+                }
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                        if(mob->offset_x ==1){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'\\');
+                        } else {
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'/');
+                        }
+                    }
+                }
+            }
+            if(hascolor){
+                if(mob->offset_x ==1){
+                    attroff(COLOR_PAIR(ON_CAVE_EVIL));
+                }else {
+                    attroff(COLOR_PAIR(ON_CAVE));
+                }
             } 
             break;
         

@@ -383,9 +383,9 @@ void generator_obstacle(Game*game){
         generator_transition_cave(game);
         break;
 
-        //case STONE:
-        //generator_pebble(game);
-        //break;
+        case TRAP:
+        generator_trap(game);
+        break;
 
         case BABEL:
         generator_babel(game);
@@ -512,7 +512,7 @@ void add_fire_unit(Game *game, int init_x, int direction, int pos, int speed, in
 
 void add_fire_row(Game *game, int direction, int pos){
     Mob* firey;
-    if(direction){
+    if(!direction){
         for(int i = 2; i < LENGTH; i++){
             firey = clone_mob(fire_still, i, HEIGTH+pos,0,0);
             firey->memory__x = -18;
@@ -953,6 +953,104 @@ void generator_babel(Game *game){
     }
     proba_change_babel(game);
 }
+
+////New_cave////
+
+void proba_change_trap(Game* game){
+    //*((game->proba)+STONE) += ((*((game->proba)+CAVE))/2) ;
+    *((game->proba)+MAGE) += ((*((game->proba)+CAVE))/2)+1;
+    //*((game->proba)+STONE) += ((*((game->proba)+CULTIST))/2) ;
+    *((game->proba)+MAGE) += ((*((game->proba)+CULTIST))/2)+1;
+    //*((game->proba)+STONE) += ((*((game->proba)+BABEL))/2) ;
+    *((game->proba)+MAGE) += ((*((game->proba)+BABEL))/2)+1;
+    *((game->proba)+CULTIST) = 0 ;
+    *((game->proba)+BABEL) = 0 ;
+    *((game->proba)+CAVE) = 0 ;
+    *((game->proba)+MAGE) += check_percent(game, CAVE, BABEL);
+
+}
+
+void generator_trap(Game* game){
+    int direction = rand()%2;
+    int init_x = rand()%(LENGTH-4) + 2;
+    int pos = 0;
+    int speed = rand()%4+1;
+    int max_action_delay = 48 + rand()%32;
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    pos++;
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 1; i<LENGTH-1; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    if(direction){
+        clone(&line->tiles[0], stalagmite);
+        clone(&line->tiles[LENGTH-1], cave);
+
+    } else {
+        clone(&line->tiles[LENGTH-1], stalagmite);
+        clone(&line->tiles[0], cave);
+
+    }
+    pos++;
+    Mob* caillou;
+    if(direction){
+        caillou = clone_mob(pebble_right, LENGTH+3, HEIGTH+pos, speed, max_action_delay);
+    } else {
+        caillou = clone_mob(pebble_left, -4, HEIGTH+pos, speed, max_action_delay);
+    }
+    caillou->memory__x = init_x*32;
+    caillou->memory__y = (HEIGTH + pos + 3)*32;
+    game->projectile = list_append(game->projectile, caillou);
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    pos++;
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    pos++;
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    if(direction){
+        clone(&line->tiles[0], cave);
+    } else {
+        clone(&line->tiles[LENGTH-1], cave);
+    }
+    pos++;
+    game->mobs = list_append(game->mobs, clone_mob(sentinel,init_x,HEIGTH+pos,speed,max_action_delay));
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[1], stalagmite);
+    clone(&line->tiles[LENGTH-2], stalagmite);
+    pos++;
+    Mob* clever = clone_mob(lever,(LENGTH-1)/2,HEIGTH+pos,speed,max_action_delay);
+    clever->memory__y = (HEIGTH + pos -1)*32;
+    clever->memory__x = (init_x)*32;
+    game->projectile = list_append(game->projectile, clever);
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    proba_change_trap(game);
+
+}
+
 //NEW_GENERATOR//
 
 void proba_change_bushes(Game* game){
@@ -1551,7 +1649,7 @@ void update_game(Game* game){
             break;
 
             case CULTIST_CAVE:
-            proba_change_game(game, TRANSITION_CAVE);
+            proba_change_game(game, TRAP);
             game->until_next = 45;
             break;
 

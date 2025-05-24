@@ -85,8 +85,6 @@ SDL_Surface** initSurfaceArrayMob(void){
             surfaceArrayMob[i] = IMG_Load("sprites/Cultiste.png");
         }else if(i==HIGHCULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/HautCultiste.png");
-        }else if(i==PEBBLE){   
-            surfaceArrayMob[i] = IMG_Load("sprites/GrosRocher.png");
         }else if(i==BEBERT){   
             surfaceArrayMob[i] = IMG_Load("sprites/Babelien.png");
         }//else{ //if(i==CURSE){
@@ -133,6 +131,10 @@ SDL_Surface** initSurfaceArrayProjectile(void){
             surfaceArrayProjectile[i] = IMG_Load("sprites/ProjectileMaudit.png");
         }else if(i==FIRE_MOB){
             surfaceArrayProjectile[i] = IMG_Load("sprites/FEU.png");
+        }else if(i==PEBBLE){   
+            surfaceArrayProjectile[i] = IMG_Load("sprites/GrosRocher.png");
+        }else if(i==LEVER){   
+            surfaceArrayProjectile[i] = IMG_Load("sprites/Lever.png");
         }else if(i==CANON_BALL){
             surfaceArrayProjectile[i] = IMG_Load("sprites/Boulet.png");
         }else if(i==ARROW_KABI){

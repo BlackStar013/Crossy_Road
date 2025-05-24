@@ -1272,8 +1272,6 @@ const Mob mage={1,1,true,0,0,0,0,0,HIGHCULTIST,0,0,still,12,0,0,0,0,0};
 const Mob curse_arrow={1,1,true,0,0,0,0,0,CURSE,0,0,follow,12,0,0,0,0,0};
 //const Mob curse_arrow_bis_1={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,100,0,0,0};
 //const Mob curse_arrow_bis_2={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,200,0,0,0};
-const Mob pebble_left = {2,2,true,0,0,0,0,0,PEBBLE,0,1,path_left,0,0,0,0,0,0}; //TO_MODIFY
-const Mob pebble_right = {2,2,true,0,0,0,0,0,PEBBLE,0,1,path_right,0,0,0,0,0,0}; //TO_MODIFY
 
 
 void babel1_1(Mob *mob,Player* Joueur){
@@ -2203,3 +2201,249 @@ const Mob xp = {1,1,false, 0,0,0,0,0,EXP,0,0,xped,0,0,0,0,0,0};
 const Mob champi = {1,1,false, 0,0,0,0,0,CHAMPI,0,0,champiped,0,0,0,0,0,0};
 
 const Mob spike_growth = {20,1,false, 0,0,0,0,0,SPIKE_GROWTH,0,0,perfectly_still,0,0,0,0,0,0};
+
+
+///New_Cave :
+
+
+void ROLL_ROLL(Mob* mob, Player* player){
+    if(mob->offset_y==1){
+        if(mob->_x<=-(mob->length-1)*32){
+            mob->_x = (LENGTH-1)*32;
+        } else {
+            mob->_x -= 16;
+        }
+        if(mob->action_value){
+            mob->offset_x++;
+            mob->offset_x%=8;
+        }
+        mob->action_value = !mob->action_value;
+    } else {
+        if(mob->_x>=((LENGTH-1)*32)){
+            mob->_x = -(mob->length-1)*32;
+        } else {
+            mob->_x += 16;
+        }
+        if(mob->action_value){
+            mob->offset_x++;
+            mob->offset_x%=8;
+        }
+        mob->action_value = !mob->action_value;
+    }
+
+}
+
+
+void rush_to_lever_no_moving(Mob* mob,Player* player){
+    if(mob->memory__x<= (LENGTH-1)*16) {
+        mob->memory__x += 5;
+    } else {
+        mob->memory__x -= 5;
+    }
+    if(((mob->memory__x)-16  <= (LENGTH-1)*16 )&&((LENGTH-1)*16 <= mob->memory__x + 16 + (mob->length - 1)*32)){
+        mob->speed = 0;
+        mob->offset_x++;
+        mob->offset_x%=2;
+        mob->memory__x = -12;
+        if(mob->id_mob ==LEVER){
+            mob->path = perfectly_still;
+        } else {
+            mob->path = ROLL_ROLL;
+        }
+    }
+
+}
+
+void detect_player_no_moving(Mob* mob, Player* player){
+    if(!mob->delay){
+        switch(mob->action_value){
+            case 0:
+                mob->memory__x += 3;
+                if((!mob->action_delay)||(mob->memory__x>=((LENGTH-1)*32-4))){
+                    mob->action_delay = mob->max_action_delay;
+                    mob->action_value = 2;
+                } else {
+                    mob->action_delay--;
+                }
+                break;
+
+            case 1:
+                mob->memory__x -= 3;
+                if((!mob->action_delay)||(mob->memory__x<=((1)*32+4))){
+                    mob->action_delay = mob->max_action_delay;
+                    mob->action_value = 3;
+                } else {
+                    mob->action_delay--;
+                }
+                break;
+
+            case 2:
+                if((!mob->action_delay)||(mob->memory__x<=((1)*32+4))){
+                    int ratio = (50 + rand()%101)/100;
+                    mob->action_delay = ratio*mob->max_action_delay;
+                    if(mob->memory__x>=((LENGTH-1)*32-4)){
+                        mob->action_value = 1;
+                    } else {
+                        mob->action_value = 0;
+                    }
+                } else {
+                    mob->action_delay--;
+                }
+                break;
+
+            case 3:
+                if((!mob->action_delay)||(mob->memory__x<=((1)*32+4))){
+                    int ratio = (50 + rand()%101)/100;
+                    mob->action_delay = ratio*mob->max_action_delay;
+                    if(mob->memory__x<=((1)*32+4)){
+                        mob->action_value = 0;
+                    } else {
+                        mob->action_value = 1;
+                    }
+                } else {
+                    mob->action_delay--;
+                }
+                break;
+
+            mob->delay = mob->speed;
+                
+        }
+    } else {
+        mob->delay--;
+    }
+    if(mob->action_value>=2){
+        if(((mob->memory__x)-16  <=player->_x_dest)&&(player->_x_dest <= mob->memory__x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
+            if(((mob->memory__y -16 -64 )<=player->_y_dest)&&(player->_y_dest <= (mob->memory__y + 16) +  (mob->heigth - 1)*32)) {   
+                mob->speed = 0;
+                mob->path = rush_to_lever_no_moving;
+            }
+        }
+    }
+}
+
+void rush_to_lever(Mob* mob,Player* player){
+    if(mob->_x<= (LENGTH-1)*16) {
+        mob->offset_y = 2;
+        mob->_x += 5;
+        if((mob->_x-mob->memory__x)%10){
+            mob->offset_x++;
+            mob->offset_x%=4;
+        }
+    } else {
+        mob->offset_y = 3;
+        mob->_x -= 5;
+        if((mob->_x-mob->memory__x)%10){
+            mob->offset_x++;
+            mob->offset_x%=4;
+        }
+    }
+    if(((mob->_x)-16  <= (LENGTH-1)*16 )&&((LENGTH-1)*16 <= mob->_x + 16 + (mob->length - 1)*32)){
+        mob->speed = 0;
+        mob->offset_x = 0;
+        mob->offset_y = 1;
+        mob->path = perfectly_still;
+    }
+
+}
+
+void detect_player(Mob* mob, Player* player){
+    if(!mob->delay){
+        switch(mob->action_value){
+            case 0:
+                mob->offset_y = 2;
+                mob->_x += 3;
+                if((mob->_x-mob->memory__x)%6){
+                    mob->offset_x++;
+                    mob->offset_x%=4;
+                }
+                if((!mob->action_delay)||(mob->_x>=((LENGTH-1)*32-4))){
+                    mob->action_delay = mob->max_action_delay;
+                    mob->action_value = 2;
+                } else {
+                    mob->action_delay--;
+                }
+                break;
+
+            case 1:
+                mob->offset_y = 3;
+                mob->_x -= 3;
+                if((mob->_x-mob->memory__x)%6){
+                    mob->offset_x++;
+                    mob->offset_x%=4;
+                }
+                if((!mob->action_delay)||(mob->_x<=((1)*32+4))){
+                    mob->action_delay = mob->max_action_delay;
+                    mob->action_value = 3;
+                } else {
+                    mob->action_delay--;
+                }
+                break;
+
+            case 2:
+                if(mob->action_delay<= 32){
+                    if(mob->_x>=((LENGTH-1)*32-4)){
+                            mob->offset_y = 3;
+                        } else {
+                            mob->offset_y = 2;
+                        }
+                }else{
+                    mob->offset_y = 0;
+                }
+                mob->offset_x = 0;
+                if((!mob->action_delay)||(mob->memory__x<=((1)*32+4))){
+                    int ratio = (40 + rand()%61)/100;
+                    mob->action_delay = ratio*mob->max_action_delay;
+                    if(mob->_x>=((LENGTH-1)*32-4)){
+                        mob->action_value = 1;
+                    } else {
+                        mob->action_value = 0;
+                    }
+                } else {
+                    mob->action_delay--;
+                }
+                break;
+
+            case 3:
+                if(mob->action_delay<= 32){
+                    if(mob->_x<=((1)*32+4)){
+                        mob->offset_y = 2;
+                    } else {
+                        mob->offset_y = 3;
+                    }
+                } else {
+                    mob->offset_y = 0;
+                }
+                if((!mob->action_delay)||(mob->_x<=((1)*32+4))){
+                    int ratio = (40 + rand()%61)/100;
+                    mob->action_delay = ratio*mob->max_action_delay;
+                    if(mob->_x<=((1)*32+4)){
+                        mob->action_value = 0;
+                    } else {
+                        mob->action_value = 1;
+                    }
+                } else {
+                    mob->action_delay--;
+                }
+                break;
+
+            mob->delay = mob->speed;
+                
+        }
+    } else {
+        mob->delay--;
+    }
+    if(mob->action_value>=2){
+        if(((mob->_x)-16  <=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
+            if(((mob->_y -16 -64 )<=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) +  (mob->heigth - 1)*32)) {   
+                mob->speed = 0;
+                mob->path = rush_to_lever;
+            }
+        }
+    }
+}
+
+
+const Mob sentinel = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,detect_player,0,0,0,0,0,0};
+const Mob lever = {1,1,false,0,0,0,0,0,LEVER,0,0,detect_player_no_moving,0,0,0,0,0,0};
+const Mob pebble_left = {2,2,true,0,0,0,0,0,PEBBLE,0,1,detect_player_no_moving,0,0,0,0,0,0}; //TO_MODIFY
+const Mob pebble_right = {2,2,true,0,0,0,0,0,PEBBLE,0,0,detect_player_no_moving,0,0,0,0,0,0}; //TO_MODIFY

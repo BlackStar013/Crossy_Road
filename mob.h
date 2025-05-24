@@ -43,7 +43,7 @@ enum MOB{
     BUSH,
     MOB_CULTIST,
     HIGHCULTIST,
-    PEBBLE,
+    //PEBBLE,
     BEBERT,
     NB_MOB
 };
@@ -52,6 +52,8 @@ enum PROJECTILE{
     CURSE,
     CANON_BALL,
     FIRE_MOB,
+    PEBBLE,
+    LEVER,
     ///Good Projectile !
     ARROW_KABI,
     SPIKE_GROWTH,
@@ -213,3 +215,8 @@ extern const Mob smoke4x1;
 extern const Mob cible;
 extern const Mob xp;
 extern const Mob champi;
+
+//New_cave
+
+extern const Mob lever;
+extern const Mob sentinel;
