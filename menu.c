@@ -67,7 +67,7 @@ void displayMainMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int wid
     SDL_DestroyTexture(cursorTexture);
 }
 
-void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, int chara){
+void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, int chara){
     SDL_bool quit2 = SDL_FALSE;
     int cursor = 0;
     while(!quit2){
@@ -78,13 +78,16 @@ void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer
             quit2 = SDL_TRUE;
         }else if(pevent->type == SDL_KEYUP){
             if((pevent->key.keysym.sym == SDLK_z) || (pevent->key.keysym.sym == SDLK_UP)){
+                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
                 cursor = (cursor-1)%NB_GOOPTION;
                 if(cursor < 0){
                     cursor = NB_GOOPTION-1;
                 }
             }else if((pevent->key.keysym.sym == SDLK_s) || (pevent->key.keysym.sym == SDLK_DOWN)){
+                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
                 cursor = (cursor+1)%NB_GOOPTION;
             }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
+                Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 if(cursor == RETRY){
                     destroy_game(*game);;
                     *game = initialise_game(chara,0);
@@ -144,24 +147,29 @@ void displayGameOverMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int
     SDL_DestroyTexture(cursorTexture);
 }
 
-void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Game *game, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp){
+void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Game *game, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp, Mix_Chunk** soundArray){
     SDL_bool quit2 = SDL_FALSE;
     int cursor = 0;
+    SDL_Surface* cursorSurface = IMG_Load("sprites/Selectionneur.png");
+    SDL_Surface* backSurface = IMG_Load("sprites/filtrepause.png");
     while(!quit2){
-        displayPauseMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), game, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp);
+        displayPauseMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), game, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp, cursorSurface, backSurface);
         SDL_PollEvent(pevent);
         if(pevent->type == SDL_QUIT){
             *quit = SDL_TRUE;
             quit2 = SDL_TRUE;
         }else if(pevent->type == SDL_KEYUP){
             if((pevent->key.keysym.sym == SDLK_z) || (pevent->key.keysym.sym == SDLK_UP)){
+                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
                 cursor = (cursor-1)%NB_PMOPTION;
                 if(cursor < 0){
                     cursor = NB_PMOPTION-1;
                 }
             }else if((pevent->key.keysym.sym == SDLK_s) || (pevent->key.keysym.sym == SDLK_DOWN)){
+                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
                 cursor = (cursor+1)%NB_PMOPTION;
             }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
+                Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 if(cursor == RESUME){
                     quit2 = SDL_TRUE;
                 }
@@ -182,19 +190,19 @@ void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_
             }
         }
     }
+    SDL_FreeSurface(backSurface);
+    SDL_FreeSurface(cursorSurface);
 }
 
-void displayPauseMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, Game *game, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp){
+void displayPauseMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, Game *game, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp, SDL_Surface* cursorSurface, SDL_Surface* backSurface){
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
 
-    SDL_Surface* cursorSurface = IMG_Load("sprites/Selectionneur.png");
     SDL_Texture* cursorTexture = SDL_CreateTextureFromSurface(renderer, cursorSurface);
 
     SDL_Texture* titleTexture = strToTexture("PAUSE", font, renderer);
 
-    //SDL_Surface* backSurface = IMG_Load("sprites/filtrepause.png");
-    //SDL_Texture* backTexture = SDL_CreateTextureFromSurface(renderer, backSurface);
+    SDL_Texture* backTexture = SDL_CreateTextureFromSurface(renderer, backSurface);
 
     display_map(game->carte, renderer,pix_defil, surfaceArrayMap);
     display_exp(game->exp, renderer,pix_defil, surfaceExp);
@@ -203,9 +211,13 @@ void displayPauseMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
     display_joueur(game->joueur, renderer,pix_defil, surfaceArrayPlayer);
 
     SDL_Texture* textTextures[] = {strToTexture("RESUME", font, renderer), strToTexture("MAIN MENU", font, renderer), strToTexture("OPTIONS", font, renderer), strToTexture("QUIT", font, renderer)};
-
-    //SDL_Rect backRect = {0, 0, width, heigth};
-    //SDL_RenderCopy(renderer, backTexture, NULL, &backRect);
+    
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    
+    SDL_Rect backRect = {0, 0, width, heigth};
+    SDL_RenderCopy(renderer, backTexture, NULL, &backRect);
+    
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 
     SDL_Rect titleRect = {width / 2 - 120*ECHELLE, heigth / 2 - 180*ECHELLE, 240*ECHELLE, 96*ECHELLE};
     SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
@@ -231,33 +243,11 @@ void displayPauseMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
 
     //SDL_DestroyTexture(screenTexture);
 
-    //SDL_FreeSurface(backSurface);
-    //SDL_DestroyTexture(backTexture);
+    SDL_DestroyTexture(backTexture);
 
     SDL_DestroyTexture(titleTexture);
 
-    SDL_FreeSurface(cursorSurface);
     SDL_DestroyTexture(cursorTexture);
-}
-
-SDL_Texture* takeScreenshot(SDL_Renderer* renderer) {
-    const Uint32 format = SDL_PIXELFORMAT_ARGB8888;
-    int width, height;
-    SDL_GetRendererOutputSize(renderer, &width, &height);
-    SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, format);
-    SDL_RenderReadPixels(renderer, NULL, format, surface->pixels, surface->pitch);
-    IMG_SavePNG(surface, "screenshot.png");
-
-    IMG_SavePNG(surface, "screenshot.png");
-
-    // Create a texture from the surface
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    if (!texture) {
-        SDL_Log("Failed to create texture: %s", SDL_GetError());
-    }
-
-    SDL_FreeSurface(surface);
-    return texture;
 }
 
 void displayCharaMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth){
@@ -316,7 +306,7 @@ void displayCharaMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
     SDL_DestroyTexture(cursorTexture);
 }
 
-void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font){
+void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray){
     SDL_bool quit2 = SDL_FALSE;
     int cursor = 0;
     while(!quit2){
@@ -327,13 +317,16 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
             quit2 = SDL_TRUE;
         }else if(pevent->type == SDL_KEYUP){
             if((pevent->key.keysym.sym == SDLK_z) || (pevent->key.keysym.sym == SDLK_UP)){
+                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
                 cursor = (cursor-1)%NB_PERSO;
                 if(cursor < 0){
                     cursor = NB_PERSO-1;
                 }
             }else if((pevent->key.keysym.sym == SDLK_s) || (pevent->key.keysym.sym == SDLK_DOWN)){
+                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
                 cursor = (cursor+1)%NB_PERSO;
             }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
+                Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 if(cursor == KAIRON){
                     *pchara = KAIRON;
                     quit2 = SDL_TRUE;
@@ -369,112 +362,101 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
     }
 }
 
-// int main(int argc, char* argv[]) {
-//     SDL_Window* window = NULL;
-//     SDL_Renderer* renderer = NULL;
-//     TTF_Font* font = NULL;
-//     SDL_Color textColor = {255, 255, 255, 255};
-//     bool quit = false;
-//     SDL_Event e;
+void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray){
+    SDL_bool quit2 = SDL_FALSE;
+    int cursor = 0;
+    SDL_Surface* cursorSurface = IMG_Load("sprites/Selectionneur.png");
+    SDL_Surface* backSurface = IMG_Load("sprites/filtrepause.png");
+    while(!quit2){
+        displayOptionsMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), cursorSurface, backSurface);
+        SDL_PollEvent(pevent);
+        if(pevent->type == SDL_QUIT){
+            *quit = SDL_TRUE;
+            quit2 = SDL_TRUE;
+        }else if(pevent->type == SDL_KEYUP){
+            if((pevent->key.keysym.sym == SDLK_z) || (pevent->key.keysym.sym == SDLK_UP)){
+                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
+                cursor = (cursor-1)%NB_OPTOPTION;
+                if(cursor < 0){
+                    cursor = NB_OPTOPTION-1;
+                }
+            }else if((pevent->key.keysym.sym == SDLK_s) || (pevent->key.keysym.sym == SDLK_DOWN)){
+                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
+                cursor = (cursor+1)%NB_OPTOPTION;
+            }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
+                Mix_PlayChannel(-1, soundArray[SELECT], 0);
+                if(cursor == SOUND){
 
-//     // Initialize SDL
-//     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-//         printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-//         return 1;
-//     }
+                }
+                if(cursor == SHORTMODE){
 
-//     // Initialize SDL_ttf
-//     if (TTF_Init() == -1) {
-//         printf("SDL_ttf could not initialize! TTF_Error: %s\n", TTF_GetError());
-//         return 1;
-//     }
+                }
+                if(cursor == SEE_HIGHSCORE){
 
-//     // Create window
-//     window = SDL_CreateWindow("Simple SDL Menu", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-//     if (window == NULL) {
-//         printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-//         return 1;
-//     }
+                }
+                if(cursor == RESET_SAVE){
+                    save(0,0,0,0);
+                }
+                if(cursor == EXIT){
+                    quit2 = SDL_TRUE;
+                }
+            }else if(pevent->key.keysym.sym == SDLK_m){
+                quit2 = SDL_TRUE;
+            }
+        }
+    }
+    SDL_FreeSurface(backSurface);
+    SDL_FreeSurface(cursorSurface);
+}
 
-//     // Create renderer for window
-//     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-//     if (renderer == NULL) {
-//         printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
-//         return 1;
-//     }
+void displayOptionsMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, SDL_Surface* cursorSurface, SDL_Surface* backSurface){
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+    SDL_RenderClear(renderer);
 
-//     // Load font
-//     font = TTF_OpenFont("font/PixelPurl.ttf", 24); // Replace with the path to your font file
-//     if (font == NULL) {
-//         printf("Failed to load font! TTF_Error: %s\n", TTF_GetError());
-//         return 1;
-//     }
+    SDL_Texture* cursorTexture = SDL_CreateTextureFromSurface(renderer, cursorSurface);
 
-//     // Render text surface
-//     SDL_Surface* textSurface = TTF_RenderText_Solid(font, "Hello, SDL_ttf!", textColor);
-//     if (textSurface == NULL) {
-//         printf("Unable to render text surface! SDL_Error: %s\n", SDL_GetError());
-//         return 1;
-//     }
+    SDL_Texture* titleTexture = strToTexture("OPTIONS", font, renderer);
 
-//     // Create texture from surface
-//     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-//     if (textTexture == NULL) {
-//         printf("Unable to create texture from rendered text! SDL_Error: %s\n", SDL_GetError());
-//         return 1;
-//     }
+    SDL_Texture* backTexture = SDL_CreateTextureFromSurface(renderer, backSurface);
 
-//     // Main loop flag
-//     while (!quit) {
-//         // Handle events on queue
-//         while (SDL_PollEvent(&e) != 0) {
-//             // User requests quit
-//             if (e.type == SDL_QUIT) {
-//                 quit = true;
-//             }
-//             // Handle key presses
-//             else if (e.type == SDL_KEYDOWN) {
-//                 switch (e.key.keysym.sym) {
-//                     case SDLK_1:
-//                         printf("Option 1 selected\n");
-//                         break;
-//                     case SDLK_2:
-//                         printf("Option 2 selected\n");
-//                         break;
-//                     case SDLK_3:
-//                         printf("Option 3 selected\n");
-//                         break;
-//                     case SDLK_q:
-//                         quit = true;
-//                         break;
-//                 }
-//             }
-//         }
+    SDL_Texture* textTextures[] = {strToTexture("SOUND", font, renderer), strToTexture("SHORTMODE", font, renderer), strToTexture("HIGHSCORE", font, renderer), strToTexture("RESET SAVE", font, renderer), strToTexture("EXIT", font, renderer)};
+    
+    //SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    
+    //SDL_Rect backRect = {0, 0, width, heigth};
+    //SDL_RenderCopy(renderer, backTexture, NULL, &backRect);
+    
+    //SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 
-//         // Clear screen
-//         SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-//         SDL_RenderClear(renderer);
+    SDL_Rect titleRect = {width / 2 - 120*ECHELLE, heigth / 2 - 180*ECHELLE, 240*ECHELLE, 96*ECHELLE};
+    SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
-//         // Render menu
-//         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-//         // You can use SDL_ttf to render text, but for simplicity, we'll just draw rectangles
-//         SDL_Rect rect1 = {SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 50, 200, 30};
-//         SDL_RenderCopy(renderer, textTexture, NULL, &rect1);
-//         SDL_Rect rect2 = {SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2, 200, 30};
-//         SDL_RenderDrawRect(renderer, &rect2);
-//         SDL_Rect rect3 = {SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 50, 200, 30};
-//         SDL_RenderDrawRect(renderer, &rect3);
+    int decals[] = {(23*5)/2, (23*9)/2, (23*9)/2, (23*10)/2, (23*4)/2};
 
-//         // Update screen
-//         SDL_RenderPresent(renderer);
-//     }
+    SDL_Rect curRect = {width / 2 - (decals[cursor]+50)*ECHELLE, heigth / 2+(cursor*40*ECHELLE) - 55*ECHELLE, 2*32*ECHELLE, 2*32*ECHELLE};
+    SDL_RenderCopy(renderer, cursorTexture, NULL, &curRect);
 
-//     // Destroy window
-//     SDL_DestroyRenderer(renderer);
-//     SDL_DestroyWindow(window);
+    SDL_Rect rect1 = {width / 2 - decals[0]*ECHELLE, heigth / 2 - 35*ECHELLE, 2*decals[0]*ECHELLE, 32*ECHELLE};
+    SDL_RenderCopy(renderer, textTextures[0], NULL, &rect1);
+    SDL_Rect rect2 = {width / 2 - decals[1]*ECHELLE, heigth / 2 +5*ECHELLE, 2*decals[1]*ECHELLE, 32*ECHELLE};
+    SDL_RenderCopy(renderer, textTextures[1], NULL, &rect2);
+    SDL_Rect rect3 = {width / 2 - decals[2]*ECHELLE, heigth / 2 + 45*ECHELLE, 2*decals[2]*ECHELLE, 32*ECHELLE};
+    SDL_RenderCopy(renderer, textTextures[2], NULL, &rect3);
+    SDL_Rect rect4 = {width / 2 - decals[3]*ECHELLE, heigth / 2 + 85*ECHELLE, 2*decals[3]*ECHELLE, 32*ECHELLE};
+    SDL_RenderCopy(renderer, textTextures[3], NULL, &rect4);
+    SDL_Rect rect5 = {width / 2 - decals[4]*ECHELLE, heigth / 2 + 125*ECHELLE, 2*decals[4]*ECHELLE, 32*ECHELLE};
+    SDL_RenderCopy(renderer, textTextures[4], NULL, &rect5);
+    
+    SDL_RenderPresent(renderer);
+    for(int i = 0; i<5; i++){
+        SDL_DestroyTexture(textTextures[i]);
+    }
 
-//     // Quit SDL subsystems
-//     SDL_Quit();
+    //SDL_DestroyTexture(screenTexture);
 
-//     return 0;
-// }
+    SDL_DestroyTexture(backTexture);
+
+    SDL_DestroyTexture(titleTexture);
+
+    SDL_DestroyTexture(cursorTexture);
+}
