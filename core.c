@@ -1479,92 +1479,135 @@ void proba_change_barrage(Game* game){
 }
 
 void generator_barrage(Game*game){
-    add_buffer_line(game->carte);
-    Line* line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], Flesh);
+    Line* line;
+    int cycle=0;
+    int r;
+    for (int i=0;i<4;i++){
+        r=rand()%3;
+        switch (r) {
+            case 0:
+            add_shooter(game,cycle);
+            break;
+            case 1:
+                add_buffer_line(game->carte);
+                line = game->carte->head_buffer;
+                for(int i = 0; i<LENGTH; i++){
+                    clone(&line->tiles[i], Flesh);
+                }
+                int nb_spikes = rand()%(LENGTH/2)+5;
+                for(int i = 0; i<nb_spikes; i++){
+                    int pos = rand()%LENGTH;
+                    if (rand()%3){
+                        game->mobs = list_append(game->mobs, clone_mob(spike, pos, HEIGTH+cycle,(rand()%3+3)*5,rand()%5+3));
+                    } else {
+                        game->mobs = list_append(game->mobs, clone_mob(spike_trap, pos, HEIGTH+cycle,(rand()%3+3)*5,0));
+                    }
+                }
+            break;
+            case 2:
+                add_buffer_line(game->carte);
+                line = game->carte->head_buffer;
+                for(int i = 0; i<LENGTH; i++){
+                    clone(&line->tiles[i], Flesh);
+                }
+                int nb_danger = rand()%(LENGTH/2)+3;
+                for(int i = 0; i<nb_danger; i++){
+                    clone(&line->tiles[rand()%LENGTH], Maw);
+                }
+            break;
+        }
+        cycle++;
     }
-    int nb_danger = rand()%(LENGTH/2)+1;
-    for(int i = 0; i<nb_danger; i++){
-        clone(&line->tiles[rand()%LENGTH], Maw);
-    }    
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], Flesh);
-    }
-    nb_danger = rand()%(LENGTH/2)+1;
-    for(int i = 0; i<nb_danger; i++){
-        clone(&line->tiles[rand()%LENGTH], Maw);
-    }    
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], Flesh);
-    }
-    nb_danger=rand()%2+1;
-    int x;
-    int speed;
-    Mob* Proj;
-    if (nb_danger==1){
-        speed=rand()%3+1;
-        x=rand()%(LENGTH-1);
-        game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
-        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
-        Proj->action_delay=16;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
-        Proj->action_delay=32;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
-        Proj->action_delay=48;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
-        Proj->action_delay=64;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-    }else {
-        x=rand()%(LENGTH/2-1);
-        speed=rand()%3+1;
-        game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
-        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
-        Proj->action_delay=16;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
-        Proj->action_delay=32;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
-        Proj->action_delay=48;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
-        Proj->action_delay=64;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        x=rand()%(LENGTH/2-1)+LENGTH/2;
-        speed=rand()%3+1;
-        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
-        Proj->action_delay=16;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
-        Proj->action_delay=32;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
-        Proj->action_delay=48;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
-        Proj->action_delay=64;
-        Proj->_x=-32;
-        game->projectile=list_append(game->projectile,Proj);
-        game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+    Line* line;
+    int nb=rand()%3;
+    for (int i=0;i<nb;i++){
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Flesh);
+        }
+        int nb_danger = rand()%(LENGTH/2)+1;
+        for(int i = 0; i<nb_danger; i++){
+            clone(&line->tiles[rand()%LENGTH], Maw);
+        }    
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Flesh);
+        }
+        nb_danger = rand()%(LENGTH/2)+1;
+        for(int i = 0; i<nb_danger; i++){
+            clone(&line->tiles[rand()%LENGTH], Maw);
+        }    
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], Flesh);
+        }
+        nb_danger=rand()%2+1;
+        int x;
+        int speed;
+        Mob* Proj;
+        if (nb_danger==1){
+            speed=rand()%3+1;
+            x=rand()%(LENGTH-1);
+            game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj->action_delay=16;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj->action_delay=32;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj->action_delay=48;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj->action_delay=64;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+        }else {
+            x=rand()%(LENGTH/2-1);
+            speed=rand()%3+1;
+            game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj->action_delay=16;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj->action_delay=32;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj->action_delay=48;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj->action_delay=64;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            x=rand()%(LENGTH/2-1)+LENGTH/2;
+            speed=rand()%3+1;
+            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj->action_delay=16;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj->action_delay=32;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj->action_delay=48;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj->action_delay=64;
+            Proj->_x=-32;
+            game->projectile=list_append(game->projectile,Proj);
+            game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+        }
     }
     proba_change_barrage(game);
 }

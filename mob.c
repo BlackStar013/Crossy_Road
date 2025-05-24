@@ -2095,20 +2095,20 @@ void spike_timer(Mob* mob, Player*p){
         mob->delay--;
     }
 }
-void spike_trigger(Mob* mob, Player*p){
-    if(!mob->delay){
-        if(mob->action_value==0){
-            if (mob_collide(mob,p)){
-                mob->action_value=1;
-                mob->offset_x++;
-            }
+void spike_trigger(Mob* mob, Player*p){   
+    if(mob->action_value==0){
+        if (mob_collide(mob,p)){
+            mob->action_value=1;
+            mob->offset_x++;
         }
-        else if (mob->action_value==1){
+    }
+    if(!mob->delay){
+            if (mob->action_value==1){
             mob->action_value=2;
             mob->action_delay=2;
             mob->offset_x++;
             mob->is_death=true;
-        } else {
+        } else if (mob->action_value==2){
             if (mob->action_delay==0){
                 mob->action_value=0;
                 mob->offset_x=0;
@@ -2125,7 +2125,7 @@ void spike_trigger(Mob* mob, Player*p){
 }
 void shooter_still(Mob* mob, Player*p){}
 
-void still_eye(Mob* mob, Player*p){//TODO
+void still_eye(Mob* mob, Player*p){
     if(!mob->delay){
         if (mob->action_value==0){
             if (p->_x<=mob->memory__x+64&&p->_x>=mob->memory__x-64&&p->_y<=mob->memory__y+64&&p->_y>=mob->memory__y-64){
@@ -2159,11 +2159,11 @@ void still_eye(Mob* mob, Player*p){//TODO
         mob->delay--;
     }
 }
-void sight_blast(Mob* mob,Player*p){//TODO
+void sight_blast(Mob* mob,Player*p){
     if(!mob->delay){
         if (mob->action_value==0){
             if (p->_x<=mob->memory__x+64&&p->_x>=mob->memory__x-64&&p->_y<=mob->memory__y+64&&p->_y>=mob->memory__y-64){
-                mob->offset_x=0;
+                mob->offset_x=1;
                 mob->is_death=false;
                 mob->_x=p->_x;
                 mob->_y=p->_y;
