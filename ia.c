@@ -259,7 +259,7 @@ int eval(Game *game){
     File *encours = create_file(matrice_eval[PROFONDEUR/2][PROFONDEUR/2]);
     matrice_eval[PROFONDEUR/2][PROFONDEUR/2]->vu = 0;
     File *futur = NULL;
-    if(game->joueur->_x_dest/32 >= (LENGTH-1)/2){
+    if(game->joueur->_x_dest/32 >= LENGTH/2){
         matrice_eval[PROFONDEUR/2][0]->val += 1;
         for(int i=0; i<PROFONDEUR/2; i++){
             for(int j=0; j<PROFONDEUR; j++){
@@ -294,28 +294,28 @@ int eval(Game *game){
                 if(matrice_eval[PROFONDEUR/2-encours->sommet->j][PROFONDEUR/2+encours->sommet->i]->chemin[k] == 0){
                     // p2->_x_dest = (game->joueur->_x_dest);
                     p2->_y_dest += 32;
-                    for(int l=0; l<DELAI; l++){
+                    for(int l=0; l<DELAI+1; l++){
                         update_game_IA(liste, projectiles, p2);
                     }
                 }else if(matrice_eval[PROFONDEUR/2-encours->sommet->j][PROFONDEUR/2+encours->sommet->i]->chemin[k] == 1){
                     p2->_x_dest += 32;
                     // p2->_y_dest = (game->joueur->_y_dest);
                     // printf("joueur %d %d\n", p2->_x_dest/32, p2->_y_dest/32);
-                    for(int l=0; l<DELAI; l++){
+                    for(int l=0; l<DELAI+1; l++){
                         update_game_IA(liste, projectiles, p2);
                     }
                 }else if(matrice_eval[PROFONDEUR/2-encours->sommet->j][PROFONDEUR/2+encours->sommet->i]->chemin[k] == 2){
                     // p2->_x_dest = (game->joueur->_x_dest);
                     p2->_y_dest -= 32;
                     // printf("joueur %d %d\n", p2->_x_dest/32, p2->_y_dest/32);
-                    for(int l=0; l<DELAI; l++){
+                    for(int l=0; l<DELAI+1; l++){
                         update_game_IA(liste, projectiles, p2);
                     }
                 }else if(matrice_eval[PROFONDEUR/2-encours->sommet->j][PROFONDEUR/2+encours->sommet->i]->chemin[k] == 3){
                     p2->_x_dest -= 32;
                     // printf("joueur %d %d\n", p2->_x_dest/32, p2->_y_dest/32);
                     // p2->_y_dest = (game->joueur->_y_dest);
-                    for(int l=0; l<DELAI; l++){
+                    for(int l=0; l<DELAI+1; l++){
                         update_game_IA(liste, projectiles, p2);
                     }
                 }
@@ -566,8 +566,8 @@ int eval(Game *game){
         directive = max->chemin[0];
     }
 
-    // print_matrice(matrice_eval);
-    // printf("%d\n", directive);
+    print_matrice(matrice_eval);
+    printf("%d\n", directive);
 
     destroy_file(encours);
     destroy_file(futur);
