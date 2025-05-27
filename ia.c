@@ -198,7 +198,7 @@ int move_right_IA(Map *map, Player *p2, Liste_Mob *liste, Liste_Mob *projectiles
 
 Point *create_point(int i, int j, int val){
     Point *new_point = malloc(sizeof(Point));
-    new_point->vu = -1;
+    new_point->vu = 99;
     new_point->val = val;
     new_point->i = i;
     new_point->j = j;
@@ -232,8 +232,8 @@ void print_matrice(Point ***evaluation){
     for(int i=0; i<PROFONDEUR; i++){
         for(int j=0; j<PROFONDEUR; j++){
             // printf("(%d,%d) ", evaluation[i][j]->i, evaluation[i][j]->j);
-            printf("(%d,%d) ", evaluation[i][j]->chemin[0], evaluation[i][j]->chemin[1]);
-            // printf("%d ", evaluation[i][j]->val);
+            // printf("(%d,%d, %d) ", evaluation[i][j]->chemin[0], evaluation[i][j]->chemin[1], evaluation[i][j]->chemin[2]);
+            printf("%d ", evaluation[i][j]->val);
             // printf("%d ", evaluation[i][j]->vu);
         }
         printf("\n");
@@ -257,6 +257,7 @@ int eval(Game *game){
     // printf("game: %d %d\n", game->joueur->_x_dest/32, game->joueur->_y_dest/32);
     Point ***matrice_eval = matrice_evaluation();
     File *encours = create_file(matrice_eval[PROFONDEUR/2][PROFONDEUR/2]);
+    matrice_eval[PROFONDEUR/2][PROFONDEUR/2]->vu = 0;
     File *futur = NULL;
     if(game->joueur->_x_dest/32 >= (LENGTH-1)/2){
         matrice_eval[PROFONDEUR/2][0]->val += 1;
@@ -293,25 +294,28 @@ int eval(Game *game){
                 if(matrice_eval[PROFONDEUR/2-encours->sommet->j][PROFONDEUR/2+encours->sommet->i]->chemin[k] == 0){
                     // p2->_x_dest = (game->joueur->_x_dest);
                     p2->_y_dest += 32;
+                    for(int l=0; l<DELAI; l++){
+                        update_game_IA(liste, projectiles, p2);
+                    }
                 }else if(matrice_eval[PROFONDEUR/2-encours->sommet->j][PROFONDEUR/2+encours->sommet->i]->chemin[k] == 1){
                     p2->_x_dest += 32;
                     // p2->_y_dest = (game->joueur->_y_dest);
                     // printf("joueur %d %d\n", p2->_x_dest/32, p2->_y_dest/32);
-                    for(int l=0; l<DELAI+1; l++){
+                    for(int l=0; l<DELAI; l++){
                         update_game_IA(liste, projectiles, p2);
                     }
                 }else if(matrice_eval[PROFONDEUR/2-encours->sommet->j][PROFONDEUR/2+encours->sommet->i]->chemin[k] == 2){
                     // p2->_x_dest = (game->joueur->_x_dest);
                     p2->_y_dest -= 32;
                     // printf("joueur %d %d\n", p2->_x_dest/32, p2->_y_dest/32);
-                    for(int l=0; l<DELAI+1; l++){
+                    for(int l=0; l<DELAI; l++){
                         update_game_IA(liste, projectiles, p2);
                     }
                 }else if(matrice_eval[PROFONDEUR/2-encours->sommet->j][PROFONDEUR/2+encours->sommet->i]->chemin[k] == 3){
                     p2->_x_dest -= 32;
                     // printf("joueur %d %d\n", p2->_x_dest/32, p2->_y_dest/32);
                     // p2->_y_dest = (game->joueur->_y_dest);
-                    for(int l=0; l<DELAI+1; l++){
+                    for(int l=0; l<DELAI; l++){
                         update_game_IA(liste, projectiles, p2);
                     }
                 }
@@ -375,7 +379,7 @@ int eval(Game *game){
                     }
                 }
                 if(bouge){
-                    if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                    if(n < matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu){
                         matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->vu = n;
                         for(int d = 0; d<n; d++){
                             matrice_eval[PROFONDEUR/2-(encours->sommet->j)-1][(encours->sommet->i)+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
@@ -414,7 +418,7 @@ int eval(Game *game){
                     }
                 }
                 if(bouge){
-                    if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->vu){
+                    if(n < matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->vu){
                         matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->vu = n;
                         for(int d = 0; d<n; d++){
                             matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)-1+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
@@ -453,7 +457,7 @@ int eval(Game *game){
                     }
                 }
                 if(bouge){
-                    if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->vu){
+                    if(n < matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->vu){
                         matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->vu = n;
                         for(int d=0; d<n; d++){
                             matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+1+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
@@ -491,7 +495,7 @@ int eval(Game *game){
                     }
                 }
                 if(bouge){
-                    if(n > matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu){
+                    if(n < matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu){
                         matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->vu = n;
                         for(int d=0; d<n; d++){
                             matrice_eval[PROFONDEUR/2-(encours->sommet->j)+1][(encours->sommet->i)+PROFONDEUR/2]->chemin[d] = matrice_eval[PROFONDEUR/2-(encours->sommet->j)][(encours->sommet->i)+PROFONDEUR/2]->chemin[d];
@@ -544,7 +548,7 @@ int eval(Game *game){
     for(int a=0; a<PROFONDEUR; a++){
         for(int b=0; b<PROFONDEUR; b++){
             // printf("max actuel : %d\n", max->val);
-            if(matrice_eval[a][b]->vu != -1){
+            if(matrice_eval[a][b]->vu != 99){
                 if(matrice_eval[a][b]->val > val_max){
                     //free(max->chemin);
                     //free(max);
