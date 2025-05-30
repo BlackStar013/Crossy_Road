@@ -2146,16 +2146,21 @@ void still_eye(Mob* mob, Player*p){
                 }
             }
         }
-        else if(mob->action_value==1||mob->action_value==2||mob->action_value==3){
+        else if(mob->action_value==1||mob->action_value==2){
             mob->offset_x++;
             mob->action_value++;
             mob->delay = mob->speed;
+        }
+        else if(mob->action_value==3){
+            mob->offset_x++;
+            mob->action_value++;
+            mob->delay = 3;
         }
         else if(mob->action_value==4){
             mob->offset_x=0;
             mob->offset_y=0;
             mob->action_value=0;
-            mob->delay = 3;
+            mob->delay = mob->speed;
         }
     } else {
         mob->delay--;
@@ -2167,8 +2172,8 @@ void sight_blast(Mob* mob,Player*p){
             if (p->_x_dest<=mob->memory__x+64&&p->_x_dest>=mob->memory__x-64&&p->_y_dest<=mob->memory__y+64&&p->_y_dest>=mob->memory__y-64){
                 mob->offset_x=1;
                 mob->is_death=false;
-                mob->_x=p->_x;
-                mob->_y=p->_y;
+                mob->_x=p->_x_dest;
+                mob->_y=p->_y_dest;
                 mob->delay = mob->speed;
                 mob->action_value++;
             }
@@ -2203,7 +2208,7 @@ void still_eyewall(Mob* mob,Player*p){
     if(!mob->delay){
         mob->offset_x+=2;
         if (mob->offset_x==10 ||mob->offset_x==11){
-            mob->offset_x=0;
+            mob->offset_x-=10;
         }
         mob->delay=mob->speed;
     } else {

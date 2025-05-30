@@ -1581,6 +1581,7 @@ void generator_barrage(Game*game){
             game->mobs=list_append(game->mobs,mob);
             mob=clone_mob(eye_wall,x+1,HEIGTH+2+cycle,speed*16,0);
             mob->offset_x++;
+            game->mobs=list_append(game->mobs,mob);
             Proj=clone_mob(eye_drop,x,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=16;
             Proj->_x=-32;
