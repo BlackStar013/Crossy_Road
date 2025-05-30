@@ -2199,7 +2199,7 @@ void sight_blast(Mob* mob,Player*p){
 }
 void still_eyewall(Mob* mob,Player*p){
     if(!mob->delay){
-        mob->offset_x++;
+        mob->offset_x+=2;
         if (mob->offset_x==5){
             mob->offset_x=0;
         }
@@ -2234,7 +2234,7 @@ const Mob bone_arrow_right={1,1,true,0,0,0,0,0,BONEARROW,0,1,path_offset_right,0
 const Mob bone_arrow_left_trap={1,1,true,0,0,0,0,0,BONEARROW,0,0,path_offset_trigger_left,0,0,0,0,0,0};
 const Mob bone_arrow_right_trap={1,1,true,0,0,0,0,0,BONEARROW,0,1,path_offset_trigger_right,0,0,0,0,0,0};
 const Mob eye={1,1,true,0,0,0,0,0,EYE,0,0,still_eye,0,0,0,0,0,0};
-const Mob eye_wall={2,1,true,0,0,0,0,0,EYEWALL,0,0,still_eyewall,0,0,0,0,0,0};
+const Mob eye_wall={1,1,true,0,0,0,0,0,EYEWALL,0,0,still_eyewall,0,0,0,0,0,0};
 const Mob eye_drop={1,1,true,0,0,0,0,0,BLOOD,0,0,dropping_path,0,0,0,0,0,0};
 const Mob eye_blast={1,1,true,0,0,0,0,0,EYE_BLAST,0,0,sight_blast,0,0,0,0,0,0};
 const Mob shift_left={1,1,false,-3,0,0,0,0,SHIFT,0,0,path_left,0,0,0,0,0,0};

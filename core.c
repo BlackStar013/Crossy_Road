@@ -1288,8 +1288,8 @@ void generator_f_spike(Game*game){
             game->mobs = list_append(game->mobs, clone_mob(spike_trap, pos, HEIGTH,(rand()%3+3)*6,0));
         }
     }
-    int nb_shifts = rand()%3+1;
-    int speed=rand()%4+1;
+    int nb_shifts = rand()%7+2;
+    int speed=rand()%4;
     if (rand()%2){
         for(int i = 0; i <nb_shifts; i++){
             game->mobs = list_append(game->mobs, clone_mob(shift_left, (LENGTH/nb_shifts)*i, HEIGTH,speed,0));
@@ -1341,7 +1341,9 @@ void add_shooter(Game *game, int pos){
         game->projectile=list_append(game->projectile, clone_mob(bone_arrow_left, x, HEIGTH+pos,rand()%4,10));
     }
     else { 
-        game->mobs = list_append(game->mobs, clone_mob(shooter_trap_left, x, HEIGTH+pos,rand()%3,0));
+        mob=clone_mob(shooter_trap_left, x, HEIGTH+pos,rand()%3,0);
+        mob->offset_x=1;
+        game->mobs = list_append(game->mobs, mob);
         game->projectile=list_append(game->projectile, clone_mob(bone_arrow_left_trap, x, HEIGTH+pos,rand()%2,0));
     }
     clone(&line->tiles[x], Shooter_block_left);
@@ -1357,6 +1359,7 @@ void add_shooter(Game *game, int pos){
     else { 
         mob=clone_mob(shooter_trap_right, x+1, HEIGTH+pos,rand()%2,0);
         mob->offset_y=1;
+        mob->offset_x=1;
         game->mobs = list_append(game->mobs, mob);
         mob=clone_mob(bone_arrow_right_trap, x+1, HEIGTH+pos,rand()%2,0);
         mob->offset_y=1;
@@ -1550,7 +1553,11 @@ void generator_barrage(Game*game){
         if (nb_danger==1){
             speed=rand()%3+1;
             x=rand()%(LENGTH-1);
-            game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+            Mob* mob=clone_mob(eye_wall,x,HEIGTH+2,speed*16,0);
+            game->mobs=list_append(game->mobs,mob);
+            mob=clone_mob(eye_wall,x+1,HEIGTH+2,speed*16,0);
+            mob->offset_x++;
+            game->mobs=list_append(game->mobs,mob);
             Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
             Proj->action_delay=16;
             Proj->_x=-32;
@@ -1570,7 +1577,10 @@ void generator_barrage(Game*game){
         }else {
             x=rand()%(LENGTH/2-1);
             speed=rand()%3+1;
-            game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+            Mob* mob=clone_mob(eye_wall,x,HEIGTH+2,speed*16,0);
+            game->mobs=list_append(game->mobs,mob);
+            mob=clone_mob(eye_wall,x+1,HEIGTH+2,speed*16,0);
+            mob->offset_x++;
             Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
             Proj->action_delay=16;
             Proj->_x=-32;
