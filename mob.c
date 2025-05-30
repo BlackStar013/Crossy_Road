@@ -2032,7 +2032,7 @@ void path_offset_right(Mob* mob, Player*p) {
 void path_offset_trigger_left(Mob* mob, Player*p){ 
     if(!mob->delay){
         if(!mob_in_map(mob)){
-            if (mob->action_value==0&& p->_y==mob->memory__y && p->_x<mob->memory__x){               
+            if (mob->action_value==0&& p->_y_dest==mob->memory__y && p->_x_dest<mob->memory__x){               
                 mob->action_value=1;
             } else if(mob->action_value==1){
                 mob->_x=mob->memory__x;
@@ -2049,7 +2049,7 @@ void path_offset_trigger_left(Mob* mob, Player*p){
 void path_offset_trigger_right(Mob* mob, Player*p){ 
     if(!mob->delay){
         if(!mob_in_map(mob)){
-            if (mob->action_value==0&& p->_y==mob->memory__y && p->_x>mob->memory__x){               
+            if (mob->action_value==0&& p->_y_dest==mob->memory__y && p->_x_dest>mob->memory__x){               
                 mob->action_value=1;
             } else if(mob->action_value==1){
                 mob->_x=mob->memory__x;
@@ -2128,7 +2128,7 @@ void shooter_still(Mob* mob, Player*p){}
 void still_eye(Mob* mob, Player*p){
     if(!mob->delay){
         if (mob->action_value==0){
-            if (p->_x<=mob->memory__x+64&&p->_x>=mob->memory__x-64&&p->_y<=mob->memory__y+64&&p->_y>=mob->memory__y-64){
+            if (p->_x_dest<=mob->memory__x+64&&p->_x_dest>=mob->memory__x-64&&p->_y_dest<=mob->memory__y+64&&p->_y_dest>=mob->memory__y-64){
                 mob->offset_x=0;
                 mob->offset_y=1;
                 mob->action_value++;
@@ -2162,7 +2162,7 @@ void still_eye(Mob* mob, Player*p){
 void sight_blast(Mob* mob,Player*p){
     if(!mob->delay){
         if (mob->action_value==0){
-            if (p->_x<=mob->memory__x+64&&p->_x>=mob->memory__x-64&&p->_y<=mob->memory__y+64&&p->_y>=mob->memory__y-64){
+            if (p->_x_dest<=mob->memory__x+64&&p->_x_dest>=mob->memory__x-64&&p->_y_dest<=mob->memory__y+64&&p->_y_dest>=mob->memory__y-64){
                 mob->offset_x=1;
                 mob->is_death=false;
                 mob->_x=p->_x;
@@ -2234,7 +2234,7 @@ const Mob bone_arrow_right={1,1,true,0,0,0,0,0,BONEARROW,0,1,path_offset_right,0
 const Mob bone_arrow_left_trap={1,1,true,0,0,0,0,0,BONEARROW,0,0,path_offset_trigger_left,0,0,0,0,0,0};
 const Mob bone_arrow_right_trap={1,1,true,0,0,0,0,0,BONEARROW,0,1,path_offset_trigger_right,0,0,0,0,0,0};
 const Mob eye={1,1,true,0,0,0,0,0,EYE,0,0,still_eye,0,0,0,0,0,0};
-const Mob eye_wall={1,2,true,0,0,0,0,0,EYEWALL,0,0,still_eyewall,0,0,0,0,0,0};
+const Mob eye_wall={2,1,true,0,0,0,0,0,EYEWALL,0,0,still_eyewall,0,0,0,0,0,0};
 const Mob eye_drop={1,1,true,0,0,0,0,0,BLOOD,0,0,dropping_path,0,0,0,0,0,0};
 const Mob eye_blast={1,1,true,0,0,0,0,0,EYE_BLAST,0,0,sight_blast,0,0,0,0,0,0};
 const Mob shift_left={1,1,false,-3,0,0,0,0,SHIFT,0,0,path_left,0,0,0,0,0,0};
