@@ -827,22 +827,22 @@ void patrol_clock4x3(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 0;
+                    //fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 3;
+                    //fire->offset_y = 3;
                     break;
                 case 2:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 1;
+                    //fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 2;
+                    //fire->offset_y = 2;
                     break;
             }
         }
@@ -895,22 +895,22 @@ void patrol_clock5x3(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 0;
+                    //fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=4*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 3;
+                    //fire->offset_y = 3;
                     break;
                 case 2:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 1;
+                    //fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=4*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 2;
+                    //fire->offset_y = 2;
                     break;
             }
         }
@@ -963,22 +963,22 @@ void patrol_clock4x4(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 0;
+                    //fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 3;
+                    //fire->offset_y = 3;
                     break;
                 case 2:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 1;
+                    //fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 2;
+                    //fire->offset_y = 2;
                     break;
             }
         }
@@ -1031,22 +1031,22 @@ void patrol_counter4x3(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 0;
+                    //fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 2;
+                    //fire->offset_y = 2;
                     break;
                 case 2:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 1;
+                    //fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 3;
+                    //fire->offset_y = 3;
                     break;
             }
         }
@@ -1099,22 +1099,22 @@ void patrol_counter5x3(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 0;
+                    //fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=4*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 2;
+                    //fire->offset_y = 2;
                     break;
                 case 2:
                     fire->action_delay=2*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 1;
+                    //fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=4*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 3;
+                    //fire->offset_y = 3;
                     break;
             }
         }
@@ -1167,22 +1167,22 @@ void patrol_counter4x4(Mob *fire,Player* Joueur){
                 case 0:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 0;
+                    //fire->offset_y = 0;
                     break;
                 case 1:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 2;
+                    //fire->offset_y = 2;
                     break;
                 case 2:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value++;
-                    fire->offset_y = 1;
+                    //fire->offset_y = 1;
                     break;
                 case 3:
                     fire->action_delay=3*fire->max_action_delay;
                     fire->action_value=0;
-                    fire->offset_y = 3;
+                    //fire->offset_y = 3;
                     break;
             }
         }
@@ -1193,13 +1193,13 @@ void patrol_counter4x4(Mob *fire,Player* Joueur){
     }
 }
 //mobs allant dans le sens horaire
-const Mob cult_clock1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x3,0,16,0,0,0,0};
-const Mob cult_clock2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock5x3,0,16,0,0,0,0};
-const Mob cult_clock3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x4,0,16,0,0,0,0};
-//mobs allant dans le sens antihoraire
-const Mob cult_counter1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x3,0,16,0,0,0,0};
-const Mob cult_counter2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter5x3,0,16,0,0,0,0};
-const Mob cult_counter3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x4,0,16,0,0,0,0};
+// const Mob cult_clock1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x3,0,16,0,0,0,0};
+// const Mob cult_clock2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock5x3,0,16,0,0,0,0};
+// const Mob cult_clock3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_clock4x4,0,16,0,0,0,0};
+// //mobs allant dans le sens antihoraire
+// const Mob cult_counter1 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x3,0,16,0,0,0,0};
+// const Mob cult_counter2 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter5x3,0,16,0,0,0,0};
+// const Mob cult_counter3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x4,0,16,0,0,0,0};
 
 void still(Mob *mage,Player* player){
         if(!mage->action_delay){
@@ -1335,32 +1335,32 @@ void babel1_1(Mob *mob,Player* Joueur){
                 case 0:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 0;
+                    //mob->offset_y = 0;
                     break;
                 case 1:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
                 case 2:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 1;
+                    //mob->offset_y = 1;
                     break;
                 case 3:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 3;
+                    //mob->offset_y = 3;
                     break;
                 case 4:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 1;
+                    //mob->offset_y = 1;
                     break;
                 case 5:
                     mob->action_delay=16;
                     mob->action_value=0;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
             }
         }
@@ -1432,32 +1432,32 @@ void babel1_2(Mob *mob,Player* Joueur){
                 case 0:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 3;
+                    //mob->offset_y = 3;
                     break;
                 case 1:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 0;
+                    //mob->offset_y = 0;
                     break;
                 case 2:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
                 case 3:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 1;
+                    //mob->offset_y = 1;
                     break;
                 case 4:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
                 case 5:
                     mob->action_delay=16;
                     mob->action_value=0;
-                    mob->offset_y = 0;
+                    //mob->offset_y = 0;
                     break;
             }
         }
@@ -1527,32 +1527,32 @@ void babel2_1(Mob *mob,Player* Joueur){
                 case 0:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
                 case 1:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 0;
+                    //mob->offset_y = 0;
                     break;
                 case 2:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y =3;
+                    //mob->offset_y =3;
                     break;
                 case 3:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 3;
+                    //mob->offset_y = 3;
                     break;
                 case 4:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 1;
+                    //mob->offset_y = 1;
                     break;
                 case 5:
                     mob->action_delay=16;
                     mob->action_value=0;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
             }
         }
@@ -1622,32 +1622,32 @@ void babel2_2(Mob *mob,Player* Joueur){
                 case 0:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 3;
+                    //mob->offset_y = 3;
                     break;
                 case 1:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 3;
+                    //mob->offset_y = 3;
                     break;
                 case 2:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 1;
+                    //mob->offset_y = 1;
                     break;
                 case 3:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
                 case 4:
                     mob->action_delay=16;
                     mob->action_value++;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
                 case 5:
                     mob->action_delay=16;
                     mob->action_value=0;
-                    mob->offset_y = 0;
+                    //mob->offset_y = 0;
                     break;
             }
         }
@@ -1693,17 +1693,17 @@ void babel3_1(Mob *mob,Player* Joueur){
                 case 0:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 3;
+                    //mob->offset_y = 3;
                     break;
                 case 1:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 1;
+                    //mob->offset_y = 1;
                     break;
                 case 2:
                     mob->action_delay=32;
                     mob->action_value=0;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
             }
         }
@@ -1750,17 +1750,17 @@ void babel3_2(Mob *mob,Player* Joueur){
                 case 0:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
                 case 1:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 3;
+                    //mob->offset_y = 3;
                     break;
                 case 2:
                     mob->action_delay=32;
                     mob->action_value=0;
-                    mob->offset_y = 0;
+                    //mob->offset_y = 0;
                     break;
             }
         }
@@ -1807,17 +1807,17 @@ void babel4_1(Mob *mob,Player* Joueur){
                 case 0:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 1;
+                    //mob->offset_y = 1;
                     break;
                 case 1:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 3;
+                    //mob->offset_y = 3;
                     break;
                 case 2:
                     mob->action_delay=32;
                     mob->action_value=0;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
             }
         }
@@ -1864,17 +1864,17 @@ void babel4_2(Mob *mob,Player* Joueur){
                 case 0:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 0;
+                    //mob->offset_y = 0;
                     break;
                 case 1:
                     mob->action_delay=32;
                     mob->action_value++;
-                    mob->offset_y = 3;
+                    //mob->offset_y = 3;
                     break;
                 case 2:
                     mob->action_delay=32;
                     mob->action_value=0;
-                    mob->offset_y = 2;
+                    //mob->offset_y = 2;
                     break;
             }
         }
@@ -1885,14 +1885,14 @@ void babel4_2(Mob *mob,Player* Joueur){
     }
 }
 
-const Mob babel11 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_1,1,16,0,0,0};
-const Mob babel12 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_2,5,16,0,0,0};
-const Mob babel21 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_1,1,16,0,0,0};
-const Mob babel22 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_2,5,16,0,0,0};
-const Mob babel31 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_1,0,16,0,0,0};
-const Mob babel32 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_2,0,16,0,0,0};
-const Mob babel41 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_1,2,16,0,0,0};
-const Mob babel42 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_2,1,16,0,0,0};
+// const Mob babel11 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_1,1,16,0,0,0};
+// const Mob babel12 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel1_2,5,16,0,0,0};
+// const Mob babel21 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_1,1,16,0,0,0};
+// const Mob babel22 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel2_2,5,16,0,0,0};
+// const Mob babel31 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_1,0,16,0,0,0};
+// const Mob babel32 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel3_2,0,16,0,0,0};
+// const Mob babel41 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_1,2,16,0,0,0};
+// const Mob babel42 = {1,2,true,0,0,0,0,0,BEBERT,0,0,babel4_2,1,16,0,0,0};
 
 
 

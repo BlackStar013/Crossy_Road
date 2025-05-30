@@ -45,15 +45,16 @@ enum Obstacle {
     ////////
     ENTRANCE,
     FIRELINE,
+    FIRE_PATROL,
     FIRE,
     ////////
     TRANSITION_CAVE,
     CAVE,
-    CULTIST,
+    //CULTIST,
     MAGE,
     TRAP,
     //STONE,
-    BABEL,
+    //BABEL,
     //CAVE_CANON,
     NB_OBSTACLE
 };
@@ -73,6 +74,9 @@ void generator_magic_road(Game*);
 void generator_entrance(Game*);
 void generator_fire(Game*);
 void generator_fireline(Game *game);
+void generator_fire_patrol(Game *game);
+void generator_fire_patrol_1(Game *game);
+void generator_fire_patrol_2(Game *game);
 void generator_transition_cave(Game * game);
 void generator_cave(Game*);
 void generator_cultist(Game*);
