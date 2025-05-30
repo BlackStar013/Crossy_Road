@@ -2227,8 +2227,8 @@ void dropping_path(Mob* mob,Player*p){
 const Mob shooter={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_still,0,0,0,0,0,0};
 const Mob shooter_trap_left={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_still,0,0,0,0,0,0};
 const Mob shooter_trap_right={1,1,true,0,0,0,0,0,SHOOT,0,1,shooter_still,0,0,0,0,0,0};
-const Mob spike={1,1,true,0,0,0,0,0,SPIKE,0,0,spike_timer,0,0,0,0,0,0};
-const Mob spike_trap={1,1,true,0,0,0,0,0,SPIKE,0,0,spike_trigger,0,0,0,0,0,0};
+const Mob spike={1,1,false,0,0,0,0,0,SPIKE,0,0,spike_timer,0,0,0,0,0,0};
+const Mob spike_trap={1,1,false,0,0,0,0,0,SPIKE,0,0,spike_trigger,0,0,0,0,0,0};
 const Mob bone_arrow_left={1,1,true,0,0,0,0,0,BONEARROW,0,0,path_offset_left,0,0,0,0,0,0};
 const Mob bone_arrow_right={1,1,true,0,0,0,0,0,BONEARROW,0,1,path_offset_right,0,0,0,0,0,0};
 const Mob bone_arrow_left_trap={1,1,true,0,0,0,0,0,BONEARROW,0,0,path_offset_trigger_left,0,0,0,0,0,0};
