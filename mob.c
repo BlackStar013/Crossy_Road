@@ -2103,6 +2103,9 @@ void spike_trigger(Mob* mob, Player*p){
             mob->action_value=1;
             mob->offset_x++;
         }
+        else {
+            mob->delay++;
+        }
     }
     if(!mob->delay){
             if (mob->action_value==1){
@@ -2138,6 +2141,7 @@ void still_eye(Mob* mob, Player*p){
             }
             else{
                 mob->delay=mob->speed;
+                mob->offset_x=1;
             }
         }
         else if(mob->action_value==1||mob->action_value==3){
@@ -2148,10 +2152,10 @@ void still_eye(Mob* mob, Player*p){
         else if(mob->action_value==2){
             mob->offset_x++;
             mob->action_value++;
-            mob->delay = 4;
+            mob->delay = 3;
         }
         else if(mob->action_value==4){
-            mob->offset_x=0;
+            mob->offset_x=1;
             mob->offset_y=0;
             mob->action_value=0;
             mob->delay = mob->speed;
