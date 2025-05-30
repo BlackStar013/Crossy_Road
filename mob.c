@@ -2155,7 +2155,7 @@ void still_eye(Mob* mob, Player*p){
             mob->offset_x=0;
             mob->offset_y=0;
             mob->action_value=0;
-            mob->delay = mob->speed+3;
+            mob->delay = mob->speed*3;
         }
     } else {
         mob->delay--;
