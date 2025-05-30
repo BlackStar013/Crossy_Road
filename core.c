@@ -1528,7 +1528,7 @@ void generator_barrage(Game*game){
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Flesh);
         }
-        int nb_danger = rand()%(LENGTH/2)+1;
+        int nb_danger = rand()%(LENGTH/2-1);
         for(int i = 0; i<nb_danger; i++){
             clone(&line->tiles[rand()%LENGTH], Maw);
         }    
@@ -1616,7 +1616,6 @@ void generator_barrage(Game*game){
             Proj->action_delay=64;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            x=rand()%(LENGTH/2-1);
             speed=rand()%3+1;
             mob=clone_mob(eye_wall,x,HEIGTH+2+cycle,speed*16,0);
             game->mobs=list_append(game->mobs,mob);

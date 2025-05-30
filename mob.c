@@ -2154,7 +2154,7 @@ void still_eye(Mob* mob, Player*p){
         else if(mob->action_value==2){
             mob->offset_x++;
             mob->action_value++;
-            mob->delay = 3;
+            mob->delay = 4;
         }
         else if(mob->action_value==4){
             mob->offset_x=0;
