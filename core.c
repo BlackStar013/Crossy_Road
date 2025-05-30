@@ -1616,7 +1616,13 @@ void generator_barrage(Game*game){
             Proj->action_delay=64;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2+cycle,speed*16,0));
+            x=rand()%(LENGTH/2-1);
+            speed=rand()%3+1;
+            mob=clone_mob(eye_wall,x,HEIGTH+2+cycle,speed*16,0);
+            game->mobs=list_append(game->mobs,mob);
+            mob=clone_mob(eye_wall,x+1,HEIGTH+2+cycle,speed*16,0);
+            mob->offset_x++;
+            game->mobs=list_append(game->mobs,mob);
         }
     }
     proba_change_barrage(game);

@@ -2146,12 +2146,12 @@ void still_eye(Mob* mob, Player*p){
                 }
             }
         }
-        else if(mob->action_value==1||mob->action_value==2){
+        else if(mob->action_value==1||mob->action_value==3){
             mob->offset_x++;
             mob->action_value++;
             mob->delay = mob->speed;
         }
-        else if(mob->action_value==3){
+        else if(mob->action_value==2){
             mob->offset_x++;
             mob->action_value++;
             mob->delay = 3;
