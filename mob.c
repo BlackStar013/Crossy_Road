@@ -2133,7 +2133,7 @@ void shooter_still(Mob* mob, Player*p){}
 void still_eye(Mob* mob, Player*p){
     if(!mob->delay){
         if (mob->action_value==0){
-            if (p->_x_dest<=mob->memory__x+64&&p->_x_dest>=mob->memory__x-64&&p->_y_dest<=mob->memory__y+64&&p->_y_dest>=mob->memory__y-64){
+            if (p->_x_dest<=mob->memory__x+128&&p->_x_dest>=mob->memory__x-128&&p->_y_dest<=mob->memory__y+128&&p->_y_dest>=mob->memory__y-128){
                 mob->offset_x=0;
                 mob->offset_y=1;
                 mob->action_value++;
@@ -2141,24 +2141,27 @@ void still_eye(Mob* mob, Player*p){
             }
             else{
                 mob->delay=mob->speed;
-                mob->offset_x=1;
+                mob->offset_x++;
+                mob->offset_x%=4;
             }
         }
-        else if(mob->action_value==1||mob->action_value==3){
+        else if(mob->action_value==1||mob->action_value==2){
             mob->offset_x++;
             mob->action_value++;
             mob->delay = mob->speed;
         }
-        else if(mob->action_value==2){
+        else if(mob->action_value==3){
             mob->offset_x++;
             mob->action_value++;
             mob->delay = 3;
-        }
-        else if(mob->action_value==4){
-            mob->offset_x=1;
+        } else if(mob->action_value==4||mob->action_value==5){
+            mob->action_value++;
+            mob->delay = 3;
+        } else if(mob->action_value==6){
+            mob->offset_x=0;
             mob->offset_y=0;
             mob->action_value=0;
-            mob->delay = mob->speed;
+            mob->delay = 0;
         }
     } else {
         mob->delay--;
@@ -2167,13 +2170,15 @@ void still_eye(Mob* mob, Player*p){
 void sight_blast(Mob* mob,Player*p){
     if(!mob->delay){
         if (mob->action_value==0){
-            if (p->_x_dest<=mob->memory__x+64&&p->_x_dest>=mob->memory__x-64&&p->_y_dest<=mob->memory__y+64&&p->_y_dest>=mob->memory__y-64){
+            if (p->_x_dest<=mob->memory__x+128&&p->_x_dest>=mob->memory__x-128&&p->_y_dest<=mob->memory__y+128&&p->_y_dest>=mob->memory__y-128){
                 mob->offset_x=1;
                 mob->is_death=false;
                 mob->_x=p->_x_dest;
                 mob->_y=p->_y_dest;
                 mob->delay = mob->speed;
                 mob->action_value++;
+            } else {
+                mob->delay=mob->speed;
             }
         }
         else if(mob->action_value==1||mob->action_value==2){
@@ -2184,19 +2189,19 @@ void sight_blast(Mob* mob,Player*p){
             mob->offset_x++;
             mob->action_value++;
             mob->is_death=true;
-            mob->delay = 0;
+            mob->delay = 3;
         }
         else if(mob->action_value==4||mob->action_value==5){
             mob->offset_x++;
             mob->action_value++;
-            mob->delay = 0;
+            mob->delay = 3;
         }
         else if(mob->action_value==6){
             mob->offset_x=0;
             mob->_x=mob->memory__x;
             mob->_y=mob->memory__y;
             mob->action_value=0;
-            mob->delay = mob->speed;
+            mob->delay = 0;
         }
     } else {
         mob->delay--;
