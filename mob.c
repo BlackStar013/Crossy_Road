@@ -2235,12 +2235,12 @@ void ROLL_ROLL(Mob* mob, Player* player){
 
 
 void rush_to_lever_no_moving(Mob* mob,Player* player){
-    if(mob->memory__x<= (LENGTH-1)*16) {
+    if(mob->memory__x<= (LENGTH-2)*16) {
         mob->memory__x += 5;
     } else {
         mob->memory__x -= 5;
     }
-    if(((mob->memory__x)-16  <= (LENGTH-1)*16 )&&((LENGTH-1)*16 <= mob->memory__x + 16 + (mob->length - 1)*32)){
+    if(((mob->memory__x)-2  <= (LENGTH-2)*16 )&&((LENGTH-2)*16 <= mob->memory__x + 2)){
         mob->speed = 0;
         mob->offset_x++;
         mob->offset_x%=2;
@@ -2248,6 +2248,8 @@ void rush_to_lever_no_moving(Mob* mob,Player* player){
         if(mob->id_mob ==LEVER){
             mob->path = perfectly_still;
         } else {
+            mob->heigth = 2;
+            mob-> length = 2;
             mob->path = ROLL_ROLL;
         }
     }
@@ -2259,7 +2261,7 @@ void detect_player_no_moving(Mob* mob, Player* player){
         switch(mob->action_value){
             case 0:
                 mob->memory__x += 3;
-                if((!mob->action_delay)||(mob->memory__x>=((LENGTH-1)*32-4))){
+                if((!mob->action_delay)||(mob->memory__x>=((LENGTH-2)*32-16))){
                     mob->action_delay = mob->max_action_delay;
                     mob->action_value = 2;
                 } else {
@@ -2269,7 +2271,7 @@ void detect_player_no_moving(Mob* mob, Player* player){
 
             case 1:
                 mob->memory__x -= 3;
-                if((!mob->action_delay)||(mob->memory__x<=((1)*32+4))){
+                if((!mob->action_delay)||(mob->memory__x<=((1)*32+16))){
                     mob->action_delay = mob->max_action_delay;
                     mob->action_value = 3;
                 } else {
@@ -2278,10 +2280,9 @@ void detect_player_no_moving(Mob* mob, Player* player){
                 break;
 
             case 2:
-                if((!mob->action_delay)||(mob->memory__x<=((1)*32+4))){
-                    int ratio = (50 + rand()%101)/100;
-                    mob->action_delay = ratio*mob->max_action_delay;
-                    if(mob->memory__x>=((LENGTH-1)*32-4)){
+                if((!mob->action_delay)||(mob->memory__x<=((1)*32+16))){
+                    mob->action_delay = (2*mob->max_action_delay)/3;
+                    if(mob->memory__x>=((LENGTH-2)*32-16)){
                         mob->action_value = 1;
                     } else {
                         mob->action_value = 0;
@@ -2292,10 +2293,9 @@ void detect_player_no_moving(Mob* mob, Player* player){
                 break;
 
             case 3:
-                if((!mob->action_delay)||(mob->memory__x<=((1)*32+4))){
-                    int ratio = (50 + rand()%101)/100;
-                    mob->action_delay = ratio*mob->max_action_delay;
-                    if(mob->memory__x<=((1)*32+4)){
+                if((!mob->action_delay)||(mob->memory__x<=((1)*32+16))){
+                    mob->action_delay = (2*mob->max_action_delay)/3;
+                    if(mob->memory__x<=((1)*32+16)){
                         mob->action_value = 0;
                     } else {
                         mob->action_value = 1;
@@ -2304,16 +2304,20 @@ void detect_player_no_moving(Mob* mob, Player* player){
                     mob->action_delay--;
                 }
                 break;
-
-            mob->delay = mob->speed;
-                
         }
+        mob->delay = mob->speed;
     } else {
         mob->delay--;
     }
+    if(( ((1)*32+16) <=player->_x_dest)&&(player->_x_dest <= (LENGTH-2)*32-16)){ //Dépassement supérieur
+            if(((mob->memory__y -16  )<=player->_y_dest)&&(player->_y_dest <= (mob->memory__y + 16))) {   
+                mob->speed = 0;
+                mob->path = rush_to_lever_no_moving;
+            }
+    }
     if(mob->action_value>=2){
-        if(((mob->memory__x)-16  <=player->_x_dest)&&(player->_x_dest <= mob->memory__x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
-            if(((mob->memory__y -16 -64 )<=player->_y_dest)&&(player->_y_dest <= (mob->memory__y + 16) +  (mob->heigth - 1)*32)) {   
+        if(((mob->memory__x)-16  <=player->_x_dest)&&(player->_x_dest <= mob->memory__x + 16)){ //Dépassement supérieur
+            if(((mob->memory__y -16 -96 )<=player->_y_dest)&&(player->_y_dest <= (mob->memory__y + 16))) {   
                 mob->speed = 0;
                 mob->path = rush_to_lever_no_moving;
             }
@@ -2321,8 +2325,31 @@ void detect_player_no_moving(Mob* mob, Player* player){
     }
 }
 
+
+void kill_player(Mob* mob, Player* player){
+    if(( ((1)*32+16) <=player->_x_dest)&&(player->_x_dest <= (LENGTH-2)*32-16)){ //Dépassement supérieur
+            if(((mob->_y -16  )<=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16))) {   
+                if(mob->_x <= player->_x_dest){
+                    mob->offset_y = 2;
+                    mob->_x += 5;
+                    if((mob->_x-mob->memory__x)%10){
+                        mob->offset_x++;
+                        mob->offset_x%=4;
+                    }
+                } else {
+                    mob->offset_y = 3;
+                    mob->_x -= 5;
+                    if((mob->_x-mob->memory__x)%10){
+                        mob->offset_x++;
+                        mob->offset_x%=4;
+                    }
+                }
+            }
+    }
+}
+
 void rush_to_lever(Mob* mob,Player* player){
-    if(mob->_x<= (LENGTH-1)*16) {
+    if(mob->_x<= (LENGTH-2)*16) {
         mob->offset_y = 2;
         mob->_x += 5;
         if((mob->_x-mob->memory__x)%10){
@@ -2337,11 +2364,11 @@ void rush_to_lever(Mob* mob,Player* player){
             mob->offset_x%=4;
         }
     }
-    if(((mob->_x)-16  <= (LENGTH-1)*16 )&&((LENGTH-1)*16 <= mob->_x + 16 + (mob->length - 1)*32)){
+    if(((mob->_x)-2  <= (LENGTH-2)*16 )&&((LENGTH-2)*16 <= mob->_x + 2 )){
         mob->speed = 0;
         mob->offset_x = 0;
         mob->offset_y = 1;
-        mob->path = perfectly_still;
+        mob->path = kill_player;
     }
 
 }
@@ -2356,7 +2383,7 @@ void detect_player(Mob* mob, Player* player){
                     mob->offset_x++;
                     mob->offset_x%=4;
                 }
-                if((!mob->action_delay)||(mob->_x>=((LENGTH-1)*32-4))){
+                if((!mob->action_delay)||(mob->_x>=((LENGTH-2)*32-16))){
                     mob->action_delay = mob->max_action_delay;
                     mob->action_value = 2;
                 } else {
@@ -2371,7 +2398,7 @@ void detect_player(Mob* mob, Player* player){
                     mob->offset_x++;
                     mob->offset_x%=4;
                 }
-                if((!mob->action_delay)||(mob->_x<=((1)*32+4))){
+                if((!mob->action_delay)||(mob->_x<=((1)*32+16))){
                     mob->action_delay = mob->max_action_delay;
                     mob->action_value = 3;
                 } else {
@@ -2380,20 +2407,9 @@ void detect_player(Mob* mob, Player* player){
                 break;
 
             case 2:
-                if(mob->action_delay<= 32){
-                    if(mob->_x>=((LENGTH-1)*32-4)){
-                            mob->offset_y = 3;
-                        } else {
-                            mob->offset_y = 2;
-                        }
-                }else{
-                    mob->offset_y = 0;
-                }
-                mob->offset_x = 0;
-                if((!mob->action_delay)||(mob->memory__x<=((1)*32+4))){
-                    int ratio = (40 + rand()%61)/100;
-                    mob->action_delay = ratio*mob->max_action_delay;
-                    if(mob->_x>=((LENGTH-1)*32-4)){
+                if((!mob->action_delay)||(mob->memory__x<=((1)*32+16))){
+                    mob->action_delay = (2*mob->max_action_delay)/3;
+                    if(mob->_x>=((LENGTH-2)*32-16)){
                         mob->action_value = 1;
                     } else {
                         mob->action_value = 0;
@@ -2404,19 +2420,9 @@ void detect_player(Mob* mob, Player* player){
                 break;
 
             case 3:
-                if(mob->action_delay<= 32){
-                    if(mob->_x<=((1)*32+4)){
-                        mob->offset_y = 2;
-                    } else {
-                        mob->offset_y = 3;
-                    }
-                } else {
-                    mob->offset_y = 0;
-                }
-                if((!mob->action_delay)||(mob->_x<=((1)*32+4))){
-                    int ratio = (40 + rand()%61)/100;
-                    mob->action_delay = ratio*mob->max_action_delay;
-                    if(mob->_x<=((1)*32+4)){
+                if((!mob->action_delay)||(mob->_x<=((1)*32+16))){
+                    mob->action_delay = (2*mob->max_action_delay)/3;
+                    if(mob->_x<=((1)*32+16)){
                         mob->action_value = 0;
                     } else {
                         mob->action_value = 1;
@@ -2424,17 +2430,24 @@ void detect_player(Mob* mob, Player* player){
                 } else {
                     mob->action_delay--;
                 }
-                break;
-
-            mob->delay = mob->speed;
-                
+                break;                
         }
+        mob->delay = mob->speed;
+
     } else {
         mob->delay--;
     }
+    if(( ((1)*32+16) <=player->_x_dest)&&(player->_x_dest <= (LENGTH-2)*32-16)){ //Dépassement supérieur
+            if(((mob->_y -16  )<=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16))) {   
+                mob->speed = 0;
+                mob->path = rush_to_lever;
+            }
+        }
     if(mob->action_value>=2){
-        if(((mob->_x)-16  <=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ //Dépassement supérieur
-            if(((mob->_y -16 -64 )<=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) +  (mob->heigth - 1)*32)) {   
+        mob->offset_x = 0;
+        mob->offset_y = 0;
+        if(((mob->_x)-16  <=player->_x_dest)&&(player->_x_dest <= mob->_x + 16)){ //Dépassement supérieur
+            if(((mob->_y -16 -96 )<=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16))) {   
                 mob->speed = 0;
                 mob->path = rush_to_lever;
             }

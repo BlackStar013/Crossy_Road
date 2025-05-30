@@ -52,6 +52,8 @@ SDL_Surface** initSurfaceArrayMap(void){
             surfaceArrayMap[i] = IMG_Load("sprites/MurSecret.png");
         }else if(i==_DOOR){   
             surfaceArrayMap[i] = IMG_Load("sprites/TransitionGrotte.png");
+        }else if(i==_LEVER){   
+            surfaceArrayMap[i] = IMG_Load("sprites/Grotte.png");
         }else{ //if(i==_WATER_MIDDLE){
             surfaceArrayMap[i] = IMG_Load("sprites/Eaumilieu.png");
         }

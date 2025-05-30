@@ -974,8 +974,8 @@ void generator_trap(Game* game){
     int direction = rand()%2;
     int init_x = rand()%(LENGTH-4) + 2;
     int pos = 0;
-    int speed = rand()%4+1;
-    int max_action_delay = 48 + rand()%32;
+    int speed = rand()%9+1;
+    int max_action_delay = rand()%13 + 4 ;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -984,17 +984,14 @@ void generator_trap(Game* game){
     pos++;
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
-    for(int i = 1; i<LENGTH-1; i++){
+    for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], stalagmite);
     }
     if(direction){
-        clone(&line->tiles[0], stalagmite);
         clone(&line->tiles[LENGTH-1], cave);
 
     } else {
-        clone(&line->tiles[LENGTH-1], stalagmite);
         clone(&line->tiles[0], cave);
-
     }
     pos++;
     Mob* caillou;
@@ -1005,6 +1002,8 @@ void generator_trap(Game* game){
     }
     caillou->memory__x = init_x*32;
     caillou->memory__y = (HEIGTH + pos + 3)*32;
+    caillou->heigth = 1;
+    caillou->length=1;
     game->projectile = list_append(game->projectile, caillou);
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
@@ -1037,16 +1036,29 @@ void generator_trap(Game* game){
     }
     clone(&line->tiles[1], stalagmite);
     clone(&line->tiles[LENGTH-2], stalagmite);
+    if(direction){
+        clone(&line->tiles[LENGTH-1], stalagmite);
+
+    } else {
+        clone(&line->tiles[0], stalagmite);
+    }
     pos++;
-    Mob* clever = clone_mob(lever,(LENGTH-1)/2,HEIGTH+pos,speed,max_action_delay);
+    Mob* clever = clone_mob(lever,(LENGTH-2)/2,HEIGTH+pos,speed,max_action_delay);
     clever->memory__y = (HEIGTH + pos -1)*32;
     clever->memory__x = (init_x)*32;
     game->projectile = list_append(game->projectile, clever);
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave);
+        clone(&line->tiles[i], stalagmite);
     }
+    if(!direction){
+        clone(&line->tiles[LENGTH-1], cave);
+
+    } else {
+        clone(&line->tiles[0], cave);
+    }
+    clone(&line->tiles[(LENGTH-2)/2], _lever);
     proba_change_trap(game);
 
 }

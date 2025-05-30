@@ -67,3 +67,5 @@ const Tile base = {false,false,_BASE};
 const Tile MurManoir = {true,false,_MANOR_WALL};
 
 const Tile Porte = {false,false,_DOOR};
+
+const Tile _lever = {true,false,_LEVER};
