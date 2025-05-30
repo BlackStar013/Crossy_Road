@@ -1553,39 +1553,39 @@ void generator_barrage(Game*game){
         if (nb_danger==1){
             speed=rand()%3+1;
             x=rand()%(LENGTH-1);
-            Mob* mob=clone_mob(eye_wall,x,HEIGTH+2,speed*16,0);
+            Mob* mob=clone_mob(eye_wall,x,HEIGTH+2+cycle,speed*16,0);
             game->mobs=list_append(game->mobs,mob);
-            mob=clone_mob(eye_wall,x+1,HEIGTH+2,speed*16,0);
+            mob=clone_mob(eye_wall,x+1,HEIGTH+2+cycle,speed*16,0);
             mob->offset_x++;
             game->mobs=list_append(game->mobs,mob);
-            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=16;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=32;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=48;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=64;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
         }else {
             x=rand()%(LENGTH/2-1);
             speed=rand()%3+1;
-            Mob* mob=clone_mob(eye_wall,x,HEIGTH+2,speed*16,0);
+            Mob* mob=clone_mob(eye_wall,x,HEIGTH+2+cycle,speed*16,0);
             game->mobs=list_append(game->mobs,mob);
-            mob=clone_mob(eye_wall,x+1,HEIGTH+2,speed*16,0);
+            mob=clone_mob(eye_wall,x+1,HEIGTH+2+cycle,speed*16,0);
             mob->offset_x++;
-            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=16;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=32;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
@@ -1593,29 +1593,29 @@ void generator_barrage(Game*game){
             Proj->action_delay=48;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=64;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
             x=rand()%(LENGTH/2-1)+LENGTH/2;
             speed=rand()%3+1;
-            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=16;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=32;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            Proj=clone_mob(eye_drop,x,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=48;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            Proj=clone_mob(eye_drop,x+1,HEIGTH+2,speed,80);
+            Proj=clone_mob(eye_drop,x+1,HEIGTH+2+cycle,speed,80);
             Proj->action_delay=64;
             Proj->_x=-32;
             game->projectile=list_append(game->projectile,Proj);
-            game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2,speed*16,0));
+            game->mobs=list_append(game->mobs,clone_mob(eye_wall,x,HEIGTH+2+cycle,speed*16,0));
         }
     }
     proba_change_barrage(game);
@@ -1707,7 +1707,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Maw);
             if (i==1||i==2){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+1,70,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+1,100,0));
             }
         }
         add_buffer_line(game->carte);
@@ -1716,7 +1716,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Maw);
             if (i==0||i==1||i==3||i==4||i==5){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+2,70,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+2,100,0));
             }
         }
         add_buffer_line(game->carte);
@@ -1725,7 +1725,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Maw);
             if (i==0||i==3||i==5||i==7||i==8||i==9||i==10){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+3,70,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+3,100,0));
             }
         }
         add_buffer_line(game->carte);
@@ -1734,7 +1734,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Maw);
             if (i==0||i==1||i==2||i==3||i==5||i==6||i==7||i==10){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+4,70,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+4,100,0));
             }
         }
         add_buffer_line(game->carte);
@@ -1743,7 +1743,7 @@ void generator_labyrinth(Game*game){
             clone(&line->tiles[i], Maw);
             if (i==10||i==9||i==8){
                 clone(&line->tiles[i], Flesh);
-                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+5,70,0));
+                game->mobs=list_append(game->mobs,clone_mob(spike_trap,i,HEIGTH+5,100,0));
             }
         }
         add_buffer_line(game->carte);
