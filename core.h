@@ -52,9 +52,9 @@ enum Obstacle {
     CAVE,
     //CULTIST,
     MAGE,
+    BABEL,
     TRAP,
     //STONE,
-    //BABEL,
     //CAVE_CANON,
     NB_OBSTACLE
 };

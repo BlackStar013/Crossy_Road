@@ -391,9 +391,9 @@ void generator_obstacle(Game*game){
         generator_trap(game);
         break;
 
-        // case BABEL:
-        // generator_babel(game);
-        // break;
+        case BABEL:
+        generator_babel(game);
+        break;
 
 
     }
@@ -1151,6 +1151,65 @@ void generator_trap(Game* game){
 
 }
 
+void proba_change_babel(Game* game){
+
+}
+
+void generator_babel(Game* game){
+    int not_prison = rand()%4;
+    int prison = 0;
+    int pos = 0;
+    int speed = rand()%4+3;
+    int max_action_delay = rand()%8 + 4 ;
+    Line* line;
+    if(!(not_prison)){;
+        prison = 1;
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], cave);
+        }
+        pos++;
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], stalagmite);
+        }
+        clone(&line->tiles[(LENGTH-1)/2], cave);
+        clone(&line->tiles[(LENGTH-1)/2 -1], cave);
+        pos++;
+    }
+    int nb_lines = 4 + rand()%3;
+    for(int i =0; i<nb_lines; i++){
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], cave);
+        }
+        pos++;
+    }
+    Mob * bebert = clone_mob(babel, (LENGTH-1)/2, HEIGTH+(nb_lines/2)+(prison)*2, speed, max_action_delay);
+    bebert -> memory__y = (HEIGTH+(nb_lines)+(prison)*2)*32;
+    game->mobs = list_append(game->mobs, bebert);
+    if(!(not_prison)){;
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], stalagmite);
+        }
+        clone(&line->tiles[(LENGTH-1)/2], cave);
+        clone(&line->tiles[(LENGTH-1)/2 -1], cave);
+        pos++;
+        add_buffer_line(game->carte);
+        line = game->carte->head_buffer;
+        for(int i = 0; i<LENGTH; i++){
+            clone(&line->tiles[i], cave);
+        }
+        pos++;
+    }
+    proba_change_babel(game);
+}
+
 //NEW_GENERATOR//
 
 void proba_change_bushes(Game* game){
@@ -1608,9 +1667,12 @@ bool use_power(Game* game){
             game->joueur->character_delay = game->joueur->character_max_delay;
             return true;
             break;
-            
 
+        default:
+            return false;
+            
     }
+    return false;
 }
 
 void to_norm(Game* game){
@@ -1749,7 +1811,7 @@ void update_game(Game* game){
             break;
 
             case CULTIST_CAVE:
-            proba_change_game(game, TRAP); //TO_DO
+            proba_change_game(game, BABEL); //TO_DO
             game->until_next = 45;
             break;
 

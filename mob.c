@@ -2458,5 +2458,303 @@ void detect_player(Mob* mob, Player* player){
 
 const Mob sentinel = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,detect_player,0,0,0,0,0,0};
 const Mob lever = {1,1,false,0,0,0,0,0,LEVER,0,0,detect_player_no_moving,0,0,0,0,0,0};
-const Mob pebble_left = {2,2,true,0,0,0,0,0,PEBBLE,0,1,detect_player_no_moving,0,0,0,0,0,0}; //TO_MODIFY
-const Mob pebble_right = {2,2,true,0,0,0,0,0,PEBBLE,0,0,detect_player_no_moving,0,0,0,0,0,0}; //TO_MODIFY
+const Mob pebble_left = {2,2,true,0,0,0,0,0,PEBBLE,0,1,detect_player_no_moving,0,0,0,0,0,0}; 
+const Mob pebble_right = {2,2,true,0,0,0,0,0,PEBBLE,0,0,detect_player_no_moving,0,0,0,0,0,0}; 
+
+void go_right(Mob* mob){
+    mob->_x += 3;
+    if(!((mob->_x - mob-> memory__x)%6)){
+        mob->offset_x++;
+        mob->offset_x%= 4;
+    }
+    mob->offset_y = 2;
+}
+
+void go_left(Mob* mob){
+    mob->_x -= 3;
+    if(!((mob->_x - mob-> memory__x)%6)){
+        mob->offset_x++;
+        mob->offset_x%= 4;
+    }
+    mob->offset_y = 3;
+}
+
+void go_up(Mob* mob){
+    mob->_y += 3;
+    if(!((mob->_y - mob-> memory__y)%6)){
+        mob->offset_x++;
+        mob->offset_x%= 4;
+    }
+    mob->offset_y = 2;
+}
+
+void go_down(Mob* mob){
+    mob->_y -= 3;
+    if(!((mob->_y - mob-> memory__y)%6)){
+        mob->offset_x++;
+        mob->offset_x%= 4;
+    }
+    mob->offset_y = 3;
+}
+
+void go_ru(Mob* mob){
+    go_right(mob);
+    go_up(mob);
+}
+
+void go_lu(Mob* mob){
+    go_left(mob);
+    go_up(mob);
+}
+
+void go_rd(Mob* mob){
+    go_right(mob);
+    go_down(mob);
+}
+
+void go_ld(Mob* mob){
+    go_left(mob);
+    go_down(mob);
+
+}
+
+void dance(Mob* mob, Player* player){
+    if(!mob->delay){
+        mob->delay = 5;
+        switch(mob->action_value){
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                mob->offset_y = 1;
+                mob->offset_x++;
+                mob->offset_x %= 4;
+                mob -> action_value++;
+                break;
+
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                mob->offset_y = 2;
+                mob->offset_x++;
+                mob->offset_x %= 4;
+                mob -> action_value++;
+                break;
+
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+                mob->offset_y = 3;
+                mob->offset_x++;
+                mob->offset_x %= 4;
+                mob -> action_value++;
+                break;
+
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+                mob->offset_y = 3;
+                mob->offset_x++;
+                mob->offset_x %= 4;
+                mob -> action_value++;
+                break;
+
+            default:
+                mob->action_value = (rand()%8)*4;
+                mob -> path = chaos;
+
+        }
+    } else {
+        mob->delay--;
+    }
+}
+
+void chaos(Mob* mob, Player* player){
+    if(!mob->delay){
+        mob->delay = mob -> speed;
+        switch(mob->action_value){
+            case 1:
+            case 2:
+            case 3:
+                mob->action_value--;
+            case 0:
+                if(mob->_y < mob-> memory__y){
+                    go_up(mob);
+                } else {
+                    mob->action_value = (rand()%8)*4;
+                }
+                break;
+
+            case 7:
+            case 5:
+            case 6:
+                mob->action_value--;
+            case 4:
+                if(mob->_y > mob-> memory__y - 5*32){
+                    go_down(mob);
+                } else {
+                    mob->action_value = (rand()%8)*4;
+                }
+                break;
+
+            case 11:
+            case 9:
+            case 10:
+                mob->action_value--;
+            case 8:
+                if(mob->_x > 0){
+                    go_left(mob);
+                } else {
+                    mob->action_value = (rand()%8)*4;
+                }
+                break;
+
+            case 15:
+            case 13:
+            case 14:
+                mob->action_value--;
+            case 12:
+                if(mob->_x < (LENGTH-1)*32){
+                    go_right(mob);
+                } else {
+                    mob->action_value = (rand()%8)*4;
+                }
+                break;
+
+            case 19:
+            case 17:
+            case 18:
+                mob->action_value--;
+            case 16:
+                if((mob->_y <= mob-> memory__y)&&(mob->_x < (LENGTH-1)*32)){
+                    go_ru(mob);
+                }  else {
+                    mob->action_value = (rand()%8)*4;
+                }
+                break;
+
+            case 23:
+            case 21:
+            case 22:
+                mob->action_value--;
+            case 20:
+                if((mob->_y > mob-> memory__y - 5*32)&&(mob->_x < (LENGTH-1)*32)){
+                    go_rd(mob);
+                } else {
+                    mob->action_value = (rand()%8)*4 ;
+                }
+                break;
+
+            case 27:
+            case 25:
+            case 26:
+                mob->action_value--;
+            case 24:
+                if((mob->_y <= mob-> memory__y)&&((mob->_x > 0))){
+                    go_lu(mob);
+                } else {
+                    mob->action_value = (rand()%8)*4;
+                }
+                break;
+
+            case 30:
+            case 31:
+            case 29:
+                mob->action_value--;
+            case 28:
+                if((mob->_y > mob-> memory__y - 5*32)&&((mob->_x > 0))){
+                    go_ld(mob);
+                } else {
+                    mob->action_value = (rand()%8)*4;
+                }
+                break;
+
+        }
+        if(!(mob->action_value)%4){
+            mob->action_value = (rand()%8)*4 + 2;
+        }
+        if(!(mob->action_value%4)){
+            if(((mob->_x -16 -64*2)<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + 64*2 + (mob->length - 1)*32)){ 
+                if(((mob->_y - 16 -64*2) <=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + 64*2 + (mob->heigth - 1)*32)) {
+                    //On est dans le radius donc on suit le joueur
+                    if(player->_y_dest > mob -> _y + 8 + (mob->heigth-1)*32){
+                        if(player -> _x_dest > mob -> _x +8){
+                            mob->action_value = 16;
+                        } else if( player -> _x_dest < mob -> _x - 8 ){
+                            mob->action_value = 24;
+                        } else {
+                            mob -> action_value = 0;
+                        }
+                    } else if(player->_y_dest < mob -> _y - 8 ){
+                        if(player -> _x_dest > mob -> _x +8){
+                            mob->action_value = 20;
+                        } else if( player -> _x_dest < mob -> _x - 8 ){
+                            mob->action_value = 28;
+                        } else {
+                            mob -> action_value = 4;
+                        }
+                    } else {
+                        if(player -> _x_dest > mob -> _x ){
+                            mob->action_value = 12;
+                        } else {
+                            mob -> action_value = 8;
+                        }
+                    }
+                }
+            }
+        }
+        if(!mob->action_delay){
+            mob->action_delay = mob->max_action_delay;
+            int chaos = rand()%13;
+            if(chaos == 12){
+              mob -> action_delay = 0;
+              chaos = rand()%12; 
+            }
+            switch(chaos){
+                case 0:
+                case 1 :
+                case 2 :
+                case 3 :
+                    mob->action_value = (rand()%8)*4 +1 + rand()%3;
+                    break;
+
+                case 4:
+                case 5:
+                case 6:
+                    mob -> speed = rand()%6 +2;
+                    mob -> delay = mob -> speed;
+                    break;
+
+                case 7:
+                case 8:
+                case 9:
+                    mob -> max_action_delay = rand()%10 +3;
+                    break;
+
+                case 10 :
+                case 11 :
+                    if(!(rand()%10)){
+                        mob -> action_value = 0;
+                        mob -> delay = 5;
+                        mob -> path = dance;
+                    }
+                    break;
+
+                
+                default:
+                    mob->action_delay = 0;
+                    break;
+
+            }
+        } else {
+            mob -> action_delay--;
+        }
+    } else {
+        mob->delay--;
+    }
+}
+
+const Mob babel = {1,2,true,0,0,0,0,0,BEBERT,0,0,chaos,0,0,0,0,0,0};

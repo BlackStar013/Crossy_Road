@@ -152,12 +152,7 @@ void babel2_2(Mob *mob,Player* player);
 void babel3_2(Mob *mob,Player* player);
 void babel4_2(Mob *mob,Player* player);
 
-extern const Mob cult_clock1;
-extern const Mob cult_clock2;
-extern const Mob cult_clock3;
-extern const Mob cult_counter1;
-extern const Mob cult_counter2;
-extern const Mob cult_counter3;
+extern const Mob cult;
 
 void still(Mob *mage,Player* player);
 void follow(Mob *projectile,Player* player);
@@ -169,14 +164,7 @@ extern const Mob curse_arrow;
 extern const Mob pebble_left;
 extern const Mob pebble_right;
 
-extern const Mob babel11;
-extern const Mob babel12;
-extern const Mob babel21;
-extern const Mob babel22;
-extern const Mob babel31;
-extern const Mob babel32;
-extern const Mob babel41;
-extern const Mob babel42;
+extern const Mob babel;
 
 //
 void path_hard_right(Mob *car, Player*p);
@@ -217,6 +205,6 @@ extern const Mob xp;
 extern const Mob champi;
 
 //New_cave
-
+void chaos(Mob* mob, Player* player);
 extern const Mob lever;
 extern const Mob sentinel;
