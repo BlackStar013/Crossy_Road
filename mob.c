@@ -2037,6 +2037,7 @@ void path_offset_trigger_left(Mob* mob, Player*p){
             } else if(mob->action_value==1){
                 mob->_x=mob->memory__x;
                 mob->_y=mob->memory__y;
+                mob->action_value=0;
             }
         } else {
             mob->_x -= 4; 
@@ -2054,6 +2055,7 @@ void path_offset_trigger_right(Mob* mob, Player*p){
             } else if(mob->action_value==1){
                 mob->_x=mob->memory__x;
                 mob->_y=mob->memory__y;
+                mob->action_value=0;
             }
         } else {
             mob->_x += 4; 
@@ -2200,7 +2202,7 @@ void sight_blast(Mob* mob,Player*p){
 void still_eyewall(Mob* mob,Player*p){
     if(!mob->delay){
         mob->offset_x+=2;
-        if (mob->offset_x==5){
+        if (mob->offset_x==10 ||mob->offset_x==11){
             mob->offset_x=0;
         }
         mob->delay=mob->speed;
