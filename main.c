@@ -12,6 +12,7 @@
 
 
 //Global variable
+#define IA_t true
 
 bool emoji = false;
 int character = KAIRON;
@@ -39,7 +40,7 @@ enum COLORS {
     ON_FLESH,
     ON_FLESH_EVIL,
     ON_ACID,
-    TRAP,
+    //TRAP,
     NB_COLOR
 };
 
@@ -948,7 +949,30 @@ int main(void){
                 update_game(game);
                 draw_all(game);
                 ch = getch();
-                if((ch == KEY_UP) || (ch == 'z') || (ch == 'Z')){
+                if(IA_t){
+                    if(game->joueur->delai){
+                        game->joueur->delai--;
+                    }else{
+                        int directive = eval(game);
+                        if(directive == 0){
+                            if(move_up(game)&&game->joueur->_y_dest>=3*32){
+                                switch_game(game);
+                                game->mobs = destroy_liste_mob_from(-1, game->mobs);
+                                game->exp = destroy_liste_mob_from(-1, game->exp);
+                                game->projectile = destroy_liste_mob_from(-2*HEIGTH, game->projectile);
+                                destroy_tail_buffer(game->carte);
+                            }
+                        }else if(directive == 1){
+                            move_right(game);
+                        }else if(directive == 2){
+                            move_down(game);
+                        }else if(directive == 3){
+                            move_left(game);
+                        }
+                        game->joueur->delai = DELAI;
+                    }
+                }else{
+                    if((ch == KEY_UP) || (ch == 'z') || (ch == 'Z')){
                         // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
                         if(move_up(game)&&game->joueur->_y_dest>=3*32){
                             switch_game(game);
@@ -971,6 +995,7 @@ int main(void){
                     }else if(ch == ' '){
                         use_power(game);
                     }
+                }
 
             }
             clear();

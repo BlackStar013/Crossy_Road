@@ -2518,7 +2518,7 @@ void to_norm(Game* game){
 
             case OOGWAAY:
                 switch(game->joueur->offset_y){
-                case 0:
+                case 0 :
                 case 1 :
                     game->joueur->_x += ((2*(rand()%2)) -1) * 16;
                     break;
@@ -2622,25 +2622,30 @@ void update_game(Game* game){
     //SDL_Delay(1000);
     if(game->score%(game->until_next) == 0){
         game->score++;
-        game->biome++;
+        if(game->biome != NB_BIOME-1){
+            game->biome++;
+        }
+        else{
+            game->biome = CROSSY_ROAD;
+        }
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 35;
+            game->until_next = 50;
             break;
 
             case HARD_CROSSY_ROAD:
             proba_change_game(game, BUSHES);
-            game->until_next = 35;
+            game->until_next = 50;
             break;
 
             case FLAMING_MANOR:
-            proba_change_game(game, ENTRANCE); 
-            game->until_next = 80;
+            proba_change_game(game, ENTRANCE);
+            game->until_next = 50;
             break;
 
             case CULTIST_CAVE:
-            proba_change_game(game, TRANSITION_CAVE); //TO_DO
+            proba_change_game(game, TRANSITION_CAVE);
             game->until_next = 45;
             break;
 
