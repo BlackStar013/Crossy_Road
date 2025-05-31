@@ -12,6 +12,7 @@
 #include "save_load.h"
 #include "SDLdisplay.h"
 #include "display.h"
+#include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,3 +62,6 @@ void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_
 void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, SDL_Surface** surfaceArrayPlayer, Game* game, bool sound);
 void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, int* shortmode, bool* sound, bool* reset_save);
 void displayOptionsMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, SDL_Surface* cursorSurface, SDL_Surface* backSurface);
+
+void displayDescMenu(int chara, int lvl, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth);
+void descMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, int chara, int lvl, bool sound);
