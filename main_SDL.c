@@ -91,42 +91,14 @@ int main(void){
     Mix_Chunk** soundArray = initSoundArray();
     Mix_Music** musicArray = initMusicArray();
 
-    // Line *line = game->carte->head_map;
-    // while(line!=NULL){
-    //     for(int i=0; i<HEIGHT; i++){
-    //         printf("%c", line->tiles[i].type);
-    //     }
-    //     printf("\n");
-    //     line=line->next;
-    // }
     int pix_defil = 0;
     int counter = 0;
-    //update_game(game);
 
     SDL_Event event;
     SDL_bool quit = SDL_FALSE;
     SDL_bool main_menu = SDL_TRUE;
     SDL_bool pause = SDL_FALSE;
-    //pour tester le chargement des diffrentes tuiles
-    // for(int i=0; i<LENGTH; i++){
-    //     game->carte->head_map->next->next->next->tiles[i].type='~';
-    //     game->carte->head_map->next->next->next->tiles[i].is_danger=true;
-    // }
-    // game->carte->head_map->next->next->next->tiles[7].type='_';
-    // game->carte->head_map->next->next->next->tiles[7].is_danger=false;
-    //game->mobs = list_append(game->mobs, clone_mob(car_left, 3, 5, 10));
-    //fin de la zone de changement de map
 
-    //a servi pour vérifier que la map s'affichait bien
-    // Line *line = game->carte->head_map;
-    // while(line!=NULL){
-    //     for(int i=0; i<HEIGHT; i++){
-    //         printf("%c", line->tiles[i].type);
-    //     }
-    //     printf("\n");
-    //     line=line->next;
-    // }
-    // printf("\n");
     const int desired_fps = 64;
     const int frameDelay = 1000 / desired_fps;
     int fps = 0;
@@ -224,16 +196,13 @@ int main(void){
             cursor = 0;
             currentTime = SDL_GetTicks();
             elapsedTime = currentTime-startTime;
-            //printf("elapsedTime = %d", elapsedTime);
             if(elapsedTime < 1000){
                 fps+=1;
             }
             else{
-                //printf("fps: %d\n", fps);
                 fps = 0;
                 startTime = SDL_GetTicks();
             }
-            // printf("score :%d\n", game->score);
             update_game(game);
             if(pix_defil){
                 if(pix_defil>13*32){
@@ -281,7 +250,6 @@ int main(void){
                     game->joueur->delai--;
                 }else{
                     int directive = eval(game);
-                    // printf("directive %d\n", directive);
                     if(directive == 0){
                         if(move_up(game)&&game->joueur->_y_dest>=3*32){
                             pix_defil += 32;
@@ -364,28 +332,6 @@ int main(void){
             if (frameDelay > (endframeTime-currentTime)) {
                 SDL_Delay(frameDelay - (endframeTime-currentTime));
             }
-            // update_game(game);
-            // // test la mort, pour le moment juste quitte le jeu
-            // if(test_death(game)){
-            //     if(SDL_RenderClear(renderer)){
-            //         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-            //     }
-            //     quit = SDL_TRUE;
-            // }
-            // if(SDL_RenderClear(renderer)){
-            //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
-            // }    
-            //display_all(game, renderer, defil, baaaaaa);
-            //if(baaaaaa){
-            //    for(int defil=0; defil<8; defil++){
-            //        switch_game(game, defil);
-            //        update_game(game);
-            //        display_all(game, renderer, defil, baaaaaa);
-            //        //SDL_Delay(1000);
-            //    }
-            //    baaaaaa = false;    
-            //}
-            //SDL_Delay(50);
         }
         if(reset_save){
             printf("try save reset\n");
