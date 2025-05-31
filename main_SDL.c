@@ -3,21 +3,22 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include "map.h"
 #include "tuiles.h"
 #include "ia.h"
 #include "core.h"
 #include "menu.h"
 #include "mob.h"
+#include "sound.h"
 #include "SDLdisplay.h"
 #include "display.h"
+#include "save_load.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-
-#define IA true
 
 int main(void){
     //globalement beaucoup d'initialisation diverses et variees
@@ -61,6 +62,16 @@ int main(void){
         return 1;
     }
 
+    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+        return 1;
+    }
+
     // permet de choisir un arrière plan, mais pas utile là puis on recouvre toute la fenetre
     //SDL_Color const BACKGROUND_COLOR = {.r=0x00, .g=0x00, .b=0x00, .a=SDL_ALPHA_OPAQUE};
     //if(SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b, BACKGROUND_COLOR.a)){
@@ -77,6 +88,8 @@ int main(void){
     SDL_Surface** surfaceExp= initSurfaceExp();
     SDL_Surface** surfaceArrayProjectile = initSurfaceArrayProjectile();
     SDL_Surface** surfaceArrayPlayer = initSurfaceArrayPlayer();
+    Mix_Chunk** soundArray = initSoundArray();
+    Mix_Music** musicArray = initMusicArray();
 
     // Line *line = game->carte->head_map;
     // while(line!=NULL){
@@ -119,33 +132,61 @@ int main(void){
     int fps = 0;
     int cursor = 0;
     int chara = AESIR;
-    Game* game = initialise_game(chara,0);
+    int shortmode;
+    int highscore;
+    int music;
+    int music_to_play[] = {0,0,1,2,3};
+    bool reset_save = false;
+    bool sound = true;
+    bool ia = false;
+    int exp;
+    load(&exp, &highscore, &chara, &shortmode);
+    Game* game = initialise_game(chara,exp);
+    game->nb_exp = exp;
+    //save(0, 0, 0, 0);
+    printf("exp: %d,highscore: %d\n", game->nb_exp, highscore);
     Uint32 startTime = SDL_GetTicks();
     Uint32 currentTime;
     Uint32 endframeTime;
     Uint32 elapsedTime;
     while(!quit){
+        Mix_HaltMusic();
         displayMainMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE));
         SDL_PollEvent(&event);
         if(event.type == SDL_QUIT){
             quit = SDL_TRUE;
         }else if(event.type == SDL_KEYUP){
             if((event.key.keysym.sym == SDLK_z) || (event.key.keysym.sym == SDLK_UP)){
+                if(sound){
+                    Mix_PlayChannel(-1, soundArray[MOVEM], 0);
+                }
                 cursor = (cursor-1)%NB_MMOPTION;
                 if(cursor < 0){
                     cursor = NB_MMOPTION-1;
                 }
             }else if((event.key.keysym.sym == SDLK_s) || (event.key.keysym.sym == SDLK_DOWN)){
+                if(sound){
+                    Mix_PlayChannel(-1, soundArray[MOVEM], 0);
+                }
                 cursor = (cursor+1)%NB_MMOPTION;
             }else if((event.key.keysym.sym == SDLK_SPACE) || (event.key.keysym.sym == SDLK_RETURN)){
+                if(sound){
+                    Mix_PlayChannel(-1, soundArray[SELECT], 0);
+                }
                 if(cursor == START){
                     main_menu = SDL_FALSE;
                 }
                 if(cursor == CHANGECHARA){
-                    charaMenu(&quit, &chara, renderer, &event, font);
+                    charaMenu(&quit, &chara, renderer, &event, font, soundArray, surfaceArrayPlayer, game, sound);
+                    if(chara == LEDE){
+                        ia = true;
+                    }
+                    else{
+                        ia = false;
+                    }
                 }
                 if(cursor == MMOPTIONS){
-                    //printf("maybe later");
+                    optionsMenu(&quit, renderer, &event, font, soundArray, &shortmode, &sound, &reset_save);
                 }
                 if(cursor == MMQUIT){
                     quit = SDL_TRUE;
@@ -155,10 +196,31 @@ int main(void){
             }
         }
         if(!main_menu){
+            int exp = game->nb_exp;
             destroy_game(game);
-            game = initialise_game(chara,0);
+            game = initialise_game(chara,exp);
+            game->nb_exp = exp;
+            if(chara == LEDE){
+                ia = true;
+            }
+            else{
+                ia = false;
+            }
+            //music init
+            music = 0;
+            if(sound){
+                Mix_PlayMusic(musicArray[music_to_play[game->biome]], -1);
+            }
+            //music init
         }
         while(!quit && !main_menu){
+            //music player
+            if(sound && music_to_play[music] != music_to_play[game->biome]){
+                Mix_HaltMusic();
+                Mix_PlayMusic(musicArray[music_to_play[game->biome]], -1);
+                music = game->biome;
+            }
+            //music player
             cursor = 0;
             currentTime = SDL_GetTicks();
             elapsedTime = currentTime-startTime;
@@ -196,7 +258,7 @@ int main(void){
                 if(SDL_RenderClear(renderer)){
                     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
                 }
-                gameOverMenu(&main_menu, &quit, &game, renderer, &event, font, chara);
+                gameOverMenu(&main_menu, &quit, &game, renderer, &event, font, soundArray, chara, sound);
                 //quit = SDL_TRUE;
             }
             if(SDL_RenderClear(renderer)){
@@ -205,11 +267,19 @@ int main(void){
             display_all(game, renderer,pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp,font);
 
             // une fois l'affichage fait, on regarde si le joueur se déplace
-            if(IA){
+            if(ia){
+                SDL_PollEvent(&event);
+                if(event.type == SDL_QUIT){
+                    quit = SDL_TRUE;
+                }else if(event.type == SDL_KEYUP){
+                    // bouge le joueur dans la direction selon la touche pressée, ZQSD, ou quitte avec M
+                    if(event.key.keysym.sym == SDLK_TAB){
+                        pauseMenu(&main_menu, &quit, renderer, &event, font, game, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp, soundArray, &shortmode, &sound, &reset_save);
+                    }
+                }
                 if(game->joueur->delai){
                     game->joueur->delai--;
-                }else{ 
-
+                }else{
                     int directive = eval(game);
                     // printf("directive %d\n", directive);
                     if(directive == 0){
@@ -284,7 +354,7 @@ int main(void){
                     }else if(event.key.keysym.sym == SDLK_SPACE){
                         use_power(game);
                     }else if(event.key.keysym.sym == SDLK_TAB){
-                        pauseMenu(&main_menu, &quit, renderer, &event, font, game, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp);
+                        pauseMenu(&main_menu, &quit, renderer, &event, font, game, pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp, soundArray, &shortmode, &sound, &reset_save);
                     }else if(event.key.keysym.sym == SDLK_m){
                         quit = SDL_TRUE;
                     }
@@ -317,6 +387,21 @@ int main(void){
             //}
             //SDL_Delay(50);
         }
+        if(reset_save){
+            printf("try save reset\n");
+            save(0,0,0,0);
+            highscore = 0;
+            destroy_game(game);
+            game = initialise_game(chara,0);
+            load(&(game->nb_exp), &highscore, &chara, &shortmode);
+        }
+        else if((game->score > highscore) && (!ia)){
+            save(game->nb_exp, game->score, chara, 0);
+        }
+        else{
+            save(game->nb_exp, highscore, chara, 0);
+        }
+        reset_save = false;
     }
     destroy_game(game);
     SDL_DestroyRenderer(renderer);
@@ -327,7 +412,12 @@ int main(void){
     freeSurfaceArrayProjectile(surfaceArrayProjectile);
     freeSurfaceExp(surfaceExp);
     TTF_CloseFont(font);
+    Mix_HaltMusic();
+    freeSoundArray(soundArray);
+    freeMusicArray(musicArray);
+    //printf("soundArray freed\n");
     TTF_Quit();
+    Mix_CloseAudio();
     SDL_Quit();
     return 0;
 }

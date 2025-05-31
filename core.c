@@ -1364,7 +1364,12 @@ void update_game(Game* game){
     //SDL_Delay(1000);
     if(game->score%(game->until_next) == 0){
         game->score++;
-        game->biome++;
+        if(game->biome != NB_BIOME-1){
+            game->biome++;
+        }
+        else{
+            game->biome = CROSSY_ROAD;
+        }
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
