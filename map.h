@@ -39,14 +39,14 @@ typedef struct _Player{
 }Player;
 
 enum Personnages {
-    KAIRON,
-    SNITCH,
-    AESIR,
-    KABI,
-    OOGWAAY,
-    JOLINAR,
-    RANTON,
     LEDE,
+    AESIR,
+    KAIRON,
+    RANTON,
+    JOLINAR,
+    SNITCH,
+    OOGWAAY,
+    KABI,
     NB_PERSO
 };
 

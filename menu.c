@@ -147,7 +147,7 @@ void displayGameOverMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int
     SDL_DestroyTexture(cursorTexture);
 }
 
-void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Game *game, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp, Mix_Chunk** soundArray){
+void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Game *game, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp, Mix_Chunk** soundArray, int* shortmode, bool* sound, bool* reset_save){
     SDL_bool quit2 = SDL_FALSE;
     int cursor = 0;
     SDL_Surface* cursorSurface = IMG_Load("sprites/Selectionneur.png");
@@ -178,7 +178,7 @@ void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_
                     quit2 = SDL_TRUE;
                 }
                 if(cursor == PMOPTIONS){
-
+                    optionsMenu(quit, renderer, pevent, font, soundArray, shortmode, sound, reset_save);
                 }
                 if(cursor == PMQUIT){
                     *quit = SDL_TRUE;
@@ -306,11 +306,174 @@ void displayCharaMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
     SDL_DestroyTexture(cursorTexture);
 }
 
-void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray){
+void updateLocks(int* unlocked, int nb_exp){
+    if(nb_exp >= 3){
+        unlocked[KAIRON] = 1;
+    }
+    if(nb_exp >= 5){
+        unlocked[RANTON] = 1;
+    }
+    if(nb_exp >= 7){
+        unlocked[KAIRON] = 2;
+        unlocked[SNITCH] = 1;
+    }
+    if(nb_exp >= 12){
+        unlocked[RANTON] = 2;
+    }
+    if(nb_exp >= 20){
+        unlocked[JOLINAR] = 1;
+    }
+    if(nb_exp >= 33){
+        unlocked[SNITCH] = 2;
+    }
+    if(nb_exp >= 54){
+        unlocked[KAIRON] = 3;
+    }
+    if(nb_exp >= 90){
+        unlocked[OOGWAAY] = 1;
+    }
+    if(nb_exp >= 148){
+        unlocked[JOLINAR] = 2;
+    }
+    if(nb_exp >= 244){
+        unlocked[SNITCH] = 3;
+    }
+    if(nb_exp >= 403){
+        unlocked[RANTON] = 3;
+    }
+    if(nb_exp >= 665){
+        unlocked[OOGWAAY] = 2;
+    }
+    if(nb_exp >= 1096){
+        unlocked[KABI] = 1;
+    }
+    if(nb_exp >= 1808){
+        unlocked[JOLINAR] = 3;
+    }
+    if(nb_exp >= 2980){
+        unlocked[KABI] = 2;
+    }
+    if(nb_exp >= 4030){
+        unlocked[OOGWAAY] = 3;
+    }
+    if(nb_exp >= 5000){
+        unlocked[KABI] = 3;
+    }
+}
+
+void displayCharaMenu2(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, SDL_Surface** surfaceArrayPlayer, Game* game, int* unlocked){
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+    SDL_RenderClear(renderer);
+
+    int selection[] = {0,0,0,0,0,0,0,0};
+    selection[cursor] = 1;
+    
+    SDL_Surface* cadrePersoSurface = IMG_Load("sprites/cadre_perso_menu.png");
+    SDL_Texture* cadrePersoTexture = SDL_CreateTextureFromSurface(renderer, cadrePersoSurface);
+    int spriteFullWidth;
+    int spriteFullHeight;
+    if (SDL_QueryTexture(cadrePersoTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+        exit(-1);
+    }
+
+    SDL_Rect spriteCadreRects[8];
+    for (int i = 0; i<NB_PERSO; i++){
+        spriteCadreRects[i].x = selection[i]*spriteFullWidth/2;
+        spriteCadreRects[i].y = 0;
+        spriteCadreRects[i].w = spriteFullWidth/2;
+        spriteCadreRects[i].h = spriteFullHeight;
+    }
+
+    SDL_Rect spritePersoRect = {0,0,32,32};
+    
+    SDL_Texture* titleTexture = strToTexture("CHARACTERS", font, renderer);
+
+    SDL_Texture* textTextures[] = {strToTexture("DEDE", font, renderer), strToTexture("AESIR", font, renderer), strToTexture("KAIRON", font, renderer), strToTexture("RANTON", font, renderer), strToTexture("JOLINAR", font, renderer), strToTexture("SNITCH", font, renderer), strToTexture("OOGWAAY", font, renderer), strToTexture("KABI", font, renderer)};
+    SDL_Texture* lvlTextures[] = {strToTexture("Lv.0", font, renderer), strToTexture("Lv.1", font, renderer), strToTexture("Lv.2", font, renderer), strToTexture("Lv.3", font, renderer)};
+    //SDL_Rect backRect = {0, 0, width, heigth};
+    //SDL_RenderCopy(renderer, backTexture, NULL, &backRect);
+
+    SDL_Rect titleRect = {width / 2 - 120*0.75*ECHELLE, heigth / 2 - 180*0.75*ECHELLE, 240*0.75*ECHELLE, 96*0.75*ECHELLE};
+    SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+
+    SDL_Surface* spriteLockedSurface = IMG_Load("sprites/Cadenas.png");
+
+    for(int i = 0; i < 4; i++){
+        SDL_Rect rectC = {width / 2 - (100 + 80 + 5)*0.75*ECHELLE - 32*ECHELLE, heigth / 2 + i*50*0.75*ECHELLE, 32*ECHELLE, 32*ECHELLE};
+        SDL_RenderCopy(renderer, cadrePersoTexture, &spriteCadreRects[i], &rectC);
+
+        if (unlocked[i] != 0){
+            SDL_Surface *spriteSurface = surfaceArrayPlayer[i];
+            SDL_Texture *spriteTexture = SDL_CreateTextureFromSurface(renderer, spriteSurface);
+            SDL_RenderCopy(renderer, spriteTexture, &spritePersoRect, &rectC);
+            SDL_DestroyTexture(spriteTexture);
+        }
+        else{
+            SDL_Texture *spriteTexture = SDL_CreateTextureFromSurface(renderer, spriteLockedSurface);
+            SDL_RenderCopy(renderer, spriteTexture, NULL, &rectC);
+            SDL_DestroyTexture(spriteTexture);
+        }
+
+        SDL_Rect rect = {width / 2 - (100 + 80)*0.75*ECHELLE, heigth / 2 + i*50*0.75*ECHELLE + 2*ECHELLE, 160*0.75*ECHELLE, 32*0.70*0.75*ECHELLE};
+        SDL_RenderCopy(renderer, textTextures[i], NULL, &rect);
+
+        SDL_Rect rectL = {width / 2 - (100 + 80)*0.75*ECHELLE, heigth / 2 + i*50*0.75*ECHELLE + 32*0.75*0.75*ECHELLE + 2*ECHELLE, 40*0.75*ECHELLE, 32*0.45*0.75*ECHELLE};
+        SDL_RenderCopy(renderer, lvlTextures[unlocked[i]], NULL, &rectL);
+    }
+
+    for(int i = 0; i < 4; i++){
+        SDL_Rect rectC = {width / 2 + (100 - 80 - 5)*0.75*ECHELLE - 32*ECHELLE + 25*ECHELLE, heigth / 2 + i*50*0.75*ECHELLE, 32*ECHELLE, 32*ECHELLE};
+        SDL_RenderCopy(renderer, cadrePersoTexture, &spriteCadreRects[i+4], &rectC);
+
+        if (unlocked[i+4] != 0){
+            SDL_Surface *spriteSurface = surfaceArrayPlayer[i+4];
+            SDL_Texture *spriteTexture = SDL_CreateTextureFromSurface(renderer, spriteSurface);
+            SDL_RenderCopy(renderer, spriteTexture, &spritePersoRect, &rectC);
+            SDL_DestroyTexture(spriteTexture);
+        }
+        else{
+            SDL_Texture *spriteTexture = SDL_CreateTextureFromSurface(renderer, spriteLockedSurface);
+            SDL_RenderCopy(renderer, spriteTexture, NULL, &rectC);
+            SDL_DestroyTexture(spriteTexture);
+        }
+
+        SDL_Rect rect = {width / 2 + (100 - 80)*0.75*ECHELLE + 25*ECHELLE, heigth / 2 + i*50*0.75*ECHELLE + 2*ECHELLE, 160*0.75*ECHELLE, 32*0.70*0.75*ECHELLE};
+        SDL_RenderCopy(renderer, textTextures[i+4], NULL, &rect);
+
+        SDL_Rect rectL = {width / 2 + (100 - 80)*0.75*ECHELLE + 25*ECHELLE, heigth / 2 + i*50*0.75*ECHELLE + 32*0.75*0.75*ECHELLE + 2*ECHELLE, 40*0.75*ECHELLE, 32*0.45*0.75*ECHELLE};
+        SDL_RenderCopy(renderer, lvlTextures[unlocked[i+4]], NULL, &rectL);
+    }
+    
+    SDL_RenderPresent(renderer);
+    for(int i = 0; i<8; i++){
+        SDL_DestroyTexture(textTextures[i]);
+    }
+
+    //SDL_DestroyTexture(screenTexture);
+
+    SDL_DestroyTexture(titleTexture);
+
+    SDL_FreeSurface(spriteLockedSurface);
+    SDL_FreeSurface(cadrePersoSurface);
+    SDL_DestroyTexture(cadrePersoTexture);
+}
+
+void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, SDL_Surface** surfaceArrayPlayer, Game* game){
     SDL_bool quit2 = SDL_FALSE;
     int cursor = 0;
+    int* unlocked = malloc(sizeof(int)*8);
+    for (int i = 0; i<8; i++){
+        if(i <= 1){
+            unlocked[i] = 1;
+        }
+        else{
+            unlocked[i] = 0;
+        }
+    }
+    updateLocks(unlocked, game->nb_exp);
     while(!quit2){
-        displayCharaMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE));
+        displayCharaMenu2(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), surfaceArrayPlayer, game, unlocked);
         SDL_PollEvent(pevent);
         if(pevent->type == SDL_QUIT){
             *quit = SDL_TRUE;
@@ -327,28 +490,28 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
                 cursor = (cursor+1)%NB_PERSO;
             }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
                 Mix_PlayChannel(-1, soundArray[SELECT], 0);
-                if(cursor == KAIRON){
+                if(cursor == KAIRON && unlocked[cursor] != 0){
                     *pchara = KAIRON;
                     quit2 = SDL_TRUE;
-                }if(cursor == SNITCH){
+                }if(cursor == SNITCH && unlocked[cursor] != 0){
                     *pchara = SNITCH;
                     quit2 = SDL_TRUE;
-                }if(cursor == AESIR){
+                }if(cursor == AESIR && unlocked[cursor] != 0){
                     *pchara = AESIR;
                     quit2 = SDL_TRUE;
-                }if(cursor == KABI){
+                }if(cursor == KABI && unlocked[cursor] != 0){
                     *pchara = KABI;
                     quit2 = SDL_TRUE;
-                }if(cursor == OOGWAAY){
+                }if(cursor == OOGWAAY && unlocked[cursor] != 0){
                     *pchara = OOGWAAY;
                     quit2 = SDL_TRUE;
-                }if(cursor == JOLINAR){
+                }if(cursor == JOLINAR && unlocked[cursor] != 0){
                     *pchara = JOLINAR;
                     quit2 = SDL_TRUE;
-                }if(cursor == RANTON){
+                }if(cursor == RANTON && unlocked[cursor] != 0){
                     *pchara = RANTON;
                     quit2 = SDL_TRUE;
-                }if(cursor == LEDE){
+                }if(cursor == LEDE && unlocked[cursor] != 0){
                     *pchara = LEDE;
                     quit2 = SDL_TRUE;
                 }
@@ -360,9 +523,10 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
             }
         }
     }
+    free(unlocked);
 }
 
-void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray){
+void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, int* shortmode, bool* sound, bool* reset_save){
     SDL_bool quit2 = SDL_FALSE;
     int cursor = 0;
     SDL_Surface* cursorSurface = IMG_Load("sprites/Selectionneur.png");
@@ -386,16 +550,16 @@ void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_
             }else if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN)){
                 Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 if(cursor == SOUND){
-
+                    *sound = !*sound;
                 }
                 if(cursor == SHORTMODE){
-
+                    *shortmode = (*shortmode+1)%2;
                 }
                 if(cursor == SEE_HIGHSCORE){
 
                 }
                 if(cursor == RESET_SAVE){
-                    save(0,0,0,0);
+                    *reset_save = true;
                 }
                 if(cursor == EXIT){
                     quit2 = SDL_TRUE;

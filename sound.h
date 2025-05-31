@@ -14,8 +14,19 @@
 enum Sounds {
     MOVEM,
     SELECT,
+    CANNON,
     NB_SOUND
 };
 
+enum Musics {
+    MUS_PLAINS,
+    MUS_MANOR,
+    MUS_CAVE,
+    MUS_MONSTER,
+    NB_MUSIC
+};
+
 Mix_Chunk** initSoundArray(void);
+Mix_Music** initMusicArray(void);
 void freeSoundArray(Mix_Chunk** soundArray);
+void freeMusicArray(Mix_Music** musicArray);
