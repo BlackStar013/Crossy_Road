@@ -1202,74 +1202,82 @@ void patrol_counter4x4(Mob *fire,Player* Joueur){
 // const Mob cult_counter3 = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_counter4x4,0,16,0,0,0,0};
 
 void still(Mob *mage,Player* player){
+    if(!mage->delay){
+        mage->delay = mage->speed;
         if(!mage->action_delay){
-            mage->action_delay=((mage->action_value)*8);
+            mage->action_delay=((mage->max_action_delay));
             mage->offset_x++;
             mage->offset_x %=4;
         }
         else {
             mage->action_delay--;
         }
-        mage->delay = mage->speed; //????
+    } else {
+        mage->delay--;
+    }
 }
 
 void follow(Mob *projectile,Player* player){
     int test_horiz=player->_x-projectile->_x;
     int test_vert=player->_y-projectile->_y;
     if(!projectile->delay){
-            if (player->_x>projectile->_x){
-                projectile->_x+=2;
-            } 
-            if (player->_x<projectile->_x){
-                projectile->_x-=2;
-                
-            }
-            if (player->_y>projectile->_y){
-                projectile->_y+=2;
-            } 
-            if (player->_y<projectile->_y){
-                projectile->_y-=2;
-            }
-    if(!projectile->action_delay){
-        projectile->_x=projectile->memory__x;
-        projectile->_y=projectile->memory__y;
-        projectile->action_delay=8*(projectile->action_value); 
-    }
-    else {
-        projectile->action_delay--;
-    }
-    projectile->delay = projectile->speed;
-    projectile->offset_x++;
-    projectile->offset_x %= 4;
-    if (test_horiz<-2){
-        projectile->offset_y=4;
-        if (test_vert>2) {
-            projectile->offset_y=5;
-        }else if (test_vert<-2) {
-            projectile->offset_y=3;
+        if (player->_x>projectile->_x){
+            projectile->_x+=2;
         } 
-    }else if (test_horiz>2){
-        projectile->offset_y=0;
-        if (test_vert>2) {
-            projectile->offset_y=7;
-        }else if (test_vert<-2) {
-            projectile->offset_y=1;
-        } 
-    }else {
-        if (test_vert>0) {
-            projectile->offset_y=6;
-        }else if (test_vert<0) {
-            projectile->offset_y=2;
+        if (player->_x<projectile->_x){
+            projectile->_x-=2;
+            
         }
-    }
+        if (player->_y>projectile->_y){
+            projectile->_y+=2;
+        } 
+        if (player->_y<projectile->_y){
+            projectile->_y-=2;
+        }
+        if(!projectile->action_delay){
+            projectile->action_delay=(projectile->max_action_delay); 
+            if(!projectile->action_value){
+                projectile->action_value = 3;
+                projectile->_x=projectile->memory__x;
+                projectile->_y=projectile->memory__y;
+            } else {
+                projectile->action_value--;
+            }
+        } else {
+            projectile->action_delay--;
+        }
+        projectile->delay = projectile->speed;
+        projectile->offset_x++;
+        projectile->offset_x %= 4;
+        if (test_horiz<-2){
+            projectile->offset_y=4;
+            if (test_vert>2) {
+                projectile->offset_y=5;
+            }else if (test_vert<-2) {
+                projectile->offset_y=3;
+            } 
+        }else if (test_horiz>2){
+            projectile->offset_y=0;
+            if (test_vert>2) {
+                projectile->offset_y=7;
+            }else if (test_vert<-2) {
+                projectile->offset_y=1;
+            } 
+        }else {
+            if (test_vert>0) {
+                projectile->offset_y=6;
+            }else if (test_vert<0) {
+                projectile->offset_y=2;
+            }
+        }
     } else {
         projectile->delay--;
     }
 }
 
 
-const Mob mage={1,1,true,0,0,0,0,0,HIGHCULTIST,0,0,still,12,0,0,0,0,0};
-const Mob curse_arrow={1,1,true,0,0,0,0,0,CURSE,0,0,follow,12,0,0,0,0,0};
+const Mob mage={1,1,true,0,0,0,0,0,HIGHCULTIST,0,0,still,0,0,0,0,0,0};
+const Mob curse_arrow={1,1,true,0,0,0,0,0,CURSE,0,0,follow,4,0,0,0,0,0};
 //const Mob curse_arrow_bis_1={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,100,0,0,0};
 //const Mob curse_arrow_bis_2={1,1,true,0,0,0,0,0,CURSE,0,0,follow,10,200,0,0,0};
 
@@ -2462,8 +2470,8 @@ const Mob pebble_left = {2,2,true,0,0,0,0,0,PEBBLE,0,1,detect_player_no_moving,0
 const Mob pebble_right = {2,2,true,0,0,0,0,0,PEBBLE,0,0,detect_player_no_moving,0,0,0,0,0,0}; 
 
 void go_right(Mob* mob){
-    mob->_x += 3;
-    if(!((mob->_x - mob-> memory__x)%6)){
+    mob->_x += 2;
+    if(!((mob->_x - mob-> memory__x)%4)){
         mob->offset_x++;
         mob->offset_x%= 4;
     }
@@ -2471,8 +2479,8 @@ void go_right(Mob* mob){
 }
 
 void go_left(Mob* mob){
-    mob->_x -= 3;
-    if(!((mob->_x - mob-> memory__x)%6)){
+    mob->_x -= 2;
+    if(!((mob->_x - mob-> memory__x)%4)){
         mob->offset_x++;
         mob->offset_x%= 4;
     }
@@ -2480,21 +2488,21 @@ void go_left(Mob* mob){
 }
 
 void go_up(Mob* mob){
-    mob->_y += 3;
-    if(!((mob->_y - mob-> memory__y)%6)){
+    mob->_y += 2;
+    if(!((mob->_y - mob-> memory__y)%4)){
         mob->offset_x++;
         mob->offset_x%= 4;
     }
-    mob->offset_y = 2;
+    mob->offset_y = 1;
 }
 
 void go_down(Mob* mob){
-    mob->_y -= 3;
-    if(!((mob->_y - mob-> memory__y)%6)){
+    mob->_y -= 2;
+    if(!((mob->_y - mob-> memory__y)%4)){
         mob->offset_x++;
         mob->offset_x%= 4;
     }
-    mob->offset_y = 3;
+    mob->offset_y = 0;
 }
 
 void go_ru(Mob* mob){
@@ -2593,7 +2601,7 @@ void chaos(Mob* mob, Player* player){
             case 6:
                 mob->action_value--;
             case 4:
-                if(mob->_y > mob-> memory__y - 5*32){
+                if(mob->_y > mob-> memory__y - 6*32){
                     go_down(mob);
                 } else {
                     mob->action_value = (rand()%8)*4;
@@ -2641,7 +2649,7 @@ void chaos(Mob* mob, Player* player){
             case 22:
                 mob->action_value--;
             case 20:
-                if((mob->_y > mob-> memory__y - 5*32)&&(mob->_x < (LENGTH-1)*32)){
+                if((mob->_y > mob-> memory__y - 6*32)&&(mob->_x < (LENGTH-1)*32)){
                     go_rd(mob);
                 } else {
                     mob->action_value = (rand()%8)*4 ;
@@ -2665,7 +2673,7 @@ void chaos(Mob* mob, Player* player){
             case 29:
                 mob->action_value--;
             case 28:
-                if((mob->_y > mob-> memory__y - 5*32)&&((mob->_x > 0))){
+                if((mob->_y > mob-> memory__y - 6*32)&&((mob->_x > 0))){
                     go_ld(mob);
                 } else {
                     mob->action_value = (rand()%8)*4;
@@ -2724,7 +2732,7 @@ void chaos(Mob* mob, Player* player){
                 case 4:
                 case 5:
                 case 6:
-                    mob -> speed = rand()%6 +2;
+                    mob -> speed = rand()%11;
                     mob -> delay = mob -> speed;
                     break;
 
@@ -2757,4 +2765,131 @@ void chaos(Mob* mob, Player* player){
     }
 }
 
+void patrol_c0(Mob* mob){
+    //printf("%d\n",mob->_y - mob->memory__y );
+    switch(mob->offset_y){
+        case 0:
+            if(mob->_y - mob->memory__y <= -4*32  ){
+                if(mob->_x - mob->memory__x >= 0){
+                    go_left(mob);
+                } else {
+                    go_right(mob);
+                }
+            } else if ((mob->_y - mob->memory__y >= -32-2)&&(mob->_y - mob->memory__y <= -32+2)){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_right(mob);
+                } else if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)) {
+                    go_left(mob);
+                } else {
+                    go_down(mob);
+                }
+            } else {
+                go_down(mob);
+            }
+            break;
+
+        case 1:
+
+            // if(mob->_y - mob->memory__y <= -3*32  ){
+            //     if(mob->_x - mob->memory__x >= 0){
+            //         go_left(mob);
+            //     } else {
+            //         go_right(mob);
+            //     }
+            // } else if ((mob->_y - mob->memory__y >= -32-2)&&(mob->_y - mob->memory__y <= -32+2)){
+            //     if((mob->_x - mob->memory__x <= 32-2)&&(mob->_x - mob->memory__x >= 32+2)){
+            //         go_right(mob);
+            //     } else if((mob->_x - mob->memory__x <= -32-2)&&(mob->_x - mob->memory__x >= -32+2)) {
+            //         go_left(mob);
+            //     } else {
+            //         go_down(mob);
+            //     }
+            // } else {
+            //     go_down(mob);
+            // }
+            if((mob->_y - mob->memory__y >= -32-2)&&(mob->_y - mob->memory__y <= -32+2)){
+                if((mob->_x - mob->memory__x >= 64-2)&&(mob->_x - mob->memory__x <= 64+2)){
+                    go_left(mob);
+                } else if((mob->_x - mob->memory__x >= -64-2)&&(mob->_x - mob->memory__x <= -64+2)){
+                    go_right(mob);
+                } else {
+                    go_up(mob);
+                }
+            } else if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)){
+                if(mob->_x - mob->memory__x < 0 ){
+                    go_right(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_up(mob);
+            }
+            break;
+
+        case 3:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= -64-2)&&(mob->_x - mob->memory__x <= -64+2)){
+                    go_up(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -32-2)&&(mob->_y - mob->memory__y <= -32+2)) {
+                if((mob->_x - mob->memory__x >= -64-2)&&(mob->_x - mob->memory__x <= -64+2)){
+                    go_down(mob);
+                } else if ((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_up(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_down(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_left(mob);
+            }
+            break;
+
+        case 2:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= 64-2)&&(mob->_x - mob->memory__x <= 64+2)){
+                    go_up(mob);
+                } else {
+                    go_right(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -32-2)&&(mob->_y - mob->memory__y <= -32+2)) {
+                if((mob->_x - mob->memory__x >= 64-2)&&(mob->_x - mob->memory__x <= 64+2)){
+                    go_down(mob);
+                } else if ((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_up(mob);
+                } else {
+                    go_right(mob);
+                }
+            } else if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_down(mob);
+                } else {
+                    go_right(mob);
+                }
+            } else {
+                go_right(mob);
+            }
+            break;
+
+
+    }
+}
+
+void patrol_cultist(Mob* mob, Player* player){
+    if(!mob->delay){
+        mob->delay = mob->speed;
+        patrol_c0(mob);
+    } else {
+        mob->delay--;
+    }
+}
+
+const Mob cultist = {1,1,true,0,0,0,0,0,MOB_CULTIST,0,0,patrol_cultist,0,0,0,0,0,0};
 const Mob babel = {1,2,true,0,0,0,0,0,BEBERT,0,0,chaos,0,0,0,0,0,0};

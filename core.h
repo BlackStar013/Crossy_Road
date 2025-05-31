@@ -49,8 +49,8 @@ enum Obstacle {
     FIRE,
     ////////
     TRANSITION_CAVE,
-    CAVE,
-    //CULTIST,
+    //CAVE,
+    CULTIST,
     MAGE,
     BABEL,
     TRAP,

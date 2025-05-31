@@ -165,6 +165,7 @@ extern const Mob pebble_left;
 extern const Mob pebble_right;
 
 extern const Mob babel;
+extern const Mob cultist;
 
 //
 void path_hard_right(Mob *car, Player*p);
