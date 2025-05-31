@@ -210,7 +210,7 @@ void path_right(Mob *car, Player*p){
             car->_x += 3; 
         }
         car->action_value = 1-car->action_value;
-        if(car->action_value&&(car->id_mob!=PLANK)){
+        if(car->action_value&&(!(car->id_mob==PLANK||car->id_mob==BONE||car->id_mob==SHIFT))){
             car->offset_x ++;
             car->offset_x %= 2;
         }
@@ -232,7 +232,7 @@ void path_left(Mob *car, Player*p){
             car->_x -=3; //À remplacer par move_mob (?)
         }
         car->action_value = 1-car->action_value;
-        if(car->action_value&&(car->id_mob!=PLANK)){
+        if(car->action_value&&(!(car->id_mob==PLANK||car->id_mob==BONE||car->id_mob==SHIFT))){
             car->offset_x ++;
             car->offset_x %= 2;
         }
@@ -2047,7 +2047,272 @@ void path_still_left(Mob *car, Player*p){
 
 const Mob big_bus_left = {4,1,true,0,0,0,0,0,BUS,0,1,path_still_left,0,0,0,0,0,0};
 
+/////Biome final
 
+void path_offset_left(Mob* mob, Player*p) { 
+    if(!mob->delay){
+        if(!mob_in_map(mob)){
+            if (mob->action_delay==0){
+                mob->action_delay=mob->max_action_delay;
+                mob->_x=mob->memory__x;
+                mob->_y=mob->memory__y;
+            } else {
+                mob->action_delay--;
+            }
+        } else {
+            mob->_x -= 4; 
+        }
+        mob->delay = mob->speed;
+    } else {
+        mob->delay--;
+    }
+}
+
+void path_offset_right(Mob* mob, Player*p) { 
+    if(!mob->delay){
+        if(!mob_in_map(mob)){
+            if (mob->action_delay==0){
+                mob->action_delay=mob->max_action_delay;
+                mob->_x=mob->memory__x;
+                mob->_y=mob->memory__y;
+            } else {
+                mob->action_delay--;
+            }
+        } else {
+            mob->_x += 4; 
+        }
+        mob->delay = mob->speed;
+    } else {
+        mob->delay--;
+    }
+}
+
+void path_offset_trigger_left(Mob* mob, Player*p){ 
+    if(!mob->delay){
+        if(!mob_in_map(mob)){
+            if (mob->action_value==0&& p->_y_dest==mob->memory__y && p->_x_dest<mob->memory__x){               
+                mob->action_value=1;
+            } else if(mob->action_value==1){
+                mob->_x=mob->memory__x;
+                mob->_y=mob->memory__y;
+                mob->action_value=0;
+            }
+        } else {
+            mob->_x -= 4; 
+        }
+        mob->delay = mob->speed;
+    } else {
+        mob->delay--;
+    }
+}
+void path_offset_trigger_right(Mob* mob, Player*p){ 
+    if(!mob->delay){
+        if(!mob_in_map(mob)){
+            if (mob->action_value==0&& p->_y_dest==mob->memory__y && p->_x_dest>mob->memory__x){               
+                mob->action_value=1;
+            } else if(mob->action_value==1){
+                mob->_x=mob->memory__x;
+                mob->_y=mob->memory__y;
+                mob->action_value=0;
+            }
+        } else {
+            mob->_x += 4; 
+        }
+        mob->delay = mob->speed;
+    } else {
+        mob->delay--;
+    }
+}
+void spike_timer(Mob* mob, Player*p){
+    if(!mob->delay){
+        if(mob->action_value==0){
+            if (mob->action_delay==0){
+                mob->action_value=1;
+                mob->offset_x++;
+            }
+            else{
+                mob->action_delay--;
+            }
+        }
+        else if (mob->action_value==1){
+            mob->action_value=2;
+            mob->action_delay=3;
+            mob->offset_x++;
+            mob->is_death=true;
+        } else {
+            if (mob->action_delay==0){
+                mob->action_value=0;
+                mob->offset_x=0;
+                mob->is_death=false;
+                mob->action_delay=mob->max_action_delay;
+            }
+            else{
+                mob->action_delay--;
+            }
+        }
+        mob->delay = mob->speed;
+    } else {
+        mob->delay--;
+    }
+}
+void spike_trigger(Mob* mob, Player*p){   
+    if(mob->action_value==0){
+        if (mob_collide(mob,p)){
+            mob->action_value=1;
+            mob->offset_x++;
+        }
+        else {
+            mob->delay++;
+        }
+    }
+    if(!mob->delay){
+            if (mob->action_value==1){
+            mob->action_value=2;
+            mob->action_delay=2;
+            mob->offset_x++;
+            mob->is_death=true;
+        } else if (mob->action_value==2){
+            if (mob->action_delay==0){
+                mob->action_value=0;
+                mob->offset_x=0;
+                mob->is_death=false;
+            }
+            else{
+                mob->action_delay--;
+            }
+        }
+        mob->delay = mob->speed;
+    } else {
+        mob->delay--;
+    }
+}
+void shooter_still(Mob* mob, Player*p){}
+
+void still_eye(Mob* mob, Player*p){
+    if(!mob->delay){
+        if (mob->action_value==0){
+            if (p->_x_dest<=mob->memory__x+128&&p->_x_dest>=mob->memory__x-128&&p->_y_dest<=mob->memory__y+128&&p->_y_dest>=mob->memory__y-128){
+                mob->offset_x=0;
+                mob->offset_y=1;
+                mob->action_value++;
+                mob->delay = mob->speed;
+            }
+            else{
+                mob->delay=mob->speed;
+                mob->offset_x++;
+                mob->offset_x%=4;
+            }
+        }
+        else if(mob->action_value==1||mob->action_value==2){
+            mob->offset_x++;
+            mob->action_value++;
+            mob->delay = mob->speed;
+        }
+        else if(mob->action_value==3){
+            mob->offset_x++;
+            mob->action_value++;
+            mob->delay = 3;
+        } else if(mob->action_value==4||mob->action_value==5){
+            mob->action_value++;
+            mob->delay = 3;
+        } else if(mob->action_value==6){
+            mob->offset_x=0;
+            mob->offset_y=0;
+            mob->action_value=0;
+            mob->delay = 0;
+        }
+    } else {
+        mob->delay--;
+    }
+}
+void sight_blast(Mob* mob,Player*p){
+    if(!mob->delay){
+        if (mob->action_value==0){
+            if (p->_x_dest<=mob->memory__x+128&&p->_x_dest>=mob->memory__x-128&&p->_y_dest<=mob->memory__y+128&&p->_y_dest>=mob->memory__y-128){
+                mob->offset_x=1;
+                mob->is_death=false;
+                mob->_x=p->_x_dest;
+                mob->_y=p->_y_dest;
+                mob->delay = mob->speed;
+                mob->action_value++;
+            } else {
+                mob->delay=mob->speed;
+            }
+        }
+        else if(mob->action_value==1||mob->action_value==2){
+            mob->action_value++;
+            mob->delay = mob->speed;
+        }
+        else if(mob->action_value==3){
+            mob->offset_x++;
+            mob->action_value++;
+            mob->is_death=true;
+            mob->delay = 3;
+        }
+        else if(mob->action_value==4||mob->action_value==5){
+            mob->offset_x++;
+            mob->action_value++;
+            mob->delay = 3;
+        }
+        else if(mob->action_value==6){
+            mob->offset_x=0;
+            mob->_x=mob->memory__x;
+            mob->_y=mob->memory__y;
+            mob->action_value=0;
+            mob->delay = 0;
+        }
+    } else {
+        mob->delay--;
+    }
+}
+void still_eyewall(Mob* mob,Player*p){
+    if(!mob->delay){
+        mob->offset_x+=2;
+        if (mob->offset_x==10 ||mob->offset_x==11){
+            mob->offset_x-=10;
+        }
+        mob->delay=mob->speed;
+    } else {
+        mob->delay--;
+    }
+}
+void dropping_path(Mob* mob,Player*p){
+    if(!mob->delay){
+        if(mob->action_delay!=0){
+            mob->action_delay--;
+            mob->_y -= 4; 
+        } else {
+            mob->_y=mob->memory__y;
+            mob->_x=mob->memory__x;
+            mob->action_delay=mob->max_action_delay;
+        }
+        mob->delay = mob->speed;
+    } else {
+        mob->delay--;
+    }
+}
+
+const Mob shooter={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_still,0,0,0,0,0,0};
+const Mob shooter_trap_left={1,1,true,0,0,0,0,0,SHOOT,0,0,shooter_still,0,0,0,0,0,0};
+const Mob shooter_trap_right={1,1,true,0,0,0,0,0,SHOOT,0,1,shooter_still,0,0,0,0,0,0};
+const Mob spike={1,1,false,0,0,0,0,0,SPIKE,0,0,spike_timer,0,0,0,0,0,0};
+const Mob spike_trap={1,1,false,0,0,0,0,0,SPIKE,0,0,spike_trigger,0,0,0,0,0,0};
+const Mob bone_arrow_left={1,1,true,0,0,0,0,0,BONEARROW,0,0,path_offset_left,0,0,0,0,0,0};
+const Mob bone_arrow_right={1,1,true,0,0,0,0,0,BONEARROW,0,1,path_offset_right,0,0,0,0,0,0};
+const Mob bone_arrow_left_trap={1,1,true,0,0,0,0,0,BONEARROW,0,0,path_offset_trigger_left,0,0,0,0,0,0};
+const Mob bone_arrow_right_trap={1,1,true,0,0,0,0,0,BONEARROW,0,1,path_offset_trigger_right,0,0,0,0,0,0};
+const Mob eye={1,1,true,0,0,0,0,0,EYE,0,0,still_eye,0,0,0,0,0,0};
+const Mob eye_wall={1,1,true,0,0,0,0,0,EYEWALL,0,0,still_eyewall,0,0,0,0,0,0};
+const Mob eye_drop={1,1,true,0,0,0,0,0,BLOOD,0,0,dropping_path,0,0,0,0,0,0};
+const Mob eye_blast={1,1,true,0,0,0,0,0,EYE_BLAST,0,0,sight_blast,0,0,0,0,0,0};
+const Mob shift_left={1,1,false,-3,0,0,0,0,SHIFT,0,0,path_left,0,0,0,0,0,0};
+const Mob shift_right={1,1,false,3,0,0,0,0,SHIFT,0,0,path_right,0,0,0,0,0,0};
+const Mob bone_left={1,1,false,-3,0,0,0,0,BONE,0,0,path_left,0,0,0,0,0,0};
+const Mob bone_right={1,1,false,3,0,0,0,0,BONE,0,0,path_right,0,0,0,0,0,0};
+
+/// @brief CHARCTER POWERS
+/// @param mob 
+/// @param player 
 void perfectly_still(Mob* mob,Player* player){
 }
 

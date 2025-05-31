@@ -45,6 +45,13 @@ enum MOB{
     HIGHCULTIST,
     //PEBBLE,
     BEBERT,
+    ///////
+    SPIKE,
+    SHOOT,
+    BONE,
+    EYE,
+    EYEWALL,
+    SHIFT,
     NB_MOB
 };
 
@@ -54,6 +61,9 @@ enum PROJECTILE{
     FIRE_MOB,
     PEBBLE,
     LEVER,
+    BONEARROW,
+    BLOOD,
+    EYE_BLAST,
     ///Good Projectile !
     ARROW_KABI,
     SPIKE_GROWTH,
@@ -177,6 +187,38 @@ void path_still_right(Mob *car, Player*p);
 void path_still_left(Mob *car, Player*p);
 extern const Mob big_bus_right;
 extern const Mob big_bus_left;
+
+void path_offset_left(Mob* mob, Player*p);
+void path_offset_right(Mob* mob, Player*p);
+void path_offset_trigger_left(Mob* mob, Player*p);
+void path_offset_trigger_right(Mob* mob, Player*p);
+void spike_timer(Mob* mob, Player*p);
+void spike_trigger(Mob* mob, Player*p);
+void shooter_trigger_still_left(Mob* mob, Player*p);
+void shooter_trigger_still_right(Mob* mob, Player*p);
+void shooter_timer_still(Mob* mob, Player*p);
+void still_eye(Mob* mob, Player*p);
+void sight_blast(Mob* mob,Player*p);
+void still_eyewall(Mob* mob,Player*p);
+void dropping_path(Mob* mob,Player*p);
+
+extern const Mob shooter;
+extern const Mob shooter_trap_left;
+extern const Mob shooter_trap_right;
+extern const Mob spike;
+extern const Mob spike_trap;
+extern const Mob bone_arrow_left;
+extern const Mob bone_arrow_right;
+extern const Mob bone_arrow_left_trap;
+extern const Mob bone_arrow_right_trap;
+extern const Mob eye;
+extern const Mob eye_wall;
+extern const Mob eye_drop;
+extern const Mob eye_blast;
+extern const Mob shift_left;
+extern const Mob shift_right;
+extern const Mob bone_left;
+extern const Mob bone_right;
 
 ////// FOR POWER CHARACTER //////////
 

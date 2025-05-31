@@ -68,4 +68,14 @@ const Tile MurManoir = {true,false,_MANOR_WALL};
 
 const Tile Porte = {false,false,_DOOR};
 
+const Tile Flesh= {false,false,_FLESH};
+const Tile Acid= {false,true,_ACID};
+const Tile Acid_up= {false,true,_ACID_UP};
+const Tile Acid_down= {false,true,_ACID_DOWN};
+const Tile Acid_middle= {false,true,_ACID_MIDDLE};
+const Tile Maw= {false,true,_MAW};
+const Tile Shooter_block_right= {true,false,_SHOOTER_BLOCK_RIGHT};
+const Tile Shooter_block_left= {true,false,_SHOOTER_BLOCK_LEFT};
+const Tile transition_finale= {false,false,_TRANSITION_HEART};
+
 const Tile _lever = {true,false,_LEVER};
