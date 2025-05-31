@@ -190,7 +190,7 @@ int main(void){
         if(!main_menu){
             int exp = game->nb_exp;
             destroy_game(game);
-            game = initialise_game(chara,0);
+            game = initialise_game(chara,exp);
             game->nb_exp = exp;
             //music init
             music = 0;

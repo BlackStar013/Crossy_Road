@@ -96,8 +96,73 @@ Tile tile_map(Map *carte, int x, int y){
     return ((cur->tiles)[x]);
 }
 
+void updateLocks(int* unlocked, int nb_exp){
+    for (int i = 0; i<8; i++){
+        if(i <= 1){
+            unlocked[i] = 1;
+        }
+        else{
+            unlocked[i] = 0;
+        }
+    }
+    if(nb_exp >= 3){
+        unlocked[KAIRON] = 1;
+    }
+    if(nb_exp >= 5){
+        unlocked[RANTON] = 1;
+    }
+    if(nb_exp >= 7){
+        unlocked[KAIRON] = 2;
+        unlocked[SNITCH] = 1;
+    }
+    if(nb_exp >= 12){
+        unlocked[RANTON] = 2;
+    }
+    if(nb_exp >= 20){
+        unlocked[JOLINAR] = 1;
+    }
+    if(nb_exp >= 33){
+        unlocked[SNITCH] = 2;
+    }
+    if(nb_exp >= 54){
+        unlocked[KAIRON] = 3;
+    }
+    if(nb_exp >= 90){
+        unlocked[OOGWAAY] = 1;
+    }
+    if(nb_exp >= 148){
+        unlocked[JOLINAR] = 2;
+    }
+    if(nb_exp >= 244){
+        unlocked[SNITCH] = 3;
+    }
+    if(nb_exp >= 403){
+        unlocked[RANTON] = 3;
+    }
+    if(nb_exp >= 665){
+        unlocked[OOGWAAY] = 2;
+    }
+    if(nb_exp >= 1096){
+        unlocked[KABI] = 1;
+    }
+    if(nb_exp >= 1808){
+        unlocked[JOLINAR] = 3;
+    }
+    if(nb_exp >= 2980){
+        unlocked[KABI] = 2;
+    }
+    if(nb_exp >= 4030){
+        unlocked[OOGWAAY] = 3;
+    }
+    if(nb_exp >= 5000){
+        unlocked[KABI] = 3;
+    }
+}
+
 Player* initialise_player(int id, int tot_exp){
     // intitialise le joueur au milieu en bas de la carte
+    int* lvls = malloc(sizeof(int)*8);
+    updateLocks(lvls, tot_exp);
     Player* joueur = malloc(sizeof(Player));
     joueur->_x = ((LENGTH-1)/2)*32;
     joueur->_y = 2*32;
@@ -138,6 +203,9 @@ Player* initialise_player(int id, int tot_exp){
             joueur->inv_frame = 0;
             break;
     }
+    joueur->character_lvl = lvls[id];
+    printf("%d\n", joueur->character_lvl);
+    free(lvls);
     return joueur;
 }
 

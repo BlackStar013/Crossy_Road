@@ -306,61 +306,6 @@ void displayCharaMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
     SDL_DestroyTexture(cursorTexture);
 }
 
-void updateLocks(int* unlocked, int nb_exp){
-    if(nb_exp >= 3){
-        unlocked[KAIRON] = 1;
-    }
-    if(nb_exp >= 5){
-        unlocked[RANTON] = 1;
-    }
-    if(nb_exp >= 7){
-        unlocked[KAIRON] = 2;
-        unlocked[SNITCH] = 1;
-    }
-    if(nb_exp >= 12){
-        unlocked[RANTON] = 2;
-    }
-    if(nb_exp >= 20){
-        unlocked[JOLINAR] = 1;
-    }
-    if(nb_exp >= 33){
-        unlocked[SNITCH] = 2;
-    }
-    if(nb_exp >= 54){
-        unlocked[KAIRON] = 3;
-    }
-    if(nb_exp >= 90){
-        unlocked[OOGWAAY] = 1;
-    }
-    if(nb_exp >= 148){
-        unlocked[JOLINAR] = 2;
-    }
-    if(nb_exp >= 244){
-        unlocked[SNITCH] = 3;
-    }
-    if(nb_exp >= 403){
-        unlocked[RANTON] = 3;
-    }
-    if(nb_exp >= 665){
-        unlocked[OOGWAAY] = 2;
-    }
-    if(nb_exp >= 1096){
-        unlocked[KABI] = 1;
-    }
-    if(nb_exp >= 1808){
-        unlocked[JOLINAR] = 3;
-    }
-    if(nb_exp >= 2980){
-        unlocked[KABI] = 2;
-    }
-    if(nb_exp >= 4030){
-        unlocked[OOGWAAY] = 3;
-    }
-    if(nb_exp >= 5000){
-        unlocked[KABI] = 3;
-    }
-}
-
 void displayCharaMenu2(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, SDL_Surface** surfaceArrayPlayer, Game* game, int* unlocked){
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
@@ -463,14 +408,6 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
     SDL_bool quit2 = SDL_FALSE;
     int cursor = 0;
     int* unlocked = malloc(sizeof(int)*8);
-    for (int i = 0; i<8; i++){
-        if(i <= 1){
-            unlocked[i] = 1;
-        }
-        else{
-            unlocked[i] = 0;
-        }
-    }
     updateLocks(unlocked, game->nb_exp);
     while(!quit2){
         displayCharaMenu2(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), surfaceArrayPlayer, game, unlocked);
