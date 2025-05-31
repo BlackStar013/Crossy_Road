@@ -204,7 +204,6 @@ Player* initialise_player(int id, int tot_exp){
             break;
     }
     joueur->character_lvl = lvls[id];
-    printf("%d\n", joueur->character_lvl);
     free(lvls);
     return joueur;
 }
