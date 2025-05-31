@@ -280,7 +280,7 @@ int main(void){
                         game->joueur->offset_x %= 4;
                     }
                     game->joueur->delai = DELAI;
-                    SDL_Delay(1000);
+                    // SDL_Delay(1000);
                 }
             }else{
                 SDL_PollEvent(&event);
