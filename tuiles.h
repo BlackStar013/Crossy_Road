@@ -42,6 +42,7 @@ enum TILE{
     _LOW_WALL,
     _CAVE,
     _STALAGMITE,
+    _LEVER,
     _MANOR_WALL,
     _DOOR,
     _FLESH,
@@ -112,6 +113,8 @@ extern const Tile base;
 extern const Tile MurManoir;
 
 extern const Tile Porte;
+
+extern const Tile _lever;
 
 extern const Tile Flesh;
 extern const Tile Acid;

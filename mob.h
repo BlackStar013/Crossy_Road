@@ -43,7 +43,7 @@ enum MOB{
     BUSH,
     MOB_CULTIST,
     HIGHCULTIST,
-    PEBBLE,
+    //PEBBLE,
     BEBERT,
     ///////
     SPIKE,
@@ -59,6 +59,8 @@ enum PROJECTILE{
     CURSE,
     CANON_BALL,
     FIRE_MOB,
+    PEBBLE,
+    LEVER,
     BONEARROW,
     BLOOD,
     EYE_BLAST,
@@ -133,6 +135,10 @@ void clockwise_cycle(Mob *fire,Player* player);
 extern const Mob fire_clock;
 void counterclock_cycle(Mob *fire,Player* player);
 extern const Mob fire_counter;
+
+extern const Mob fire_right;
+extern const Mob fire_left;
+extern const Mob fire_still;
 // void clockwise_cycle_3(Mob *fire,Player* player);
 // extern const Mob fire_3_clock;
 // void counterclock_cycle_3(Mob *fire,Player* player);
@@ -156,12 +162,7 @@ void babel2_2(Mob *mob,Player* player);
 void babel3_2(Mob *mob,Player* player);
 void babel4_2(Mob *mob,Player* player);
 
-extern const Mob cult_clock1;
-extern const Mob cult_clock2;
-extern const Mob cult_clock3;
-extern const Mob cult_counter1;
-extern const Mob cult_counter2;
-extern const Mob cult_counter3;
+extern const Mob cult;
 
 void still(Mob *mage,Player* player);
 void follow(Mob *projectile,Player* player);
@@ -173,14 +174,8 @@ extern const Mob curse_arrow;
 extern const Mob pebble_left;
 extern const Mob pebble_right;
 
-extern const Mob babel11;
-extern const Mob babel12;
-extern const Mob babel21;
-extern const Mob babel22;
-extern const Mob babel31;
-extern const Mob babel32;
-extern const Mob babel41;
-extern const Mob babel42;
+extern const Mob babel;
+extern const Mob cultist;
 
 //
 void path_hard_right(Mob *car, Player*p);
@@ -251,3 +246,8 @@ extern const Mob smoke4x1;
 extern const Mob cible;
 extern const Mob xp;
 extern const Mob champi;
+
+//New_cave
+void chaos(Mob* mob, Player* player);
+extern const Mob lever;
+extern const Mob sentinel;

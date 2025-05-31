@@ -16,10 +16,18 @@ void add_exp(int x, int y, Game *game){
     if(game->joueur->character_id == RANTON){
         game->exp = list_append(game->exp,clone_mob(champi, x, y, 4, 4));
     } else {
-        game->exp = list_append(game->exp,clone_mob(xp, x, y, 4, 4));
+        Mob* exp = clone_mob(xp, x, y, 4, 4);
+        exp->offset_x = rand()%4;
+        game->exp = list_append(game->exp,exp);
     }
 }
 
+void add_row_exp(Game* game, int max_exp, int pos, int min_x, int max_x){
+    int nb = rand()%(max_exp+1);
+    for(int i = 0; i<nb; i++){
+            add_exp(rand()%(max_x+1-min_x) + min_x, HEIGTH+pos, game);
+    }
+}
 
 void proba_change_game(Game* game, int obstacle){
     for(int i = 0; i<NB_OBSTACLE; i++){
@@ -87,6 +95,7 @@ void generator_forest(Game *game){
 }
 
 void add_road(Game *game, Mob car, Tile road_, int pos, int speed, int nb_car){
+    add_row_exp(game, rand()%2+1, pos,1,LENGTH-2);
     add_buffer_line(game->carte);
     Line *line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -247,6 +256,7 @@ void generator_river(Game *game){
 }
 
 void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int where_can){
+    add_row_exp(game, rand()%2+1, pos,1,LENGTH-2);
     add_buffer_line(game->carte);
     Line *line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
@@ -353,9 +363,17 @@ void generator_obstacle(Game*game){
         generator_fire(game);
         break;
 
-        case CAVE:
-        generator_cave(game);
+        case FIRE_PATROL:
+        generator_fire_patrol(game);
         break;
+
+        case FIRELINE:
+        generator_fireline(game);
+        break;
+
+        // case CAVE:
+        // generator_cave(game);
+        // break;
 
         case CULTIST:
         generator_cultist(game);
@@ -369,9 +387,10 @@ void generator_obstacle(Game*game){
         generator_transition_cave(game);
         break;
 
-        case STONE:
-        generator_pebble(game);
+        case TRAP:
+        generator_trap(game);
         break;
+
         case BABEL:
         generator_babel(game);
         break;
@@ -415,12 +434,13 @@ void generator_obstacle(Game*game){
 //générateurs avancés
 ///////////////////////////////////////////
 
-
+/////BIOME FEEEEEUUUUUUUUUUU/////////
 void proba_change_entrance(Game* game){
     for(int i = 0; i<NB_OBSTACLE; i++){
         *(game->proba+i) = 0;
     }
-    *((game->proba)+FIRE) = 100;
+    *((game->proba)+FIRE) = 50;
+    *((game->proba)+FIRELINE) = 50;
 
 }
 
@@ -453,56 +473,485 @@ void generator_entrance(Game *game){
     proba_change_entrance(game);
 }
 
-void proba_change_fire(Game* game){
-    //Pour l'instant fire ne donne que fire
+void proba_change_fire(Game* game, int nb_line){
+    int proba_change = 10 + ((nb_line-1)/2)*(rand()%5+5);
+    if(*((game->proba)+FIRE) <= proba_change){
+        *((game->proba)+FIRELINE) += (2*(*((game->proba)+FIRE)))/3 ;
+        *((game->proba)+FIRE_PATROL) += ((*((game->proba)+FIRE)))/3 ;
+        *((game->proba)+FIRE) = 0;
+    } else {
+        *((game->proba)+FIRE) -= proba_change ;
+        *((game->proba)+FIRELINE) += (2*proba_change)/3 ;
+        *((game->proba)+FIRE_PATROL) += (proba_change)/3 ;
+    }
+    *((game->proba)+FIRE_PATROL) += check_percent(game, FIRELINE, FIRE);
+}
+
+void add_fire(Game* game, int decal, int nb_flames){
+    for(int i = 0; i<nb_flames; i++){
+        int direction=rand()%2;
+        int pos = rand()%(LENGTH-1);
+        int speed = rand()%3;
+        Mob* fire;
+        if(direction){
+            fire = clone_mob(fire_clock, pos, HEIGTH+decal,speed,16*((rand()%2)+1));
+        } else { 
+            fire = clone_mob(fire_counter, pos, HEIGTH+decal,speed,16*((rand()%2)+1));
+        }
+        fire ->memory__x = -18;
+        for(int i =0; i < rand()%4; i++){
+             (fire->path)(fire,game->joueur);
+        }
+        game->projectile = list_append(game->projectile, fire);
+    }
+
 }
 
 void generator_fire(Game *game){
     //feu
+    int nb_inside = rand()%4 + 1;
+    Line* line;
+    for(int i = 0; i < nb_inside; i++){
+        for(int i = 0; i < 2; i++){
+            add_buffer_line(game->carte);
+            line = game->carte->head_buffer;
+            for(int i = 0; i<LENGTH; i++){
+                clone(&line->tiles[i], planks);
+            }
+        }
+        int nb_Block = rand()%8;
+        for(int i = 0; i<nb_Block; i++){
+            int coinflip = rand()%2;
+            if(coinflip){
+                clone(&(line->next)->tiles[rand()%LENGTH], brokenplanks);
+            } else {
+                clone(&line->tiles[rand()%LENGTH], brokenplanks);
+            }
+        }
+        int nb_flames = rand()%4+1;
+        add_fire(game,2*i,nb_flames);
+        }
+    proba_change_fire(game,nb_inside);
+}
+
+void add_one_fire(Game* game, int x, int y){
+   Mob* firey = clone_mob(fire_still, x, y,0,0);
+    firey->memory__x = -18;
+    firey->offset_x = rand()%4;
+    game->projectile = list_append(game->projectile, firey);
+}
+
+void add_fire_unit(Game *game, int init_x, int direction, int pos, int speed, int nb_fire){
+    Mob* firey;
+    for(int i = 0; i < nb_fire; i++){
+        if(direction){
+           firey =  clone_mob(fire_right, init_x+(LENGTH/nb_fire)*i, HEIGTH+pos,speed,0);
+        } else {
+            firey =  clone_mob(fire_left, init_x+(LENGTH/nb_fire)*i, HEIGTH+pos,speed,0);        }
+        firey->memory__x = -18;
+        firey->offset_x = rand()%4;
+        game->projectile = list_append(game->projectile, firey);
+
+    }
+}
+
+void add_fire_row(Game *game, int direction, int pos){
+    Mob* firey;
+    if(!direction){
+        for(int i = 2; i < LENGTH; i++){
+            firey = clone_mob(fire_still, i, HEIGTH+pos,0,0);
+            firey->memory__x = -18;
+            firey->offset_x = rand()%4;
+            game->projectile = list_append(game->projectile, firey);
+        }
+    } else {
+        for(int i = 0; i < LENGTH-2; i++){
+            firey = clone_mob(fire_still, i, HEIGTH+pos,0,0);
+            firey->memory__x = -18;
+            firey->offset_x = rand()%4;
+            game->projectile = list_append(game->projectile, firey);
+        }
+    }
+}
+
+void proba_change_fireline(Game *game, int nb_line){
+    int proba_change = 10 + (nb_line-1)*(rand()%8+10);
+    if(*((game->proba)+FIRELINE) <= proba_change){
+        *((game->proba)+FIRE) += ((*((game->proba)+FIRELINE)))/2 ;
+        *((game->proba)+FIRE_PATROL) += ((*((game->proba)+FIRELINE)))/2 ;
+        *((game->proba)+FIRELINE) = 0 ;
+    } else {
+        *((game->proba)+FIRELINE) -= proba_change ;
+        *((game->proba)+FIRE) += proba_change ;
+        *((game->proba)+FIRE_PATROL) += proba_change/2 ;
+    }
+    *((game->proba)+FIRE_PATROL) += check_percent(game, FIRELINE, FIRE);
+}
+
+void generator_fireline(Game *game){
+    // explicite
+    int direction = rand()%2;
+    int where_enter = direction*(LENGTH-1);
+    int nb_inside = rand()%2+2;
+    int pos = 0;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], planks);
     }
-    int nb_Block = rand()%3;
-    for(int i = 0; i<nb_Block; i++){
-        clone(&line->tiles[rand()%LENGTH], brokenplanks);
+    add_fire_unit(game, rand()%3, direction, pos,rand()%3+1,rand()%3+1);
+    pos++;
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], planks);
     }
-    int nb_flames = rand()%4+1;
-    for(int i = 0; i<nb_flames; i++){
-        int pattern=rand()%4;
-        int pos;
-        switch (pattern){
-        case 0:
-            pos=rand()%(LENGTH-2);
-            game->projectile = list_append(game->projectile, clone_mob(fire_clock, pos, HEIGTH,(rand()%3)+1,16));
-            break;
-        case 1:
-            pos=rand()%(LENGTH-3);
-            game->projectile = list_append(game->projectile, clone_mob(fire_clock, pos, HEIGTH,(rand()%3)+1,32));
-            break;
-        case 2:
-            pos=rand()%(LENGTH-2);
-            game->projectile = list_append(game->projectile, clone_mob(fire_counter, pos, HEIGTH,(rand()%3)+1,16));
-            break;
-        case 3:
-            pos=rand()%(LENGTH-3);
-            game->projectile = list_append(game->projectile, clone_mob(fire_counter, pos, HEIGTH,(rand()%3)+1,32));
-            break;
-        default:
-            break;
+    add_fire_row(game, direction, pos);
+    pos++;
+    direction = 1 - direction;
+    for(int i = 0 ; i < 2*nb_inside ; i+=1){
+        int speed = rand()%4 ;
+        int init_x = rand()%3;
+        int nb_fire = rand()%3 +1;
+        for(int j = 0; j<2;j++){
+            add_buffer_line(game->carte);
+            line = game->carte->head_buffer;
+            for(int i = 0; i<LENGTH; i++){
+                clone(&line->tiles[i], planks);
+            }
+            add_fire_unit(game, init_x,direction, pos, speed, nb_fire);
+            add_fire_unit(game, init_x-1,direction, pos, speed, nb_fire);
+            pos++;
         }
-    proba_change_fire(game);
-        
+        direction = 1 - direction;
     }
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], planks);
+    }
+    add_fire_row(game, direction, pos);
+    pos++;
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], planks);
+    }
+    add_fire_unit(game, rand()%4, direction, pos,rand()%3+1,rand()%3+1);
+    proba_change_fire(game, nb_inside);
 }
 
+
+
+void proba_change_fire_patrol(Game* game){
+ int proba_change = 12 + rand()%9;
+    if(*((game->proba)+FIRE_PATROL) <= proba_change){
+        *((game->proba)+FIRELINE) += (2*(*((game->proba)+FIRE)))/3 ;
+        *((game->proba)+FIRE) += ((*((game->proba)+FIRE)))/3 ;
+        *((game->proba)+FIRE_PATROL) = 0;
+    } else {
+        *((game->proba)+FIRE_PATROL) -= proba_change ;
+        *((game->proba)+FIRELINE) += (2*proba_change)/3 ;
+        *((game->proba)+FIRE) += (proba_change)/3 ;
+    }
+    *((game->proba)+FIRELINE) += check_percent(game, FIRELINE, FIRE);
+
+}
+
+
+void generator_fire_patrol(Game *game){
+    int type = rand()%2;
+    if(type){
+        generator_fire_patrol_1(game);
+    } else {
+        generator_fire_patrol_2(game);
+    }
+    proba_change_fire_patrol(game);
+
+}
+
+void generator_fire_patrol_1(Game *game){
+    //les cultistes avec des dagues
+    int direction = rand()%2;
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], planks);
+    }
+    add_fire_unit(game, rand()%3, direction, 0,rand()%3+1,rand()%3+1);
+    int type=rand()%3;
+    int sens=rand()%2;
+    int nb_lines;
+    int lat_size;
+    if (type==2) {
+        lat_size=6;
+        }
+    else {
+        lat_size=5;
+    }
+    if (type==1) {
+        nb_lines=4;
+        }
+    else {
+        nb_lines=3;
+    }
+    int pos_fire=rand()%(LENGTH-lat_size);
+    int nb_fire=rand()%2+1;
+    for (int i=0;i<nb_lines;i++) {
+        add_buffer_line(game->carte);
+        Line* line = game->carte->head_buffer;
+        for(int j = 0; j<LENGTH; j++){
+             clone(&line->tiles[j], planks);
+            if (!((j>=pos_fire && j<=(pos_fire+lat_size-2))&&(i==0||i==(nb_lines-1)||j==(pos_fire+lat_size-2)||j==pos_fire))) {
+                add_one_fire(game, j, i+HEIGTH+1);
+            }
+        }
+    }
+    int speed=(rand()%3);
+    Mob* firey = clone_mob(fire_still, pos_fire+2, HEIGTH+nb_lines,speed,16);
+    switch (type) {
+        case 0:
+        if (sens==0){
+            firey -> path = patrol_clock4x3;
+        }
+        else {
+            firey -> _x -= 32;
+            firey -> path = patrol_counter4x3;
+        }
+        break;
+        case 2:
+        if (sens==0){
+            firey -> _x += 32;
+            firey -> path = patrol_clock5x3;
+        }
+        else {
+            firey -> _x -= 32;
+            firey -> path = patrol_counter5x3;
+        }
+        break;
+        case 1:
+        if (sens==0){
+            firey -> path = patrol_clock4x4;
+        }
+        else {
+            firey -> _x -= 32;
+            firey -> path = patrol_counter4x4;
+        }
+        break;
+    }
+    firey -> memory__x = -64;
+    game->projectile=list_append(game->projectile,firey);
+    if (nb_fire==2) {
+        firey = clone_mob(fire_still, pos_fire+2, HEIGTH+nb_lines,speed,16);
+        firey -> _y = (HEIGTH + 1)*32;
+        switch (type) {
+            case 0:
+                if (sens==0){
+                    firey -> path = patrol_clock4x3;
+                    firey -> _x = (pos_fire+1)*32;
+                }
+                else {
+                    firey -> path = patrol_counter4x3;
+                    firey -> _x = (pos_fire+2)*32;
+                }
+                break;
+            case 2:
+                if (sens==0){
+                    firey -> _x = (pos_fire+1)*32;
+                    firey -> path = patrol_clock5x3;
+                }
+                else {
+                    firey -> _x = (pos_fire+3)*32;
+                    firey -> path = patrol_counter5x3;
+                }
+                break;
+            case 1:
+                if (sens==0){
+                    firey -> _x = (pos_fire+1)*32;
+                    firey -> path = patrol_clock4x4;
+                }
+                else {
+                    firey -> _x = (pos_fire+2)*32;
+                    firey -> path = patrol_counter4x4;
+                }
+                break;
+        }
+        firey->action_value=2;
+        firey->offset_x = rand()%4;
+        game->projectile=list_append(game->projectile,firey);
+    }
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], planks);
+    }
+    add_fire_unit(game, rand()%4, !direction, nb_lines+1,rand()%3+1,rand()%3+1);
+}
+
+
+void generator_fire_patrol_2(Game *game){
+    int direction = rand()%2;
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], planks);
+    }
+    add_fire_unit(game, rand()%3, direction, 0,rand()%3+1,rand()%3+1);
+    int type=rand()%4;
+    int sens=rand()%2;
+    int pos_b=rand()%(LENGTH-5);
+    int nb_lines = 4;
+    for (int i=0;i<nb_lines;i++) {
+        add_buffer_line(game->carte);
+        Line* line = game->carte->head_buffer;
+        for(int j = 0; j<LENGTH; j++){
+            clone(&line->tiles[j], planks);
+            if(j<pos_b ||j>pos_b+4){
+                add_one_fire(game, j, i+HEIGTH+1);;
+            }
+            else {
+                switch (type){
+                case 0:
+                    if (i==1){
+                        if (j==1+pos_b ||j==3+pos_b){
+                            add_one_fire(game, j, i+HEIGTH+1);
+                        }
+                    }
+                    if (i==3){
+                        if (j==0+pos_b ||j==2+pos_b||j==4+pos_b){
+                            add_one_fire(game, j, i+HEIGTH+1);
+                        }
+                    }
+                    break;
+                case 1:
+                    if (i==1){
+                        if (j==2+pos_b){
+                            add_one_fire(game, j, i+HEIGTH+1);
+                        }
+                    }
+                    if (i==3){
+                        if (j==0+pos_b ||j==4+pos_b){
+                            add_one_fire(game, j, i+HEIGTH+1);
+                        }
+                    }
+                    // if (i==4){
+                    //     if (j==1+pos_b ||j==3+pos_b){
+                    //         clone(&line->tiles[j], stalagmite);
+                    //     }
+                    // }
+                    break;
+                case 2:
+                    if (i==0){
+                        if (j==0+pos_b ||j==4+pos_b){
+                            add_one_fire(game, j, i+HEIGTH+1);
+                        }
+                    }
+                    // if (i==4){
+                    //     if (j==1+pos_b ||j==2+pos_b||j==3+pos_b){
+                    //         clone(&line->tiles[j], stalagmite);
+                    //     }
+                    // }
+                    break;
+                case 3:
+                    if (i==2){
+                        if (j==0+pos_b ||j==4+pos_b){
+                            add_one_fire(game, j, i+HEIGTH+1);
+                        }
+                    }
+                    if (i==3){
+                        if (j==pos_b ||j==1+pos_b ||j==3+pos_b||j==4+pos_b){
+                            add_one_fire(game, j, i+HEIGTH+1);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+    }
+    int speed=(rand()%3);
+    Mob* firey_feet = clone_mob(fire_still, pos_b, HEIGTH+2,speed,16);
+    Mob* firey_head = clone_mob(fire_still, pos_b, HEIGTH+3,speed,16);
+    switch (type) {
+            case 0:
+                if (sens==0){
+                    firey_head -> path = babel1_1;
+                    firey_feet -> path = babel1_1;
+                }
+                else{
+                    firey_head -> _x += 128;
+                    firey_head -> path = babel1_2;
+                    firey_feet-> _x += 128;
+                    firey_feet -> path = babel1_2;
+                }
+                break;
+            case 1:
+                if (sens==0){
+                    firey_head -> path = babel2_1;
+                    firey_feet -> path = babel2_1;                    
+                }
+                else{
+                    firey_head -> _x += 128;
+                    firey_head -> path = babel2_2;
+                    firey_feet-> _x += 128;
+                    firey_feet -> path = babel2_2;                    
+                }
+                break;
+            case 2:
+                if (sens==0){
+                    firey_head -> _x += 64;
+                    firey_head -> _y += 32;
+                    firey_head -> path = babel3_1;
+                    firey_feet -> _x += 64;
+                    firey_feet -> _y += 32;
+                    firey_feet -> path = babel3_1;                    
+                }
+                else{
+                    firey_head -> _x += 32;
+                    firey_head -> path = babel3_2;
+                    firey_feet-> _x += 32;
+                    firey_feet -> path = babel3_2;
+                }
+                break;
+            case 3:
+                if (sens==0){
+                    firey_head -> _x += 64;
+                    firey_head -> _y -= 32;
+                    firey_head -> path = babel4_1;
+                    firey_feet-> _x += 64;
+                    firey_feet -> _y -= 32;
+                    firey_feet -> path = babel4_1;
+                }
+                else{
+                    firey_head -> _x += 32;
+                    firey_head -> path = babel4_2;
+                    firey_feet-> _x += 32;
+                    firey_feet -> path = babel4_2;
+                }
+                break;
+            default:
+                break;
+    }
+    firey_head -> offset_x = rand()%4;
+    firey_feet -> offset_x = rand()%4;
+    game->projectile = list_append(game->projectile, firey_head);
+    game->projectile = list_append(game->projectile, firey_feet);
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], planks);
+    }
+    add_fire_unit(game, rand()%4, !direction, nb_lines+1,rand()%3+1,rand()%3+1);
+}
 
 void proba_change_transition_cave(Game* game){
         for(int i = 0; i<NB_OBSTACLE; i++){
         *(game->proba+i) = 0;
     }
-    *((game->proba)+CULTIST) = 100;
+    *((game->proba)+CULTIST) = 50;
+    *((game->proba)+BABEL) = 25;
+    *((game->proba)+TRAP) = 25;
 }
 
 
@@ -537,21 +986,21 @@ void generator_transition_cave(Game * game){
 
 
 void proba_change_cave(Game* game){
-    int proba_change = (rand()%4)*5 + 10;
-    if(*((game->proba)+CAVE) <= proba_change){
-        *((game->proba)+CULTIST) += (2*(*((game->proba)+CAVE)))/5+1 ;
-        *((game->proba)+BABEL) += ((*((game->proba)+CAVE)))/5 ;
-        *((game->proba)+STONE) += ((*((game->proba)+CAVE)))/5 ;
-        *((game->proba)+MAGE) += (*((game->proba)+CAVE))/5 ;
-        *((game->proba)+CAVE) = 0 ;
-    } else {
-        *((game->proba)+CULTIST) += 2*proba_change/5+1 ;
-        *((game->proba)+CAVE) -= proba_change ;
-        *((game->proba)+MAGE) += proba_change/5 ;
-        *((game->proba)+STONE) += proba_change/5 ;
-        *((game->proba)+MAGE) += proba_change/5 ;
-    }
-    *((game->proba)+CAVE) += check_percent(game, CAVE, BABEL);
+    // int proba_change = (rand()%4)*5 + 10;
+    // if(*((game->proba)+CAVE) <= proba_change){
+    //     //*((game->proba)+CULTIST) += (2*(*((game->proba)+CAVE)))/5+1 ;
+    //     //*((game->proba)+BABEL) += ((*((game->proba)+CAVE)))/5 ;
+    //     //*((game->proba)+STONE) += ((*((game->proba)+CAVE)))/5 ;
+    //     *((game->proba)+MAGE) += (*((game->proba)+CAVE))/5 ;
+    //     *((game->proba)+CAVE) = 0 ;
+    // } else {
+    //     //*((game->proba)+CULTIST) += 2*proba_change/5+1 ;
+    //     *((game->proba)+CAVE) -= proba_change ;
+    //     *((game->proba)+MAGE) += proba_change/5 ;
+    //     //*((game->proba)+STONE) += proba_change/5 ;
+    //     *((game->proba)+MAGE) += proba_change/5 ;
+    // }
+    //*((game->proba)+CAVE) += check_percent(game, CAVE, BABEL);
 }
 
 
@@ -573,139 +1022,34 @@ void generator_cave(Game *game){
     proba_change_cave(game);
 }
 
-void proba_change_cultist(Game* game){
-    *((game->proba)+CAVE) += ((*((game->proba)+CULTIST))/3) ;
-    *((game->proba)+STONE) += ((*((game->proba)+CULTIST))/3) ;
-    *((game->proba)+MAGE) += ((*((game->proba)+CULTIST))/3)+1;
-    *((game->proba)+CULTIST) = 0 ;
-    *((game->proba)+CAVE) += check_percent(game, CAVE, BABEL);
 
-    *((game->proba)+CAVE) += ((*((game->proba)+BABEL))/3) ;
-    *((game->proba)+STONE) += ((*((game->proba)+BABEL))/3) ;
-    *((game->proba)+MAGE) += ((*((game->proba)+BABEL))/3)+1;
-    *((game->proba)+BABEL) = 0 ;
-    *((game->proba)+CAVE) += check_percent(game, CAVE, BABEL);
-
-}
-
-
-
-void generator_cultist(Game *game){
-    //les cultistes avec des dagues
-    int type=rand()%3;
-    int sens=rand()%2;
-    int nb_lines;
-    int lat_size;
-    if (type==2) {
-        lat_size=6;
-        }
-    else {
-        lat_size=5;
-    }
-    if (type==1) {
-        nb_lines=4;
-        }
-    else {
-        nb_lines=3;
-    }
-    int pos_cult=rand()%(LENGTH-lat_size);
-    int nb_cultists=rand()%2+1;
-    for (int i=0;i<nb_lines;i++) {
-        add_buffer_line(game->carte);
-        Line* line = game->carte->head_buffer;
-        for(int j = 0; j<LENGTH; j++){
-            if (((j>=pos_cult && j<=(pos_cult+lat_size-2))&&(i==0||i==(nb_lines-1)||j==(pos_cult+lat_size-2)||j==pos_cult))) {
-                clone(&line->tiles[j], cave);
-            }
-            else {
-                clone(&line->tiles[j], stalagmite);
-            }
-        }
-    }
-    int speed=(rand()%3)+1;
-    switch (type) {
-        case 0:
-        if (sens==0){
-            game->mobs = list_append(game->mobs, clone_mob(cult_clock1, pos_cult+2, HEIGTH+nb_lines-1,speed,16));
-        }
-        else {
-            game->mobs = list_append(game->mobs, clone_mob(cult_counter1, pos_cult+1, HEIGTH+nb_lines-1,speed,16));
-        }
-        break;
-        case 2:
-        if (sens==0){
-            game->mobs = list_append(game->mobs, clone_mob(cult_clock2, pos_cult+3, HEIGTH+nb_lines-1,speed,16));
-        }
-        else {
-            game->mobs = list_append(game->mobs, clone_mob(cult_counter2, pos_cult+1, HEIGTH+nb_lines-1,speed,16));
-        }
-        break;
-        case 1:
-        if (sens==0){
-            game->mobs = list_append(game->mobs, clone_mob(cult_clock3, pos_cult+2, HEIGTH+nb_lines-1,speed,16));
-        }
-        else {
-            game->mobs = list_append(game->mobs, clone_mob(cult_counter3, pos_cult+1, HEIGTH+nb_lines-1,speed,16));
-        }
-        break;
-    }
-    if (nb_cultists==2) {
-        Mob *Double;
-        switch (type) {
-            case 0:
-                if (sens==0){
-                    Double=clone_mob(cult_clock1, pos_cult+1, HEIGTH,speed,16);
-                }
-                else {
-                    Double=clone_mob(cult_counter1, pos_cult+2, HEIGTH,speed,16);
-                }
-                break;
-            case 2:
-                if (sens==0){
-                    Double=clone_mob(cult_clock2, pos_cult+1, HEIGTH,speed,16);
-                }
-                else {
-                    Double=clone_mob(cult_counter2, pos_cult+3, HEIGTH,speed,16);
-                }
-                break;
-            case 1:
-                if (sens==0){
-                    Double=clone_mob(cult_clock3, pos_cult+1, HEIGTH,speed,16);
-                }
-                else {
-                    Double=clone_mob(cult_counter3, pos_cult+2, HEIGTH,speed,16);
-                }
-                break;
-        }
-        Double->action_value=2;
-        game->mobs=list_append(game->mobs,Double);
-    }
-    proba_change_cultist(game);
-}
 
 
 void proba_change_mage(Game* game){
-    int proba_change = (rand()%4)*5+10;
+   int proba_change = 10 + rand()%12;
     if(*((game->proba)+MAGE) <= proba_change){
-        *((game->proba)+CULTIST) += (*((game->proba)+MAGE))/4 ;
-        *((game->proba)+CAVE) += (*((game->proba)+MAGE))/4 ;
-        *((game->proba)+STONE) += (*((game->proba)+MAGE))/4+1;
-        *((game->proba)+BABEL) += (*((game->proba)+MAGE))/4;
-        *((game->proba)+MAGE) = 0 ;
+        *((game->proba)+TRAP) += ((*((game->proba)+MAGE)))/3 ;
+        *((game->proba)+BABEL) += ((*((game->proba)+MAGE)))/3 ;
+        *((game->proba)+CULTIST) += ((*((game->proba)+MAGE)))/3 ;
+        *((game->proba)+MAGE) = 0;
     } else {
-        *((game->proba)+CULTIST) += proba_change/2 ;
-        *((game->proba)+BABEL) += proba_change/2 ;
-        *((game->proba)+STONE) += proba_change/2 ;
         *((game->proba)+MAGE) -= proba_change ;
-        *((game->proba)+CAVE) += proba_change/2+1 ;
+        *((game->proba)+TRAP) += proba_change/3 ;
+        *((game->proba)+BABEL) += proba_change/3 ;
+        *((game->proba)+CULTIST) += proba_change/3;
     }
-    *((game->proba)+MAGE) += check_percent(game, CAVE, BABEL);
+    *((game->proba)+MAGE) += check_percent(game, CULTIST, TRAP);
 }
 
 void generator_mage(Game *game){
     add_buffer_line(game->carte);
-    int pos_x=rand()%LENGTH;
     Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    add_buffer_line(game->carte);
+    int pos_x=rand()%LENGTH;
+    line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         if (i==pos_x){
             clone(&line->tiles[i], base);
@@ -713,208 +1057,425 @@ void generator_mage(Game *game){
             clone(&line->tiles[i], channel);
         }
     }
-    int speed=3;
-    Mob *c=clone_mob(mage, pos_x, HEIGTH,speed,0);
-    c->offset_x+=3;
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    int speed= rand()%4 +1;
+    int advance = 8 * (rand()%5 +2);
+    int max_action_delay = advance - 1;
+    Mob *c=clone_mob(mage, pos_x, HEIGTH+1,speed,max_action_delay);
     game->mobs = list_append(game->mobs, c);
-    Mob *arrow=clone_mob(curse_arrow, pos_x, HEIGTH,speed,0);
-    if (speed==2){
-        arrow->action_value=16;
-    }
-    if (speed==3){
-        arrow->action_value=12;
-    }
-    if (speed==1){
-        arrow->action_value=24;
-    }
+    c->offset_x = 3;
+    Mob *arrow=clone_mob(curse_arrow, pos_x, HEIGTH+1,speed,max_action_delay);
     game->projectile = list_append(game->projectile, arrow);
     proba_change_mage(game);
 }
 
-void add_pebble(Game *game, Mob pebble, Tile cave_, int pos, int speed, int nb_pebble){
-    add_buffer_line(game->carte);
-    Line *line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave_);
+
+
+////New_cave////
+
+void proba_change_trap(Game* game){
+    int proba_change = 10 + rand()%12;
+    if(*((game->proba)+TRAP) <= proba_change){
+        *((game->proba)+MAGE) += ((*((game->proba)+TRAP)))/3 ;
+        *((game->proba)+BABEL) += ((*((game->proba)+TRAP)))/3 ;
+        *((game->proba)+CULTIST) += ((*((game->proba)+TRAP)))/3 ;
+        *((game->proba)+TRAP) = 0;
+    } else {
+        *((game->proba)+TRAP) -= proba_change ;
+        *((game->proba)+MAGE) += proba_change/3 ;
+        *((game->proba)+BABEL) += proba_change/3 ;
+        *((game->proba)+CULTIST) += proba_change/3;
     }
+    *((game->proba)+TRAP) += check_percent(game, CULTIST, TRAP);
+
+}
+
+void generator_trap(Game* game){
+    int direction = rand()%2;
+    int init_x = rand()%(LENGTH-4) + 2;
+    int pos = 0;
+    int speed = rand()%9+1;
+    int max_action_delay = rand()%13 + 4 ;
+    Line* line;
     add_buffer_line(game->carte);
     line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
-        clone(&line->tiles[i], cave_);
+        clone(&line->tiles[i], stalagmite);
     }
-    int init_x = -pebble.length+(rand()%3+1)*pos;
-    for(int i = 0; i < nb_pebble; i++){
-        game->mobs = list_append(game->mobs, clone_mob(pebble, init_x+(LENGTH/nb_pebble)*i, HEIGTH+pos,speed,0));
-    }
-}
+    if(direction){
+        clone(&line->tiles[LENGTH-1], cave);
 
-void proba_change_pebble(Game *game, int nb_line){
-    int proba_change = 10 + (nb_line-1)*(rand()%8+10);
-    if(*((game->proba)+STONE) <= proba_change){
-        *((game->proba)+CAVE) += ((*((game->proba)+STONE)))/4 ;
-        *((game->proba)+MAGE) += ((*((game->proba)+STONE)))/4 ;
-        *((game->proba)+CULTIST) += (*((game->proba)+STONE))/4 ;
-        *((game->proba)+BABEL) += (*((game->proba)+STONE))/4 ;
-        *((game->proba)+STONE) = 0 ;
     } else {
-        *((game->proba)+STONE) -= proba_change ;
-        *((game->proba)+CAVE) += proba_change/4 ;
-        *((game->proba+MAGE)) += proba_change/4;
-        *((game->proba)+CULTIST) += proba_change/4 ;
-        *((game->proba)+BABEL) += proba_change/4 ;
+        clone(&line->tiles[0], cave);
     }
-    *((game->proba)+STONE) += check_percent(game, CAVE, BABEL);
+    pos++;
+    Mob* caillou;
+    if(direction){
+        caillou = clone_mob(pebble_right, LENGTH+3, HEIGTH+pos, speed, max_action_delay);
+    } else {
+        caillou = clone_mob(pebble_left, -4, HEIGTH+pos, speed, max_action_delay);
+    }
+    caillou->memory__x = init_x*32;
+    caillou->memory__y = (HEIGTH + pos + 3)*32;
+    caillou->heigth = 1;
+    caillou->length=1;
+    game->projectile = list_append(game->projectile, caillou);
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    pos++;
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    pos++;
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    if(direction){
+        clone(&line->tiles[0], cave);
+    } else {
+        clone(&line->tiles[LENGTH-1], cave);
+    }
+    pos++;
+    game->mobs = list_append(game->mobs, clone_mob(sentinel,init_x,HEIGTH+pos,speed,max_action_delay));
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[1], stalagmite);
+    clone(&line->tiles[LENGTH-2], stalagmite);
+    if(direction){
+        clone(&line->tiles[LENGTH-1], stalagmite);
+
+    } else {
+        clone(&line->tiles[0], stalagmite);
+    }
+    pos++;
+    Mob* clever = clone_mob(lever,(LENGTH-2)/2,HEIGTH+pos,speed,max_action_delay);
+    clever->memory__y = (HEIGTH + pos -1)*32;
+    clever->memory__x = (init_x)*32;
+    game->projectile = list_append(game->projectile, clever);
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    if(!direction){
+        clone(&line->tiles[LENGTH-1], cave);
+
+    } else {
+        clone(&line->tiles[0], cave);
+    }
+    clone(&line->tiles[(LENGTH-2)/2], _lever);
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    proba_change_trap(game);
+
 }
 
-void generator_pebble(Game *game){
-    // explicite
-    int nb_line = rand()%2+1;
-    Tile tile=cave;
-    for(int i = 0 ; i < 2*nb_line ; i+=2){
-        int direction = rand()%2;
-        int speed = rand()%5 +1;
-        int nb_pebble;
-        if(speed==6){
-            nb_pebble = rand()%4 + 2;
-        } else if(speed==1){
-            nb_pebble = rand()%3 +1;
-        } else {
-            nb_pebble = rand()%4 + 1;
-        }
-        if(direction == 0){
-            add_pebble(game, pebble_right,tile,i,speed,nb_pebble);
-        } else {
-            add_pebble(game,pebble_left,tile,i,speed,nb_pebble);
-        }
+//ROOMs Generator 
+
+void generator_room_0(Game* game){
+    //Première ligne blocante
+    int direction = rand()%2;
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
     }
-    proba_change_pebble(game, nb_line);
+    clone(&line->tiles[(LENGTH-1)/2], cave);
+    clone(&line->tiles[(LENGTH-1)/2 +1], cave);
+    //2nd ligne libre
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    //3ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*2], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*4], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*7], stalagmite);
+    //4ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*1], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*2], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*4], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*5], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*7], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*8], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*9], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*10], stalagmite);
+    //5ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    //6ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[rand()%(LENGTH)], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH)], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH)], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH)], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH)], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH)], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH)], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH)], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH)], stalagmite);
+    //Dernière ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+
+}
+
+void generator_room_1(Game* game){
+    //Première ligne blocante
+    int direction = rand()%2;
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[(LENGTH-1)/2], cave);
+    clone(&line->tiles[(LENGTH-1)/2 +1], cave);
+    //2nd ligne libre
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*4], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*7], stalagmite);
+    //3ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*1], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*4], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*7], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*8], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*9], stalagmite);
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*10], stalagmite);
+    //4ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[(1-direction)*(LENGTH-1) + (-1 + 2*direction)*1], stalagmite);
+    //5ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[(1-direction)*(LENGTH-1)], cave);
+    //6ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[rand()%(LENGTH-2)+1], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH-2)+1], stalagmite);
+    clone(&line->tiles[rand()%(LENGTH-2)+1], stalagmite);
+    //Dernière ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+
+}
+
+void generator_room_c0(Game* game){
+    //Première ligne blocante
+    int direction = rand()%2;
+    add_buffer_line(game->carte);
+    Line* line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[(LENGTH-1)/2], cave);
+    clone(&line->tiles[(LENGTH-1)/2 +1], cave);
+    //2nd ligne libre
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    //3ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[1], stalagmite);
+    clone(&line->tiles[2], stalagmite);
+    clone(&line->tiles[3], stalagmite);
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[9], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    //4ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[1], stalagmite);
+    clone(&line->tiles[2], stalagmite);
+    clone(&line->tiles[3], stalagmite);
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[9], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+    clone(&line->tiles[6], stalagmite);
+    //5ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[2], stalagmite);
+    clone(&line->tiles[9], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+    clone(&line->tiles[6], stalagmite);
+    //6ème ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[1],  cave);
+    clone(&line->tiles[2],  cave);
+    clone(&line->tiles[3],  cave);
+    clone(&line->tiles[8],  cave);
+    clone(&line->tiles[9],  cave);
+    clone(&line->tiles[10], cave);
+    //Dernière ligne 
+    add_buffer_line(game->carte);
+    line = game->carte->head_buffer;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+
 }
 
 void proba_change_babel(Game* game){
-    *((game->proba)+STONE) += ((*((game->proba)+CAVE))/2) ;
-    *((game->proba)+MAGE) += ((*((game->proba)+CAVE))/2)+1;
-    *((game->proba)+STONE) += ((*((game->proba)+CULTIST))/2) ;
-    *((game->proba)+MAGE) += ((*((game->proba)+CULTIST))/2)+1;
-    *((game->proba)+STONE) += ((*((game->proba)+BABEL))/2) ;
-    *((game->proba)+MAGE) += ((*((game->proba)+BABEL))/2)+1;
-    *((game->proba)+CULTIST) = 0 ;
-    *((game->proba)+BABEL) = 0 ;
-    *((game->proba)+CAVE) = 0 ;
-    *((game->proba)+STONE) += check_percent(game, CAVE, BABEL);
+    int proba_change = 13 + rand()%21;
+    if(*((game->proba)+BABEL) <= proba_change){
+        *((game->proba)+MAGE) += ((*((game->proba)+BABEL)))/3 ;
+        *((game->proba)+CULTIST) += ((*((game->proba)+BABEL)))/3 ;
+        *((game->proba)+TRAP) += ((*((game->proba)+BABEL)))/3 ;
+        *((game->proba)+BABEL) = 0;
+    } else {
+        *((game->proba)+BABEL) -= proba_change ;
+        *((game->proba)+MAGE) += proba_change/3 ;
+        *((game->proba)+CULTIST) += proba_change/3 ;
+        *((game->proba)+TRAP) += proba_change/3 ;
+    }
+    *((game->proba)+BABEL) += check_percent(game, CULTIST, TRAP);
 
 }
 
-void generator_babel(Game *game){
-    int type=rand()%4;
-    int sens=rand()%2;
-    int pos_b=rand()%(LENGTH-5);
-    for (int i=0;i<4;i++) {
-        add_buffer_line(game->carte);
-        Line* line = game->carte->head_buffer;
-        for(int j = 0; j<LENGTH; j++){
-            clone(&line->tiles[j], cave);
-            if(j<pos_b ||j>pos_b+4){
-                clone(&line->tiles[j], stalagmite);
-            }
-            else {
-                switch (type){
-                case 0:
-                    if (i==1){
-                        if (j==1+pos_b ||j==3+pos_b){
-                            clone(&line->tiles[j], stalagmite);
-                        }
-                    }
-                    if (i==3){
-                        if (j==0+pos_b ||j==2+pos_b||j==4+pos_b){
-                            clone(&line->tiles[j], stalagmite);
-                        }
-                    }
-                    break;
-                case 1:
-                    if (i==1){
-                        if (j==2+pos_b){
-                            clone(&line->tiles[j], stalagmite);
-                        }
-                    }
-                    if (i==3){
-                        if (j==0+pos_b ||j==4+pos_b){
-                            clone(&line->tiles[j], stalagmite);
-                        }
-                    }
-                    // if (i==4){
-                    //     if (j==1+pos_b ||j==3+pos_b){
-                    //         clone(&line->tiles[j], stalagmite);
-                    //     }
-                    // }
-                    break;
-                case 2:
-                    if (i==0){
-                        if (j==0+pos_b ||j==4+pos_b){
-                            clone(&line->tiles[j], stalagmite);
-                        }
-                    }
-                    // if (i==4){
-                    //     if (j==1+pos_b ||j==2+pos_b||j==3+pos_b){
-                    //         clone(&line->tiles[j], stalagmite);
-                    //     }
-                    // }
-                    break;
-                case 3:
-                    if (i==2){
-                        if (j==0+pos_b ||j==4+pos_b){
-                            clone(&line->tiles[j], stalagmite);
-                        }
-                    }
-                    if (i==3){
-                        if (j==1+pos_b ||j==3+pos_b){
-                            clone(&line->tiles[j], stalagmite);
-                        }
-                    }
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
+void generator_babel(Game* game){
+    int speed = rand()%4+3;
+    int max_action_delay = rand()%9 + 2 ;
+    int room = rand()%5;
+    switch(room){
+        case 0:
+        case 2:
+            generator_room_0(game);
+            break;
+
+        case 1:
+        case 3:
+            generator_room_1(game);
+            break;
+
+        case 4:
+            generator_room_c0(game);
+            break;
     }
-    int speed=(rand()%3)+1;
-    switch (type) {
-            case 0:
-                if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel11, pos_b+2, HEIGTH+1,speed,16));
-                }
-                else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel12, pos_b+3, HEIGTH+2,speed,16));
-                }
-                break;
-            case 1:
-                if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel21, pos_b+1, HEIGTH+2,speed,16));
-                }
-                else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel22, pos_b+3, HEIGTH+2,speed,16));
-                }
-                break;
-            case 2:
-                if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel31, pos_b+2, HEIGTH+2,speed,16));
-                }
-                else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel32, pos_b+1, HEIGTH+1,speed,16));
-                }
-                break;
-            case 3:
-                if (sens==0){
-                    game->mobs = list_append(game->mobs, clone_mob(babel41, pos_b+1, HEIGTH+1,speed,16));
-                }
-                else{
-                    game->mobs = list_append(game->mobs, clone_mob(babel42, pos_b+3, HEIGTH+1,speed,16));
-                }
-                break;
-            default:
-                break;
-    }
+    Mob * bebert = clone_mob(babel, 5, HEIGTH+(4), speed, max_action_delay);
+    bebert -> memory__y = (HEIGTH+(6))*32;
+    game->mobs = list_append(game->mobs, bebert);
     proba_change_babel(game);
+}
+
+void proba_change_cultist(Game* game){
+    int proba_change = 10 + rand()%12;
+    if(*((game->proba)+CULTIST) <= proba_change){
+        *((game->proba)+MAGE) += ((*((game->proba)+CULTIST)))/3 ;
+        *((game->proba)+BABEL) += ((*((game->proba)+CULTIST)))/3 ;
+        *((game->proba)+TRAP) += ((*((game->proba)+CULTIST)))/3 ;
+        *((game->proba)+CULTIST) = 0;
+    } else {
+        *((game->proba)+CULTIST) -= proba_change ;
+        *((game->proba)+MAGE) += proba_change/3 ;
+        *((game->proba)+BABEL) += proba_change/3 ;
+        *((game->proba)+TRAP) += proba_change/3;
+    }
+    *((game->proba)+CULTIST) += check_percent(game, CULTIST, TRAP);
+}
+
+void generator_cultist(Game* game){
+    int speed = rand()%3+1;
+    int direction = rand()%2;
+    int nb_cultisto = 1; //rand()%4+1;
+    generator_room_c0(game);
+    Mob* cultisto;
+    for(int nb = 0; nb < nb_cultisto;nb++){
+         cultisto = clone_mob(cultist, 2, HEIGTH+(5), speed, 0);
+         cultisto->offset_y = 2 + direction;
+         for(int i = 0;i<rand()%17;i++){
+             (cultisto->path)(cultisto,game->joueur);
+         }
+         game->mobs = list_append(game->mobs, cultisto);
+    }
+    direction = rand()%2;
+    nb_cultisto = 1; //rand()%4+1;
+    for(int nb = 0; nb < nb_cultisto;nb++){
+         cultisto = clone_mob(cultist, 9, HEIGTH+(5), speed, 0);
+         cultisto->offset_y = 2 + direction;
+         for(int i = 0;i<rand()%17;i++){
+             (cultisto->path)(cultisto,game->joueur);
+         }
+         game->mobs = list_append(game->mobs, cultisto);
+    }
+    proba_change_cultist(game);
 }
 //NEW_GENERATOR//
 
@@ -1245,7 +1806,7 @@ void generator_f_maw(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_danger = rand()%(LENGTH/2)+3;
+    int nb_danger = rand()%(LENGTH/2-2)+2;
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }
@@ -1279,7 +1840,7 @@ void generator_f_spike(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_spikes = rand()%(LENGTH/2)+5;
+    int nb_spikes = rand()%(LENGTH/2)+3;
     for(int i = 0; i<nb_spikes; i++){
         int pos = rand()%LENGTH;
         if (rand()%3){
@@ -1288,7 +1849,7 @@ void generator_f_spike(Game*game){
             game->mobs = list_append(game->mobs, clone_mob(spike_trap, pos, HEIGTH,(rand()%3+3)*6,0));
         }
     }
-    int nb_shifts = rand()%7+2;
+    int nb_shifts = rand()%4+2;
     int speed=rand()%4;
     if (rand()%2){
         for(int i = 0; i <nb_shifts; i++){
@@ -1332,7 +1893,7 @@ void add_shooter(Game *game, int pos){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_danger = 4;
+    int nb_danger = 3;
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }
@@ -1513,7 +2074,7 @@ void generator_barrage(Game*game){
                 for(int i = 0; i<LENGTH; i++){
                     clone(&line->tiles[i], Flesh);
                 }
-                int nb_danger = rand()%(LENGTH/2)+3;
+                int nb_danger = rand()%(LENGTH/2-2)+1;
                 for(int i = 0; i<nb_danger; i++){
                     clone(&line->tiles[rand()%LENGTH], Maw);
                 }
@@ -1528,7 +2089,7 @@ void generator_barrage(Game*game){
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Flesh);
         }
-        int nb_danger = rand()%(LENGTH/2-1);
+        int nb_danger = rand()%(LENGTH/2-3);
         for(int i = 0; i<nb_danger; i++){
             clone(&line->tiles[rand()%LENGTH], Maw);
         }    
@@ -1537,7 +2098,7 @@ void generator_barrage(Game*game){
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Flesh);
         }
-        nb_danger = rand()%(LENGTH/2)+1;
+        nb_danger = rand()%(LENGTH/2-3);
         for(int i = 0; i<nb_danger; i++){
             clone(&line->tiles[rand()%LENGTH], Maw);
         }    
@@ -1935,9 +2496,12 @@ bool use_power(Game* game){
             game->joueur->character_delay = game->joueur->character_max_delay;
             return true;
             break;
-            
 
+        default:
+            return false;
+            
     }
+    return false;
 }
 
 void to_norm(Game* game){
@@ -1954,7 +2518,7 @@ void to_norm(Game* game){
 
             case OOGWAAY:
                 switch(game->joueur->offset_y){
-                case 0:
+                case 0 :
                 case 1 :
                     game->joueur->_x += ((2*(rand()%2)) -1) * 16;
                     break;
@@ -2058,21 +2622,26 @@ void update_game(Game* game){
     //SDL_Delay(1000);
     if(game->score%(game->until_next) == 0){
         game->score++;
-        game->biome++;
+        if(game->biome != NB_BIOME-1){
+            game->biome++;
+        }
+        else{
+            game->biome = CROSSY_ROAD;
+        }
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 10;
+            game->until_next = 50;
             break;
 
             case HARD_CROSSY_ROAD:
             proba_change_game(game, BUSHES);
-            game->until_next = 10;
+            game->until_next = 50;
             break;
 
             case FLAMING_MANOR:
             proba_change_game(game, ENTRANCE);
-            game->until_next = 10;
+            game->until_next = 50;
             break;
 
             case CULTIST_CAVE:

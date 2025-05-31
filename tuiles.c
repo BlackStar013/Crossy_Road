@@ -77,3 +77,5 @@ const Tile Maw= {false,true,_MAW};
 const Tile Shooter_block_right= {true,false,_SHOOTER_BLOCK_RIGHT};
 const Tile Shooter_block_left= {true,false,_SHOOTER_BLOCK_LEFT};
 const Tile transition_finale= {false,false,_TRANSITION_HEART};
+
+const Tile _lever = {true,false,_LEVER};

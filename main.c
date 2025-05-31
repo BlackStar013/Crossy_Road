@@ -12,6 +12,7 @@
 
 
 //Global variable
+#define IA_t true
 
 bool emoji = false;
 int character = KAIRON;
@@ -39,7 +40,7 @@ enum COLORS {
     ON_FLESH,
     ON_FLESH_EVIL,
     ON_ACID,
-    TRAP,
+    //TRAP,
     NB_COLOR
 };
 
@@ -579,73 +580,7 @@ void draw_mob(Mob* mob){
             } 
             break;
 
-         case PEBBLE :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_CAVE_EVIL));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                        if(i){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,')');
-                        } else {
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'(');
-                        }
-                    }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_CAVE_EVIL));
-            } 
-            break;
-        case SHIFT :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_FLESH));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                        mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'-');
-                    }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_FLESH));
-            } 
-            break;
-        case EYE://TODO
-        case EYEWALL://TODO
-        case SPIKE://TODO
-        case BONESHOOTER :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_FLESH));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                        mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'#');
-                    }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_FLESH));
-            } 
-            break;
-        case BONE :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_ACID));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                        mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'+');
-                    }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_ACID));
-            } 
-            break;
+
     }
 
 
@@ -667,6 +602,54 @@ void draw_projectile(Mob* mob){
             }
             if(hascolor){
                 attroff(COLOR_PAIR(ON_CAVE_EVIL));
+            } 
+            break;
+        
+        case PEBBLE :
+            if(hascolor){
+                attron(COLOR_PAIR(ON_CAVE_EVIL));
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                        if(i){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,')');
+                        } else {
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'(');
+                        }
+                    }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_CAVE_EVIL));
+            } 
+            break;
+
+        case LEVER :
+            if(hascolor){
+                if(mob->offset_x ==1){
+                    attron(COLOR_PAIR(ON_CAVE_EVIL));
+                }else {
+                    attron(COLOR_PAIR(ON_CAVE));
+                }
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                        if(mob->offset_x ==1){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'\\');
+                        } else {
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'/');
+                        }
+                    }
+                }
+            }
+            if(hascolor){
+                if(mob->offset_x ==1){
+                    attroff(COLOR_PAIR(ON_CAVE_EVIL));
+                }else {
+                    attroff(COLOR_PAIR(ON_CAVE));
+                }
             } 
             break;
         
@@ -966,7 +949,30 @@ int main(void){
                 update_game(game);
                 draw_all(game);
                 ch = getch();
-                if((ch == KEY_UP) || (ch == 'z') || (ch == 'Z')){
+                if(IA_t){
+                    if(game->joueur->delai){
+                        game->joueur->delai--;
+                    }else{
+                        int directive = eval(game);
+                        if(directive == 0){
+                            if(move_up(game)&&game->joueur->_y_dest>=3*32){
+                                switch_game(game);
+                                game->mobs = destroy_liste_mob_from(-1, game->mobs);
+                                game->exp = destroy_liste_mob_from(-1, game->exp);
+                                game->projectile = destroy_liste_mob_from(-2*HEIGTH, game->projectile);
+                                destroy_tail_buffer(game->carte);
+                            }
+                        }else if(directive == 1){
+                            move_right(game);
+                        }else if(directive == 2){
+                            move_down(game);
+                        }else if(directive == 3){
+                            move_left(game);
+                        }
+                        game->joueur->delai = DELAI;
+                    }
+                }else{
+                    if((ch == KEY_UP) || (ch == 'z') || (ch == 'Z')){
                         // si le joueur avance de plus de 3 cases, on avance la carte, sinon c'est qu'il avait reculé donc on avance pas toute la map
                         if(move_up(game)&&game->joueur->_y_dest>=3*32){
                             switch_game(game);
@@ -989,6 +995,7 @@ int main(void){
                     }else if(ch == ' '){
                         use_power(game);
                     }
+                }
 
             }
             clear();

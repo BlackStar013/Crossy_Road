@@ -52,8 +52,8 @@ SDL_Surface** initSurfaceArrayMap(void){
             surfaceArrayMap[i] = IMG_Load("sprites/MurSecret.png");
         }else if(i==_DOOR){   
             surfaceArrayMap[i] = IMG_Load("sprites/TransitionGrotte.png");
-        }else if(i==_WATER_MIDDLE){
-            surfaceArrayMap[i] = IMG_Load("sprites/Eaumilieu.png");
+        }else if(i==_LEVER){   
+            surfaceArrayMap[i] = IMG_Load("sprites/GrotteAvecLevier.png");
         }else if(i==_FLESH){
             surfaceArrayMap[i] = IMG_Load("sprites/Chair.png");
         }else if(i==_ACID_MIDDLE){
@@ -72,6 +72,8 @@ SDL_Surface** initSurfaceArrayMap(void){
             surfaceArrayMap[i] = IMG_Load("sprites/ShooterDestroyedRight.png");
         }else if(i==_TRANSITION_HEART){
             surfaceArrayMap[i] = IMG_Load("sprites/TransitionCoeur.png");
+         }else{ //if(i==_WATER_MIDDLE){
+            surfaceArrayMap[i] = IMG_Load("sprites/Eaumilieu.png");
         }
     }
     return surfaceArrayMap;
@@ -103,8 +105,6 @@ SDL_Surface** initSurfaceArrayMob(void){
             surfaceArrayMob[i] = IMG_Load("sprites/Cultiste.png");
         }else if(i==HIGHCULTIST){   
             surfaceArrayMob[i] = IMG_Load("sprites/HautCultiste.png");
-        }else if(i==PEBBLE){   
-            surfaceArrayMob[i] = IMG_Load("sprites/GrosRocher.png");
         }else if(i==BEBERT){   
             surfaceArrayMob[i] = IMG_Load("sprites/Babelien.png");
         }else if(i==SPIKE){   
@@ -163,6 +163,10 @@ SDL_Surface** initSurfaceArrayProjectile(void){
             surfaceArrayProjectile[i] = IMG_Load("sprites/ProjectileMaudit.png");
         }else if(i==FIRE_MOB){
             surfaceArrayProjectile[i] = IMG_Load("sprites/FEU.png");
+        }else if(i==PEBBLE){   
+            surfaceArrayProjectile[i] = IMG_Load("sprites/GrosRocher.png");
+        }else if(i==LEVER){   
+            surfaceArrayProjectile[i] = IMG_Load("sprites/Lever.png");
         }else if(i==CANON_BALL){
             surfaceArrayProjectile[i] = IMG_Load("sprites/Boulet.png");
         }else if(i==ARROW_KABI){

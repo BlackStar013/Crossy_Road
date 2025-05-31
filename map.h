@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdio.h>
 #include "tuiles.h"
 
 typedef struct _Line{
@@ -39,14 +40,14 @@ typedef struct _Player{
 }Player;
 
 enum Personnages {
-    KAIRON,
-    SNITCH,
+    LEDE,
     AESIR,
-    KABI,
-    OOGWAAY,
-    JOLINAR,
+    KAIRON,
     RANTON,
-    DEDE,
+    JOLINAR,
+    SNITCH,
+    OOGWAAY,
+    KABI,
     NB_PERSO
 };
 
@@ -59,6 +60,8 @@ Map* create_empty_map(void); //Done
 bool carte_vide(Map *map); //Done
 Tile tile_map(Map *carte,int x,int y); //Elle renvoie qu'elle est la tile (x,y) , done
 void switch_map(Map *carte);
+
+void updateLocks(int* unlocked, int nb_exp);
 
 Player* initialise_player(int, int tot_exp);
 
