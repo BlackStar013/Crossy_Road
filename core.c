@@ -582,7 +582,7 @@ void proba_change_fireline(Game *game, int nb_line){
         *((game->proba)+FIRELINE) = 0 ;
     } else {
         *((game->proba)+FIRELINE) -= proba_change ;
-        *((game->proba)+FIRE) += proba_change ;
+        *((game->proba)+FIRE) += proba_change/2 ;
         *((game->proba)+FIRE_PATROL) += proba_change/2 ;
     }
     *((game->proba)+FIRE_PATROL) += check_percent(game, FIRELINE, FIRE);
@@ -592,7 +592,7 @@ void generator_fireline(Game *game){
     // explicite
     int direction = rand()%2;
     int where_enter = direction*(LENGTH-1);
-    int nb_inside = rand()%2+2;
+    int nb_inside = rand()%2+1;
     int pos = 0;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
@@ -1320,77 +1320,249 @@ void generator_room_1(Game* game){
 
 }
 
+
 void generator_room_c0(Game* game){
     //Première ligne blocante
-    int direction = rand()%2;
-    add_buffer_line(game->carte);
-    Line* line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+    Line* line = game->carte->head_map->prev;
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], stalagmite);
     }
     clone(&line->tiles[(LENGTH-1)/2], cave);
-    clone(&line->tiles[(LENGTH-1)/2 +1], cave);
     //2nd ligne libre
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
+    line = line->prev;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], cave);
     }
     //3ème ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+        line = line->prev;
+
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], cave);
     }
     clone(&line->tiles[1], stalagmite);
     clone(&line->tiles[2], stalagmite);
     clone(&line->tiles[3], stalagmite);
-    clone(&line->tiles[8], stalagmite);
-    clone(&line->tiles[9], stalagmite);
-    clone(&line->tiles[10], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+
     //4ème ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+        line = line->prev;
+
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], cave);
     }
     clone(&line->tiles[1], stalagmite);
     clone(&line->tiles[2], stalagmite);
     clone(&line->tiles[3], stalagmite);
-    clone(&line->tiles[8], stalagmite);
-    clone(&line->tiles[9], stalagmite);
-    clone(&line->tiles[10], stalagmite);
     clone(&line->tiles[5], stalagmite);
-    clone(&line->tiles[6], stalagmite);
     //5ème ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], cave);
     }
     clone(&line->tiles[2], stalagmite);
-    clone(&line->tiles[9], stalagmite);
     clone(&line->tiles[5], stalagmite);
-    clone(&line->tiles[6], stalagmite);
     //6ème ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], stalagmite);
     }
     clone(&line->tiles[1],  cave);
     clone(&line->tiles[2],  cave);
     clone(&line->tiles[3],  cave);
+    //Dernière ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+}
+
+void generator_room_c1(Game* game){
+    //Première ligne blocante
+    Line* line = game->carte->head_map->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[0], cave);
+    //2nd ligne libre
+    line = line->prev;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[5], stalagmite);
+    //3ème ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[1], stalagmite);
+    clone(&line->tiles[3], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+    //4ème ligne 
+        line = line->prev;
+
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[1], stalagmite);
+    clone(&line->tiles[3], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+    //5ème ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[3], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+    //6ème ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[0],  stalagmite);
+    clone(&line->tiles[1],  stalagmite);
+    clone(&line->tiles[5],  stalagmite);
+    //Dernière ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+
+}
+
+void generator_room_s0(Game* game){
+    //Première ligne blocante
+    Line* line = game->carte->head_map->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[LENGTH/2], cave);
+    //2nd ligne libre
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    //3ème ligne 
+        line = line->prev;
+
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[9], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    clone(&line->tiles[6], stalagmite);
+
+    //4ème ligne 
+        line = line->prev;
+
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[9], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    clone(&line->tiles[6], stalagmite);
+    //5ème ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[9], stalagmite);
+    clone(&line->tiles[6], stalagmite);
+    //6ème ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
     clone(&line->tiles[8],  cave);
     clone(&line->tiles[9],  cave);
     clone(&line->tiles[10], cave);
     //Dernière ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+}
+
+void generator_room_s1(Game* game){
+    //Première ligne blocante
+    Line* line = game->carte->head_map->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[LENGTH-1], cave);
+    //2nd ligne libre
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6], stalagmite);
+    //3ème ligne 
+        line = line->prev;
+
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6], stalagmite);
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    //4ème ligne 
+        line = line->prev;
+
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6], stalagmite);
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    //5ème ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6], stalagmite);
+    clone(&line->tiles[8], stalagmite);
+    //6ème ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6],  stalagmite);
+    clone(&line->tiles[10],  stalagmite);
+    clone(&line->tiles[11], stalagmite);
+    //Dernière ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
         clone(&line->tiles[i], cave);
     }
 
+}
+
+
+
+
+void generator_room_cultist(Game* game, int c, int s){
+    for(int i = 0; i<7; i++){
+        add_buffer_line(game->carte);
+    }
+    switch(c){
+        case 0:
+            generator_room_c0(game);
+            break;
+
+        case 1:
+            generator_room_c1(game);
+            break;
+    }
+    switch(s){
+        case 0:
+            generator_room_s0(game);
+            break;
+
+        case 1:
+            generator_room_s1(game);
+            break;
+    }
 }
 
 void proba_change_babel(Game* game){
@@ -1452,26 +1624,91 @@ void proba_change_cultist(Game* game){
 }
 
 void generator_cultist(Game* game){
+    int c = rand()%2;
+    int s = rand()%2;
+    int tour_max;
+    int init_x;
+    int init_y;
+    int nb_tour;
+    generator_room_cultist(game, c, s);
+    Mob* cultisto;
+    switch(c){
+        case 0:
+            tour_max = 15;
+            init_x = 2;
+            init_y = HEIGTH+5;
+            break;
+
+        case 1:
+            tour_max = 22;
+            init_x = 3;
+            init_y = HEIGTH + 5;
+            break;
+    }
     int speed = rand()%3+1;
     int direction = rand()%2;
-    int nb_cultisto = 1; //rand()%4+1;
-    generator_room_c0(game);
-    Mob* cultisto;
+    int nb_cultisto = rand()%3+2;
+        int init = rand()%tour_max;
     for(int nb = 0; nb < nb_cultisto;nb++){
-         cultisto = clone_mob(cultist, 2, HEIGTH+(5), speed, 0);
+         cultisto = clone_mob(cultist, init_x, init_y, speed, c);
          cultisto->offset_y = 2 + direction;
-         for(int i = 0;i<rand()%17;i++){
-             (cultisto->path)(cultisto,game->joueur);
+         switch(nb){
+            case 0:
+                nb_tour = init;
+                break;
+
+            case 1:
+                nb_tour = (tour_max)/2 + init + rand()%3;
+                break;
+
+            default:
+                nb_tour = rand()%tour_max;
+                break;
+         }
+         for(int i = 0;i<nb_tour;i++){
+            for(int i = 0; i<16;i++){
+                cultisto->delay = 0;
+                (cultisto->path)(cultisto,game->joueur);
+            }
          }
          game->mobs = list_append(game->mobs, cultisto);
     }
+    switch(s){
+        case 0:
+            tour_max = 15;
+            init_x = 9;
+            init_y = HEIGTH+5;
+            break;
+
+        case 1:
+            tour_max = 22;
+            init_x = 8;
+            init_y = HEIGTH + 5;
+            break;
+    }
     direction = rand()%2;
-    nb_cultisto = 1; //rand()%4+1;
+    nb_cultisto = rand()%3+2;
+    init = rand()%tour_max;
     for(int nb = 0; nb < nb_cultisto;nb++){
-         cultisto = clone_mob(cultist, 9, HEIGTH+(5), speed, 0);
+         cultisto = clone_mob(cultist, init_x, init_y, speed, s);
          cultisto->offset_y = 2 + direction;
-         for(int i = 0;i<rand()%17;i++){
-             (cultisto->path)(cultisto,game->joueur);
+         cultisto->action_delay=0;
+        switch(nb){
+            case 0:
+                nb_tour = init;
+                break;
+            case 1:
+                nb_tour = (tour_max)/2 + init + rand()%3;
+                break;
+            default:
+                nb_tour = rand()%tour_max;
+                break;
+        }  
+         for(int i = 0;i<(nb_tour);i++){
+             for(int j = 0; j<16;j++){
+                cultisto->delay = 0;
+                (cultisto->path)(cultisto,game->joueur);
+            }
          }
          game->mobs = list_append(game->mobs, cultisto);
     }

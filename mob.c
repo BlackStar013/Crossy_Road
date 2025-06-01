@@ -2735,8 +2735,8 @@ const Mob pebble_left = {2,2,true,0,0,0,0,0,PEBBLE,0,1,detect_player_no_moving,0
 const Mob pebble_right = {2,2,true,0,0,0,0,0,PEBBLE,0,0,detect_player_no_moving,0,0,0,0,0,0}; 
 
 void go_right(Mob* mob){
-    mob->_x += 2;
-    if(!((mob->_x - mob-> memory__x)%4)){
+    mob->_x += 3;
+    if(!((mob->_x - mob-> memory__x)%6)){
         mob->offset_x++;
         mob->offset_x%= 4;
     }
@@ -2744,8 +2744,8 @@ void go_right(Mob* mob){
 }
 
 void go_left(Mob* mob){
-    mob->_x -= 2;
-    if(!((mob->_x - mob-> memory__x)%4)){
+    mob->_x -= 3;
+    if(!((mob->_x - mob-> memory__x)%6)){
         mob->offset_x++;
         mob->offset_x%= 4;
     }
@@ -2753,8 +2753,8 @@ void go_left(Mob* mob){
 }
 
 void go_up(Mob* mob){
-    mob->_y += 2;
-    if(!((mob->_y - mob-> memory__y)%4)){
+    mob->_y += 3;
+    if(!((mob->_y - mob-> memory__y)%6)){
         mob->offset_x++;
         mob->offset_x%= 4;
     }
@@ -2762,8 +2762,8 @@ void go_up(Mob* mob){
 }
 
 void go_down(Mob* mob){
-    mob->_y -= 2;
-    if(!((mob->_y - mob-> memory__y)%4)){
+    mob->_y -= 3;
+    if(!((mob->_y - mob-> memory__y)%6)){
         mob->offset_x++;
         mob->offset_x%= 4;
     }
@@ -3030,7 +3030,7 @@ void chaos(Mob* mob, Player* player){
     }
 }
 
-void patrol_c0(Mob* mob){
+void patrol_0(Mob* mob){
     //printf("%d\n",mob->_y - mob->memory__y );
     switch(mob->offset_y){
         case 0:
@@ -3147,12 +3147,371 @@ void patrol_c0(Mob* mob){
     }
 }
 
+void patrol_1r(Mob* mob){
+    //printf("%d\n",mob->_y - mob->memory__y );
+    switch(mob->offset_y){
+        case 0:
+            if(mob->_y - mob->memory__y <= -4*32  ){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_left(mob);
+                } else if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)) {
+                    go_right(mob);
+                } else {
+                    go_down(mob);
+                }
+            } else if ((mob->_y - mob->memory__y >= -32-2)&&(mob->_y - mob->memory__y <= -32+2)){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_down(mob);
+                    mob->action_value = 1;
+                } else {
+                    go_down(mob);
+                }
+            } else {
+                go_down(mob);
+            }
+            break;
+
+        case 1:
+            if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)){
+                if(mob->_x - mob->memory__x < 0 ){
+                    go_right(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_up(mob);
+            }
+            break;
+
+        case 2:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_up(mob);
+                    mob->action_value = 1;
+                } else {
+                    go_right(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_down(mob);
+                } else {
+                    go_right(mob);
+                }
+            } else {
+                go_right(mob);
+            }
+            break;
+
+        case 3:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_up(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_down(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_left(mob);
+            }
+            break;
+
+
+    }
+}
+
+void patrol_1rbis(Mob* mob){
+    //printf("%d\n",mob->_y - mob->memory__y );
+    mob->memory__x += 64;
+    mob->memory__y -= 32;
+    switch(mob->offset_y){
+        case 0:
+            if(mob->_y - mob->memory__y <= -3*32  ){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_left(mob);
+                } else if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)) {
+                    go_right(mob);
+                } else {
+                    go_down(mob);
+                }
+            } else {
+                go_down(mob);
+            }
+            break;
+
+        case 1:
+            if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)){
+                if(mob->_x - mob->memory__x < 0 ){
+                    go_right(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_up(mob);
+            }
+            break;
+
+        case 2:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_up(mob);
+                } else {
+                    go_right(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_down(mob);
+                } else {
+                    go_right(mob);
+                }
+            } else {
+                go_right(mob);
+            }
+            break;
+
+        case 3:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_up(mob);
+                    mob->action_value = 0;
+                } else {
+                    go_left(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_down(mob);
+                    mob->action_value = 0;
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_left(mob);
+            }
+            break;
+
+
+    }
+    mob->memory__x -= 64;
+    mob->memory__y += 32;
+}
+
+void patrol_1l(Mob* mob){
+    //printf("%d\n",mob->_y - mob->memory__y );
+    switch(mob->offset_y){
+        case 0:
+            if(mob->_y - mob->memory__y <= -4*32  ){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_left(mob);
+                } else if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)) {
+                    go_right(mob);
+                } else {
+                    go_down(mob);
+                }
+            } else if ((mob->_y - mob->memory__y >= -32-2)&&(mob->_y - mob->memory__y <= -32+2)){
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_down(mob);
+                    mob->action_value = 1;
+                } else {
+                    go_down(mob);
+                }
+            } else {
+                go_down(mob);
+            }
+            break;
+
+        case 1:
+            if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)){
+                if(mob->_x - mob->memory__x < 0 ){
+                    go_right(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_up(mob);
+            }
+            break;
+
+        case 3:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_up(mob);
+                    mob->action_value = 1;
+                } else {
+                    go_left(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_down(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_left(mob);
+            }
+            break;
+
+        case 2:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_up(mob);
+                } else {
+                    go_right(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_down(mob);
+                } else {
+                    go_right(mob);
+                }
+            } else {
+                go_right(mob);
+            }
+            break;
+
+
+    }
+}
+
+void patrol_1lbis(Mob* mob){
+    //printf("%d\n",mob->_y - mob->memory__y );
+    mob->memory__x -= 64;
+    mob->memory__y -= 32;
+    switch(mob->offset_y){
+        case 0:
+            if(mob->_y - mob->memory__y <= -3*32  ){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_left(mob);
+                } else if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)) {
+                    go_right(mob);
+                } else {
+                    go_down(mob);
+                }
+            } else {
+                go_down(mob);
+            }
+            break;
+
+        case 1:
+            if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)){
+                if(mob->_x - mob->memory__x < 0 ){
+                    go_right(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_up(mob);
+            }
+            break;
+
+        case 3:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_up(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= -32-2)&&(mob->_x - mob->memory__x <= -32+2)){
+                    go_down(mob);
+                } else {
+                    go_left(mob);
+                }
+            } else {
+                go_left(mob);
+            }
+            break;
+
+        case 2:
+            if(mob->_y - mob->memory__y < -64 ){
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_up(mob);
+                    mob->action_value = 0;
+                } else {
+                    go_right(mob);
+                }
+            } else  if((mob->_y - mob->memory__y >= -2)&&(mob->_y - mob->memory__y <= +2)) {
+                if((mob->_x - mob->memory__x >= 32-2)&&(mob->_x - mob->memory__x <= 32+2)){
+                    go_down(mob);
+                    mob->action_value = 0;
+                } else {
+                    go_right(mob);
+                }
+            } else {
+                go_right(mob);
+            }
+            break;
+
+
+    }
+    mob->memory__x += 64;
+    mob->memory__y += 32;
+}
+
 void patrol_cultist(Mob* mob, Player* player){
     if(!mob->delay){
         mob->delay = mob->speed;
-        patrol_c0(mob);
+        switch(mob->max_action_delay){
+            case 0:
+                patrol_0(mob);
+                break;
+
+            case 1:
+                if(!mob->action_delay){
+                    if(!mob->action_value){
+                        patrol_1r(mob);
+                    } else {
+                        patrol_1rbis(mob);
+                    }
+                } else {
+                    if(!mob->action_value){
+                        patrol_1l(mob);
+                    } else {
+                        patrol_1lbis(mob);
+                    }
+                }
+                break;
+
+        }
     } else {
         mob->delay--;
+    }
+    switch(mob->offset_y){
+        case 0:
+            if(((mob->_x -16 )<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ 
+                if(((mob->_y - 16 -64) <=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + (mob->heigth - 1)*32)){
+                    mob->delay = 0;
+                }
+            }
+            break;
+
+        case 1:
+            if(((mob->_x -16 )<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + (mob->length - 1)*32)){ 
+                if(((mob->_y - 16) <=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + 64 + (mob->heigth - 1)*32)){
+                    mob->delay = 0;
+                }
+            }
+            break;
+
+        case 2:
+            if(((mob->_x -16 )<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16 + 64 + (mob->length - 1)*32)){ 
+                if(((mob->_y - 16) <=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + (mob->heigth - 1)*32)){
+                    mob->delay = 0;
+                }
+            }
+            break;
+
+        case 3:
+            if(((mob->_x -16 -64 )<=player->_x_dest)&&(player->_x_dest <= mob->_x + 16  + (mob->length - 1)*32)){ 
+                if(((mob->_y - 16) <=player->_y_dest)&&(player->_y_dest <= (mob->_y + 16) + (mob->heigth - 1)*32)){
+                    mob->delay = 0;
+                }
+            }
+            break;
+
     }
 }
 
