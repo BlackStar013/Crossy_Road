@@ -272,11 +272,13 @@ int eval(Game *game){
             Player *p2 = malloc(sizeof(Player));
             p2->_x_dest = pos_init_x;
             p2->_y_dest = pos_init_y;
+            int reculer = 2;
             Liste_Mob *liste = clone_listemob(game->mobs);
             Liste_Mob *projectiles = clone_listemob(game->projectile);
             for(int k=0; k<n; k++){
                 if(matrice_eval[PROFONDEUR/2-encours->sommet->j][PROFONDEUR/2+encours->sommet->i]->chemin[k] == 0){
                     p2->_y_dest += 32;
+                    reculer --;
                     for(int l=0; l<(DELAI+1); l++){
                         update_game_IA(liste, projectiles, p2);
                     }
@@ -416,7 +418,7 @@ int eval(Game *game){
             bouge = true;
             p2->_x_dest = pos_encours_x;
             p2->_y_dest = pos_encours_y;
-            if(!IS_BLOCK(tile_map(game->carte, to_nb_IA(p2->_x_dest), to_nb_IA(p2->_y_dest)-1)) && (encours->sommet->j)+PROFONDEUR/2 > 0){
+            if((reculer>0) && !IS_BLOCK(tile_map(game->carte, to_nb_IA(p2->_x_dest), to_nb_IA(p2->_y_dest)-1)) && (encours->sommet->j)+PROFONDEUR/2 > 0){
                 // essaie de descendre
                 move_down_IA(game->carte, p2, liste, projectiles);
                 Liste_Mob *liste_temp = clone_listemob(liste);
