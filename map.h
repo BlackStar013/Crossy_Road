@@ -51,7 +51,7 @@ enum Personnages {
     NB_PERSO
 };
 
-#define DELAI 10
+#define DELAI 5
 
 Line* create_empty_line(Line* prev, Line* next);
 

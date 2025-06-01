@@ -204,6 +204,7 @@ Point ***matrice_evaluation(void){
         evaluation[i] = malloc(PROFONDEUR*sizeof(Point));
         for(int j=0; j<PROFONDEUR; j++){
             evaluation[i][j] = create_point(-PROFONDEUR/2+j, PROFONDEUR/2-i, coef*(1 + val_absolue(PROFONDEUR/2-i) + val_absolue(PROFONDEUR/2-j)) );
+            // evaluation[i][j] = create_point(-PROFONDEUR/2+j, PROFONDEUR/2-i, (1 + val_absolue(PROFONDEUR/2-i) + val_absolue(PROFONDEUR/2-j)) );
         }
     }
     evaluation[0][PROFONDEUR/2]->val += 1;
