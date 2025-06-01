@@ -249,21 +249,21 @@ int eval(Game *game){
     File *encours = create_file(matrice_eval[PROFONDEUR/2][PROFONDEUR/2]);
     matrice_eval[PROFONDEUR/2][PROFONDEUR/2]->vu = 0;
     File *futur = NULL;
-    if(game->joueur->_x_dest/32 >= LENGTH/2){
-        matrice_eval[PROFONDEUR/2][0]->val += 1;
-        for(int i=0; i<PROFONDEUR/2; i++){
-            for(int j=0; j<PROFONDEUR; j++){
-                matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
-            }
-        }
-    }else{
-        matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val += 1;
-        for(int i=0; i<PROFONDEUR/2; i++){
-            for(int j=0; j<PROFONDEUR; j++){
-                matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val)));
-           }
-        }
-    }
+    // if(game->joueur->_x_dest/32 >= LENGTH/2){
+    //     matrice_eval[PROFONDEUR/2][0]->val += 1;
+    //     for(int i=0; i<PROFONDEUR/2; i++){
+    //         for(int j=0; j<PROFONDEUR; j++){
+    //             matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
+    //         }
+    //     }
+    // }else{
+    //     matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val += 1;
+    //     for(int i=0; i<PROFONDEUR/2; i++){
+    //         for(int j=0; j<PROFONDEUR; j++){
+    //             matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val)));
+    //        }
+    //     }
+    // }
     int n = 0;
     int pos_init_x = game->joueur->_x_dest;
     int pos_init_y = game->joueur->_y_dest;
@@ -469,16 +469,16 @@ int eval(Game *game){
         }
     }
     Point *max = NULL;
-    int val_max = -99;
+    int val_max = 0;
     for(int a=0; a<PROFONDEUR; a++){
         for(int b=0; b<PROFONDEUR; b++){
             if(matrice_eval[a][b]->vu != 99){
-                if(matrice_eval[a][b]->val > val_max){
+                if(matrice_eval[a][b]->vu > val_max){
                     max = matrice_eval[a][b];
-                    val_max = matrice_eval[a][b]->val;
+                    val_max = matrice_eval[a][b]->vu;
                 }
-            }else{
-                matrice_eval[a][b]->val = -50;
+            // }else{
+                // matrice_eval[a][b]->val = -50;
             }
         }
     }
