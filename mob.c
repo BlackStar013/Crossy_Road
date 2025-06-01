@@ -503,7 +503,6 @@ void imobilize_liste_mob_collide(Liste_Mob *liste_mob,Mob* mob){ // !! La liste 
     } else if((mob_collide_mob(liste_mob->mob,mob))){
         liste_mob->mob->path = perfectly_still;
         liste_mob->mob->delay++;
-        Mob* smoky;
         imobilize_liste_mob_collide(liste_mob->next, mob);
         return;
     } else {

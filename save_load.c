@@ -42,12 +42,3 @@ void load(int* xp, int* highscore, int* chara, int* shortmode){
     *shortmode = shortmodej->valueint;
     cJSON_Delete(json);
 }
-
-/* int main(void){
-    save(10, 200);
-    int xp;
-    int highscore;
-    load(&xp, &highscore);
-    printf("xp: %d, highscore: %d\n",xp,highscore);
-}
- */

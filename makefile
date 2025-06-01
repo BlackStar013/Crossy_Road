@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Wpedantic -std=c99 -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Wno-unused-parameter -Wno-unused-but-set-variable -Wpedantic -std=c99 -g -fsanitize=address
 
 all: clean main sdl_main test
 

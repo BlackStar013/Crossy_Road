@@ -93,13 +93,10 @@ int main(void){
     Mix_Music** musicArray = initMusicArray();
 
     int pix_defil = 0;
-    int counter = 0;
-
     SDL_Event event;
     SDL_bool quit = SDL_FALSE;
     SDL_bool main_menu = SDL_TRUE;
-    SDL_bool pause = SDL_FALSE;
-
+    
     const int desired_fps = 64;
     const int frameDelay = 1000 / desired_fps;
     int fps = 0;
@@ -227,7 +224,6 @@ int main(void){
             // printf("score :%d\n", game->score);
             if(game->joueur->_y_dest>=3*32){
                             pix_defil += 32;
-                            counter = 0;
                             switch_game(game);
                             game->mobs = destroy_liste_mob_from(-pix_defil/32-1, game->mobs);
                             game->exp = destroy_liste_mob_from(-pix_defil/32-1, game->exp);
@@ -244,8 +240,6 @@ int main(void){
                 }else{
                     pix_defil -= 4;
                 }
-            }else{
-                counter += 1;
             }
             if(!pix_defil){
                 destroy_tail_buffer(game->carte);

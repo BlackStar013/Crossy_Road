@@ -226,7 +226,7 @@ void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_
                     *quit = SDL_TRUE;
                     quit2 = SDL_TRUE;
                 }
-            }else if((pevent->key.keysym.sym == SDLK_TAB)){
+            }else if(pevent->key.keysym.sym == SDLK_TAB){
                 if(*sound){
                     Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 }
@@ -520,7 +520,7 @@ void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_
                 if(cursor == EXIT){
                     quit2 = SDL_TRUE;
                 }
-            }else if((pevent->key.keysym.sym == SDLK_TAB)){
+            }else if(pevent->key.keysym.sym == SDLK_TAB){
                 if(*sound){
                     Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 }
@@ -741,7 +741,6 @@ void displayDescMenu(int chara, int lvl, SDL_Renderer* renderer, TTF_Font* font,
 
 void Tutorial(SDL_bool* quit2, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, bool sound){
     SDL_bool quit3 = SDL_FALSE;
-    int cursor = 0;
     while(!quit3){
         displayTutorial(renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE));
         SDL_PollEvent(pevent);
@@ -766,7 +765,6 @@ void Tutorial(SDL_bool* quit2, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event
 
 void descMenu(SDL_bool* quit2, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, int chara, int lvl, bool sound){
     SDL_bool quit3 = SDL_FALSE;
-    int cursor = 0;
     while(!quit3){
         displayDescMenu(chara, lvl, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE));
         SDL_PollEvent(pevent);

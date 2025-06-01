@@ -28,8 +28,6 @@ SDL_Surface** initSurfaceArrayMap(void){
             surfaceArrayMap[i] = IMG_Load("sprites/Eaubordhaut.png");
         }else if(i==_WATER_DOWN){   
             surfaceArrayMap[i] = IMG_Load("sprites/Eaubordbas.png");
-        }else if(i==_TREE){   
-            surfaceArrayMap[i] = IMG_Load("sprites/Buisson.png");
         }else if(i==_RUINS){   
             surfaceArrayMap[i] = IMG_Load("sprites/DebrisRuines.png");
         }else if(i==_BROKENPLANKS){   

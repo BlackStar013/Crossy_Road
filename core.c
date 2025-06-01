@@ -8,7 +8,7 @@
 
 ////Partie Création d'obstacles !///
 
-bool add_exp(int x, int y, Game *game){
+void add_exp(int x, int y, Game *game){
     if(game->joueur->character_id == RANTON){
         game->exp = list_append(game->exp,clone_mob(champi, x, y, 4, 4));
     } else {
@@ -624,7 +624,6 @@ void proba_change_fireline(Game *game, int nb_line){
 void generator_fireline(Game *game){
     // explicite
     int direction = rand()%2;
-    int where_enter = direction*(LENGTH-1);
     int nb_inside = rand()%2+1;
     int pos = 0;
     add_buffer_line(game->carte);

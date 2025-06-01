@@ -275,6 +275,26 @@ void draw_background(Game *game){
                     }
                     break;
 
+                 case _MANOR_WALL :
+                        if(hascolor){
+                            attron(COLOR_PAIR(ON_CAVE));
+                        }
+                        mvaddch(i,j,'_');
+                        if(hascolor){
+                            attroff(COLOR_PAIR(ON_CAVE));
+                        }
+                    break;
+
+                 case _DOOR :
+                        if(hascolor){
+                            attron(COLOR_PAIR(ON_CAVE));
+                        }
+                        mvaddch(i,j,' ');
+                        if(hascolor){
+                            attroff(COLOR_PAIR(ON_CAVE));
+                        }
+                    break;
+
                 case _STALAGMITE :
                     if(hascolor){
                         attron(COLOR_PAIR(ON_CAVE));
@@ -284,18 +304,20 @@ void draw_background(Game *game){
                         attroff(COLOR_PAIR(ON_CAVE));
                     }
                     break;
+
                 case _TRANSITION_HEART :
                     if(hascolor){
                         attron(COLOR_PAIR(ON_CAVE));
                     }
-                    mvaddch(i,j,'*');
+                    mvaddch(i,j,' ');
                     if(hascolor){
                         attroff(COLOR_PAIR(ON_CAVE));
                     }
                     break;
+
                 case _MAW :
                     if(hascolor){
-                        attron(ON_CAVE_EVIL);
+                        attron(COLOR_PAIR(ON_CAVE_EVIL));
                     }
                     mvaddch(i,j,'0');
                     if(hascolor){
@@ -305,7 +327,7 @@ void draw_background(Game *game){
 
                 case _FLESH :
                     if(hascolor){
-                        attron(ON_CAVE);
+                        attron(COLOR_PAIR(ON_CAVE));
                     }
                     mvaddch(i,j,' ');
                     if(hascolor){
@@ -330,6 +352,16 @@ void draw_background(Game *game){
                     mvaddch(i,j,'{');
                     if(hascolor){
                         attroff(COLOR_PAIR(ON_CAVE));
+                    }
+                    break;
+
+                default:
+                    if(hascolor){
+                        attron(COLOR_PAIR(PLAYER_DEDE));
+                    }
+                    mvaddch(i,j,'?');
+                    if(hascolor){
+                        attroff(COLOR_PAIR(PLAYER_DEDE));
                     }
                     break;
 
@@ -423,6 +455,16 @@ void draw_character(Game* game){
             attron(COLOR_PAIR(PLAYER_DEDE));
             }
             mvaddch(HEIGTH - to_nb(game->joueur->_y_dest) - 1,to_nb(game->joueur->_x_dest),'$');
+            if(hascolor){
+                attroff(COLOR_PAIR(PLAYER_DEDE));
+            }
+            break;
+
+        default:
+            if(hascolor){
+                attron(COLOR_PAIR(PLAYER_DEDE));
+            }
+            mvaddch(HEIGTH - to_nb(game->joueur->_y_dest) - 1,to_nb(game->joueur->_x_dest),'?');
             if(hascolor){
                 attroff(COLOR_PAIR(PLAYER_DEDE));
             }
@@ -949,7 +991,7 @@ void draw_projectile(Mob* mob){
 
         case EYE_BLAST :
             if(hascolor){
-                if(mob->is_death){
+                if(!mob->is_death){
                     attron(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
                 } else {
                     attron(COLOR_PAIR(ON_CAVE_EVIL));
@@ -963,7 +1005,7 @@ void draw_projectile(Mob* mob){
                 }
             }
             if(hascolor){
-                if(mob->is_death){
+                if(!mob->is_death){
                     attroff(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
                 } else {
                     attroff(COLOR_PAIR(ON_CAVE_EVIL));
