@@ -250,19 +250,19 @@ int eval(Game *game){
     matrice_eval[PROFONDEUR/2][PROFONDEUR/2]->vu = 0;
     File *futur = NULL;
     if(game->joueur->_x_dest/32 >= LENGTH/2){
-        matrice_eval[PROFONDEUR/2][0]->val += 1;
-        for(int i=0; i<PROFONDEUR/2; i++){
-            for(int j=0; j<PROFONDEUR; j++){
-                matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
-            }
-        }
+        matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val -= 1;
+        // for(int i=0; i<PROFONDEUR/2; i++){
+        //     for(int j=0; j<PROFONDEUR; j++){
+        //         matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
+        //     }
+        // }
     }else{
-        matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val += 1;
-        for(int i=0; i<PROFONDEUR/2; i++){
-            for(int j=0; j<PROFONDEUR; j++){
-                matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val)));
-            }
-        }
+        matrice_eval[PROFONDEUR/2][0]->val -= 1;
+        //  for(int i=0; i<PROFONDEUR/2; i++){
+        //      for(int j=0; j<PROFONDEUR; j++){
+        //          matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val)));
+        //     }
+        //  }
     }
     int n = 0;
     int pos_init_x = game->joueur->_x_dest;
@@ -417,6 +417,7 @@ int eval(Game *game){
             p2->_x_dest = pos_encours_x;
             p2->_y_dest = pos_encours_y;
             if(!IS_BLOCK(tile_map(game->carte, to_nb_IA(p2->_x_dest), to_nb_IA(p2->_y_dest)-1)) && (encours->sommet->j)+PROFONDEUR/2 > 0){
+                // essaie de descendre
                 move_down_IA(game->carte, p2, liste, projectiles);
                 Liste_Mob *liste_temp = clone_listemob(liste);
                 Liste_Mob *projectiles_temp = clone_listemob(projectiles);
