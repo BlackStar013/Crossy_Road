@@ -246,11 +246,11 @@ SDL_Surface** initSurfaceArrayPower(void){
         }else if(i==KABI){
             surfaceArrayPower[i] = IMG_Load("sprites/ChargeKabi.png");
         }else if(i==OOGWAAY){
-            surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
+            surfaceArrayPower[i] = IMG_Load("sprites/ChargeOogway.png");
         }else if(i==RANTON){
             surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
         }else if(i==JOLINAR){
-            surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
+            surfaceArrayPower[i] = IMG_Load("sprites/ChargeJolinar.png");
         }else{
             surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
         }

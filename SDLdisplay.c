@@ -1,4 +1,5 @@
 #include "SDLdisplay.h"
+#include "map.h"
 #include "mob.h"
 #include "tuiles.h"
 
@@ -860,6 +861,7 @@ void display_power(Player* player, SDL_Renderer *renderer, SDL_Surface** surface
                 break;
 
             case KABI:
+            case JOLINAR:
                 spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
                 if(!spriteTexture){
                     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
@@ -888,6 +890,37 @@ void display_power(Player* player, SDL_Renderer *renderer, SDL_Surface** surface
                 }
                 SDL_DestroyTexture(spriteTexture);
                 break;
+
+            case OOGWAAY:
+                spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+                if(!spriteTexture){
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                    exit(-1);
+                }
+                if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                    exit(-1);
+                }
+                spriteWidth = (spriteFullWidth / 5 );
+                spriteHeight = spriteFullHeight;
+                offset_x =  ((player->character_delay*3)/player->character_max_delay) +1 ;
+                if(player->character_delay==0){
+                    offset_x = 0;
+                }
+                spriteRect.x = offset_x*spriteWidth;
+                spriteRect.y = 0;
+                spriteRect.w = spriteWidth;
+                spriteRect.h = spriteHeight;
+                destRect.x = (LENGTH*32 -2*32 - 21 )*ECHELLE;
+                destRect.y = (21)*ECHELLE;
+                destRect.w = spriteWidth*ECHELLE;
+                destRect.h = spriteHeight*ECHELLE;
+                if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+                }
+                SDL_DestroyTexture(spriteTexture);
+                break;
+                
 
             case KAIRON:
                 switch(player->character_lvl){
