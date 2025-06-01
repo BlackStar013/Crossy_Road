@@ -2203,7 +2203,7 @@ void generator_f_maw(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_danger = rand()%(LENGTH/2)+3;
+    int nb_danger = rand()%(LENGTH/2-2)+2;
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }
@@ -2237,7 +2237,7 @@ void generator_f_spike(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_spikes = rand()%(LENGTH/2)+5;
+    int nb_spikes = rand()%(LENGTH/2)+3;
     for(int i = 0; i<nb_spikes; i++){
         int pos = rand()%LENGTH;
         if (rand()%3){
@@ -2246,7 +2246,7 @@ void generator_f_spike(Game*game){
             game->mobs = list_append(game->mobs, clone_mob(spike_trap, pos, HEIGTH,(rand()%3+3)*6,0));
         }
     }
-    int nb_shifts = rand()%7+2;
+    int nb_shifts = rand()%4+2;
     int speed=rand()%4;
     if (rand()%2){
         for(int i = 0; i <nb_shifts; i++){
@@ -2290,7 +2290,7 @@ void add_shooter(Game *game, int pos){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
     }
-    int nb_danger = 4;
+    int nb_danger = 3;
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }
@@ -2471,7 +2471,7 @@ void generator_barrage(Game*game){
                 for(int i = 0; i<LENGTH; i++){
                     clone(&line->tiles[i], Flesh);
                 }
-                int nb_danger = rand()%(LENGTH/2)+3;
+                int nb_danger = rand()%(LENGTH/2-2)+1;
                 for(int i = 0; i<nb_danger; i++){
                     clone(&line->tiles[rand()%LENGTH], Maw);
                 }
@@ -2486,7 +2486,7 @@ void generator_barrage(Game*game){
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Flesh);
         }
-        int nb_danger = rand()%(LENGTH/2-1);
+        int nb_danger = rand()%(LENGTH/2-3);
         for(int i = 0; i<nb_danger; i++){
             clone(&line->tiles[rand()%LENGTH], Maw);
         }    
@@ -2495,7 +2495,7 @@ void generator_barrage(Game*game){
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Flesh);
         }
-        nb_danger = rand()%(LENGTH/2)+1;
+        nb_danger = rand()%(LENGTH/2-3);
         for(int i = 0; i<nb_danger; i++){
             clone(&line->tiles[rand()%LENGTH], Maw);
         }    
