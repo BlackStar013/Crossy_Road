@@ -208,7 +208,7 @@ int main(void){
             }
             //music player
             if(game->joueur->character_delay == 0 && !bip_done){
-                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
+                Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 bip_done = true;
             }
             if(game->joueur->character_delay != 0){
