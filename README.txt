@@ -10,4 +10,4 @@ Pour jouer au jeu:
 Controles:
     zqsd ou fléches directionneles pour les déplacements
     barre d'espace ou entrée pour confirmer les choix dans les menus
-    en version terminale, entré pour acceder au menu pause
+    en version terminale, entrée pour acceder au menu pause
