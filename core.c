@@ -2173,6 +2173,8 @@ void generator_transition_heart(Game*game){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i],transition_finale);
     }
+    add_exp((LENGTH-1)/2, HEIGTH, game);
+    add_exp((LENGTH)/2, HEIGTH, game);
     proba_change_transition_heart(game);
 }
 
@@ -2207,6 +2209,7 @@ void generator_f_maw(Game*game){
     for(int i = 0; i<nb_danger; i++){
         clone(&line->tiles[rand()%LENGTH], Maw);
     }
+    add_row_exp(game, rand()%2+1, HEIGTH,1,LENGTH-2);
     proba_change_maw(game);
 }
 
@@ -2233,6 +2236,7 @@ void proba_change_spikes(Game* game){
 
 void generator_f_spike(Game*game){
     add_buffer_line(game->carte);
+    
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
@@ -2257,6 +2261,7 @@ void generator_f_spike(Game*game){
             game->mobs = list_append(game->mobs, clone_mob(shift_right, (LENGTH/nb_shifts)*i, HEIGTH,speed,0));
         }
     }
+    add_row_exp(game, rand()%2+1, 0,1,LENGTH-2);
     proba_change_spikes(game);
 }
 
@@ -2283,6 +2288,7 @@ void proba_change_shooter(Game* game,int nb_lines){
 
 
 void add_shooter(Game *game, int pos){
+    add_row_exp(game, rand()%2+1, pos,1,LENGTH-2);
     add_buffer_line(game->carte);
     Mob *mob;
     Line *line = game->carte->head_buffer;
@@ -2366,6 +2372,9 @@ void add_bone(Game *game, Mob plank,Tile tile, int pos, int speed){
     for(int i = 0; i <= LENGTH; i++){
         int dice = rand()%100+1;
         if(dice<proba_plank){
+            if(!(rand()%13)){
+                add_exp(-1+i,HEIGTH+pos,game);
+            }
             game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed,0));
             if(plank_lenght<3){
                 proba_plank -= 10;
@@ -2451,6 +2460,7 @@ void generator_barrage(Game*game){
             break;
             case 1:
                 add_buffer_line(game->carte);
+                add_row_exp(game, rand()%2+1, cycle,1,LENGTH-2);
                 line = game->carte->head_buffer;
                 for(int i = 0; i<LENGTH; i++){
                     clone(&line->tiles[i], Flesh);
@@ -2466,6 +2476,7 @@ void generator_barrage(Game*game){
                 }
             break;
             case 2:
+                add_row_exp(game, rand()%2+1, cycle,1,LENGTH-2);
                 add_buffer_line(game->carte);
                 line = game->carte->head_buffer;
                 for(int i = 0; i<LENGTH; i++){
@@ -2489,12 +2500,14 @@ void generator_barrage(Game*game){
         int nb_danger = rand()%(LENGTH/2-3);
         for(int i = 0; i<nb_danger; i++){
             clone(&line->tiles[rand()%LENGTH], Maw);
-        }    
+        }
+        add_row_exp(game, rand()%2+1, cycle+3*i,1,LENGTH-2);
         add_buffer_line(game->carte);
         line = game->carte->head_buffer;
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Flesh);
         }
+        add_row_exp(game, rand()%2+1, cycle+3*i+1,1,LENGTH-2);
         nb_danger = rand()%(LENGTH/2-3);
         for(int i = 0; i<nb_danger; i++){
             clone(&line->tiles[rand()%LENGTH], Maw);
@@ -2504,6 +2517,7 @@ void generator_barrage(Game*game){
         for(int i = 0; i<LENGTH; i++){
             clone(&line->tiles[i], Flesh);
         }
+        add_row_exp(game, rand()%2+3*i+2, cycle,1,LENGTH-2);
         nb_danger=2;
         int x;
         int speed;
@@ -2608,6 +2622,7 @@ void proba_change_eye(Game* game){
 
 void generator_sentinel_eye(Game*game){
     add_buffer_line(game->carte);
+    add_row_exp(game, rand()%2+1, 0,1,LENGTH-2);
     Line* line = game->carte->head_buffer;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], Flesh);
