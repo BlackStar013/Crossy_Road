@@ -258,11 +258,11 @@ int eval(Game *game){
         // }
     }else{
         matrice_eval[PROFONDEUR/2][0]->val -= 1;
-        //  for(int i=0; i<PROFONDEUR/2; i++){
-        //      for(int j=0; j<PROFONDEUR; j++){
-        //          matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val)));
-        //     }
-        //  }
+        // for(int i=0; i<PROFONDEUR/2; i++){
+        //     for(int j=0; j<PROFONDEUR; j++){
+        //         matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val)));
+        //    }
+        // }
     }
     int n = 0;
     int pos_init_x = game->joueur->_x_dest;
