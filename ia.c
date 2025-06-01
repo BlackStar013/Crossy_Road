@@ -250,19 +250,19 @@ int eval(Game *game){
     matrice_eval[PROFONDEUR/2][PROFONDEUR/2]->vu = 0;
     File *futur = NULL;
     if(game->joueur->_x_dest/32 >= LENGTH/2){
-        matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val -= 1;
-        // for(int i=0; i<PROFONDEUR/2; i++){
-        //     for(int j=0; j<PROFONDEUR; j++){
-        //         matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
-        //     }
-        // }
+        matrice_eval[PROFONDEUR/2][0]->val += 1;
+        for(int i=0; i<PROFONDEUR/2; i++){
+            for(int j=0; j<PROFONDEUR; j++){
+                matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][0]->val)));
+            }
+        }
     }else{
-        matrice_eval[PROFONDEUR/2][0]->val -= 1;
-        // for(int i=0; i<PROFONDEUR/2; i++){
-        //     for(int j=0; j<PROFONDEUR; j++){
-        //         matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val)));
-        //    }
-        // }
+        matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val += 1;
+        for(int i=0; i<PROFONDEUR/2; i++){
+            for(int j=0; j<PROFONDEUR; j++){
+                matrice_eval[i][j]->val += val_absolue((matrice_eval[i][j]->val)-((matrice_eval[PROFONDEUR/2][PROFONDEUR-1]->val)));
+           }
+        }
     }
     int n = 0;
     int pos_init_x = game->joueur->_x_dest;
