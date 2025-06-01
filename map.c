@@ -105,41 +105,41 @@ void updateLocks(int* unlocked, int nb_exp){
             unlocked[i] = 0;
         }
     }
-    if(nb_exp >= 3){
+    if(nb_exp >= 15){
         unlocked[KAIRON] = 1;
     }
-    if(nb_exp >= 5){
+    if(nb_exp >= 35){
         unlocked[RANTON] = 1;
     }
-    if(nb_exp >= 7){
+    if(nb_exp >= 55){
         unlocked[KAIRON] = 2;
         unlocked[SNITCH] = 1;
     }
-    if(nb_exp >= 12){
+    if(nb_exp >= 80){
         unlocked[RANTON] = 2;
     }
-    if(nb_exp >= 20){
+    if(nb_exp >= 110){
         unlocked[JOLINAR] = 1;
     }
-    if(nb_exp >= 33){
+    if(nb_exp >= 150){
         unlocked[SNITCH] = 2;
     }
-    if(nb_exp >= 54){
+    if(nb_exp >= 210){
         unlocked[KAIRON] = 3;
     }
-    if(nb_exp >= 90){
+    if(nb_exp >= 280){
         unlocked[OOGWAAY] = 1;
     }
-    if(nb_exp >= 148){
+    if(nb_exp >= 370){
         unlocked[JOLINAR] = 2;
     }
-    if(nb_exp >= 244){
+    if(nb_exp >= 470){
         unlocked[SNITCH] = 3;
     }
-    if(nb_exp >= 403){
+    if(nb_exp >= 590){
         unlocked[RANTON] = 3;
     }
-    if(nb_exp >= 665){
+    if(nb_exp >= 710){
         unlocked[OOGWAAY] = 2;
     }
     if(nb_exp >= 1096){

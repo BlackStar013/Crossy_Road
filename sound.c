@@ -10,6 +10,9 @@ Mix_Chunk** initSoundArray(void){
         if(i==SELECT){              
             soundsArray[i] = Mix_LoadWAV("sounds/mixkit-select-click-1109.wav");
         }
+        if(i==STARTGAME){
+            soundsArray[i] = Mix_LoadWAV("sounds/game-start-6104.wav");
+        }
         if(i==CANNON){
             soundsArray[i] = Mix_LoadWAV("sounds/loud-shot-193248.wav");
         }

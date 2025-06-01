@@ -14,6 +14,7 @@
 enum Sounds {
     MOVEM,
     SELECT,
+    STARTGAME,
     CANNON,
     NB_SOUND
 };

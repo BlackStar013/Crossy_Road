@@ -226,6 +226,11 @@ void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_
                     *quit = SDL_TRUE;
                     quit2 = SDL_TRUE;
                 }
+            }else if((pevent->key.keysym.sym == SDLK_TAB)){
+                if(*sound){
+                    Mix_PlayChannel(-1, soundArray[SELECT], 0);
+                }
+                quit2 = SDL_TRUE;
             }else if(pevent->key.keysym.sym == SDLK_m){
                 *quit = SDL_TRUE;
                 quit2 = SDL_TRUE;
@@ -457,6 +462,9 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
                 }
                 descMenu(&quit2, quit, renderer, pevent, font, soundArray, cursor, unlocked[cursor], sound);
             }else if(pevent->key.keysym.sym == SDLK_TAB){
+                if(sound){
+                    Mix_PlayChannel(-1, soundArray[SELECT], 0);
+                }
                 quit2 = SDL_TRUE;
             }else if(pevent->key.keysym.sym == SDLK_m){
                 *quit = SDL_TRUE;
@@ -512,6 +520,11 @@ void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_
                 if(cursor == EXIT){
                     quit2 = SDL_TRUE;
                 }
+            }else if((pevent->key.keysym.sym == SDLK_TAB)){
+                if(*sound){
+                    Mix_PlayChannel(-1, soundArray[SELECT], 0);
+                }
+                quit2 = SDL_TRUE;
             }else if(pevent->key.keysym.sym == SDLK_m){
                 quit2 = SDL_TRUE;
                 *quit = SDL_TRUE;
@@ -616,7 +629,7 @@ void displayTutorial(SDL_Renderer* renderer, TTF_Font* font, int width, int heig
     SDL_Rect rect1 = {width / 2 - 120*0.75*ECHELLE, heigth / 2 + 180*0.75*ECHELLE, 240*0.75*ECHELLE, 50*0.75*ECHELLE};
     SDL_RenderCopy(renderer, exitTexture, NULL, &rect1);
     
-    char message[2000] = "PRESS Z/Q/S/D or the directional arrows to move\nPRESS SPACE or ENTER to confirm in a menu\nPRESS D on the CHARACTERS menu for a description of their power\nPRESS SPACE to use a character's power\nPRESS TAB to pause/unpause the game\nDO NOT PRESS M, EVER";
+    char message[2000] = "PRESS Z/Q/S/D or the directional arrows to move\nPRESS SPACE or ENTER to confirm in a menu\nPRESS D on the CHARACTERS menu for a description of their power\nPRESS SPACE or ENTER to use a character's power\nPRESS TAB to pause/unpause the game\nDO NOT PRESS M, EVER";
 
     SDL_Color textColor = {255, 255, 255, 255};
 
@@ -673,7 +686,7 @@ void displayDescMenu(int chara, int lvl, SDL_Renderer* renderer, TTF_Font* font,
     
     SDL_Texture* exitTexture = strToTexture("PRESS ENTER TO EXIT", font, renderer);
     
-    int paliers[8][4] = {{0,0,0,0},{0,0,0,0},{3,7,54,0},{5,12,403,0},{20,148,1808,0},{7,33,244,0},{90,665,4030,0},{1096,2980,5000,0}};
+    int paliers[8][4] = {{0,0,0,0},{0,0,0,0},{15,55,210,0},{35,80,590,0},{110,370,1808,0},{55,150,470,0},{280,710,4030,0},{1096,2980,5000,0}};
     int xp_to_next = paliers[chara][lvl];
     char xp_message[30];
     sprintf(xp_message, "XP TO NEXT LEVEL: %d XP", xp_to_next);

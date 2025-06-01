@@ -114,6 +114,7 @@ int main(void){
     bool ia = false;
     bool shall_die = false;
     bool on_main_menu = false;
+    bool bip_done = false;
     int exp;
     load(&exp, &highscore, &chara, &shortmode);
     int initshortmode = shortmode;
@@ -150,8 +151,11 @@ int main(void){
                 }
                 cursor = (cursor+1)%NB_MMOPTION;
             }else if((event.key.keysym.sym == SDLK_SPACE) || (event.key.keysym.sym == SDLK_RETURN)){
-                if(sound){
+                if(sound && cursor != START){
                     Mix_PlayChannel(-1, soundArray[SELECT], 0);
+                }
+                if(sound && cursor == START){
+                    Mix_PlayChannel(-1, soundArray[STARTGAME], 0);
                 }
                 if(cursor == START){
                     main_menu = SDL_FALSE;
@@ -189,7 +193,7 @@ int main(void){
             //music init
             music = 0;
             if(sound){
-                Mix_VolumeMusic(96);
+                Mix_VolumeMusic(64); //64 pour volume à 50%
                 Mix_PlayMusic(musicArray[music_to_play[game->biome]], -1);
             }
             //music init
@@ -203,6 +207,13 @@ int main(void){
                 music = game->biome;
             }
             //music player
+            if(game->joueur->character_delay == 0 && !bip_done){
+                Mix_PlayChannel(-1, soundArray[MOVEM], 0);
+                bip_done = true;
+            }
+            if(game->joueur->character_delay != 0){
+                bip_done = false;
+            }
             cursor = 0;
             currentTime = SDL_GetTicks();
             elapsedTime = currentTime-startTime;
