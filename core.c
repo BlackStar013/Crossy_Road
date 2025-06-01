@@ -625,7 +625,7 @@ void generator_fireline(Game *game){
     // explicite
     int direction = rand()%2;
     int where_enter = direction*(LENGTH-1);
-    int nb_inside = rand()%2+2;
+    int nb_inside = rand()%2+1;
     int pos = 0;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;

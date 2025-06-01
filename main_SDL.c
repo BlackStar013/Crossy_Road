@@ -270,7 +270,6 @@ int main(void){
                         move_left(game);
                     }
                     game->joueur->delai = DELAI;
-                    // SDL_Delay(1000);
                 }
             }else{
                 SDL_PollEvent(&event);
@@ -305,6 +304,7 @@ int main(void){
                     }
                 }
             }
+            // SDL_Delay(100);
             endframeTime = SDL_GetTicks();
             if (frameDelay > (endframeTime-currentTime)) {
                 SDL_Delay(frameDelay - (endframeTime-currentTime));
