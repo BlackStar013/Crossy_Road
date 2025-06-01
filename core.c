@@ -101,9 +101,9 @@ void add_road(Game *game, Mob car, Tile road_, int pos, int speed, int nb_car){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], road_);
     }
-    int init_x = -car.length+(rand()%3+1)*pos;
+    int init_x = (rand()%3+1)*pos;
     for(int i = 0; i < nb_car; i++){
-        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(LENGTH/nb_car)*i, HEIGTH+pos,speed,0));
+        game->mobs = list_append(game->mobs, clone_mob(car, ((init_x+(((LENGTH-1)/(nb_car) + car.length ))*i)%(LENGTH + car.length)) - car.length, HEIGTH+pos,speed,0));
     }
 }
 
@@ -138,7 +138,7 @@ void generator_road(Game *game){
             int speed = rand()%5 +1;
             int nb_car;
             if(speed==6){
-                nb_car = rand()%4 + 2;
+                nb_car = rand()%3 + 2;
             } else if(speed==1){
                 nb_car = rand()%3 +1;
             } else {
@@ -182,7 +182,7 @@ void add_plank(Game *game, Mob plank,Tile tile, int pos, int speed){
     int proba_plank = 50;
     int plank_lenght = 0;
     int cons = 0;
-    for(int i = 0; i < LENGTH; i++){
+    for(int i = 0; i <= LENGTH; i++){
         int dice = rand()%100+1;
         if(dice<proba_plank){
             game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed,0));
@@ -271,8 +271,8 @@ void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int wher
         }
     }
     int delay = (rand()%100 * speed)/100;
-    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/32);
-    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/32);
+    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/16);
+    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/16);
     ball->memory__x = where_can*32;
     canon_->delay = delay;
     ball->delay = delay;
@@ -490,7 +490,7 @@ void proba_change_fire(Game* game, int nb_line){
 void add_fire(Game* game, int decal, int nb_flames){
     for(int i = 0; i<nb_flames; i++){
         int direction=rand()%2;
-        int pos = rand()%(LENGTH-1);
+        int pos = rand()%(LENGTH)-1;
         int speed = rand()%3;
         Mob* fire;
         if(direction){
@@ -500,6 +500,7 @@ void add_fire(Game* game, int decal, int nb_flames){
         }
         fire ->memory__x = -18;
         for(int i =0; i < rand()%4; i++){
+             fire->delay = 0;
              (fire->path)(fire,game->joueur);
         }
         game->projectile = list_append(game->projectile, fire);
@@ -519,8 +520,8 @@ void generator_fire(Game *game){
                 clone(&line->tiles[i], planks);
             }
         }
-        int nb_Block = rand()%8;
-        for(int i = 0; i<nb_Block; i++){
+        int nb_Block = rand()%7;
+        for(int j = 0; j<nb_Block; j++){
             int coinflip = rand()%2;
             if(coinflip){
                 clone(&(line->next)->tiles[rand()%LENGTH], brokenplanks);
@@ -545,9 +546,10 @@ void add_fire_unit(Game *game, int init_x, int direction, int pos, int speed, in
     Mob* firey;
     for(int i = 0; i < nb_fire; i++){
         if(direction){
-           firey =  clone_mob(fire_right, init_x+(LENGTH/nb_fire)*i, HEIGTH+pos,speed,0);
+            firey = clone_mob(fire_right, ((init_x+(((LENGTH-1)/(nb_fire) + 1 ))*i)%(LENGTH + 1)) - 1, HEIGTH+pos,speed,0);
         } else {
-            firey =  clone_mob(fire_left, init_x+(LENGTH/nb_fire)*i, HEIGTH+pos,speed,0);        }
+            firey = clone_mob(fire_left, ((init_x+(((LENGTH-1)/(nb_fire) + 1 ))*i)%(LENGTH + 1)) - 1, HEIGTH+pos,speed,0);
+        }
         firey->memory__x = -18;
         firey->offset_x = rand()%4;
         game->projectile = list_append(game->projectile, firey);
@@ -582,7 +584,7 @@ void proba_change_fireline(Game *game, int nb_line){
         *((game->proba)+FIRELINE) = 0 ;
     } else {
         *((game->proba)+FIRELINE) -= proba_change ;
-        *((game->proba)+FIRE) += proba_change ;
+        *((game->proba)+FIRE) += proba_change/2 ;
         *((game->proba)+FIRE_PATROL) += proba_change/2 ;
     }
     *((game->proba)+FIRE_PATROL) += check_percent(game, FIRELINE, FIRE);
@@ -592,7 +594,7 @@ void generator_fireline(Game *game){
     // explicite
     int direction = rand()%2;
     int where_enter = direction*(LENGTH-1);
-    int nb_inside = rand()%2+2;
+    int nb_inside = rand()%2+1;
     int pos = 0;
     add_buffer_line(game->carte);
     Line* line = game->carte->head_buffer;
@@ -1320,77 +1322,249 @@ void generator_room_1(Game* game){
 
 }
 
+
 void generator_room_c0(Game* game){
     //Première ligne blocante
-    int direction = rand()%2;
-    add_buffer_line(game->carte);
-    Line* line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+    Line* line = game->carte->head_map->prev;
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], stalagmite);
     }
     clone(&line->tiles[(LENGTH-1)/2], cave);
-    clone(&line->tiles[(LENGTH-1)/2 +1], cave);
     //2nd ligne libre
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
+    line = line->prev;
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], cave);
     }
     //3ème ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+        line = line->prev;
+
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], cave);
     }
     clone(&line->tiles[1], stalagmite);
     clone(&line->tiles[2], stalagmite);
     clone(&line->tiles[3], stalagmite);
-    clone(&line->tiles[8], stalagmite);
-    clone(&line->tiles[9], stalagmite);
-    clone(&line->tiles[10], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+
     //4ème ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+        line = line->prev;
+
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], cave);
     }
     clone(&line->tiles[1], stalagmite);
     clone(&line->tiles[2], stalagmite);
     clone(&line->tiles[3], stalagmite);
-    clone(&line->tiles[8], stalagmite);
-    clone(&line->tiles[9], stalagmite);
-    clone(&line->tiles[10], stalagmite);
     clone(&line->tiles[5], stalagmite);
-    clone(&line->tiles[6], stalagmite);
     //5ème ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], cave);
     }
     clone(&line->tiles[2], stalagmite);
-    clone(&line->tiles[9], stalagmite);
     clone(&line->tiles[5], stalagmite);
-    clone(&line->tiles[6], stalagmite);
     //6ème ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
         clone(&line->tiles[i], stalagmite);
     }
     clone(&line->tiles[1],  cave);
     clone(&line->tiles[2],  cave);
     clone(&line->tiles[3],  cave);
+    //Dernière ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+}
+
+void generator_room_c1(Game* game){
+    //Première ligne blocante
+    Line* line = game->carte->head_map->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[0], cave);
+    //2nd ligne libre
+    line = line->prev;
+    for(int i = 0; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[5], stalagmite);
+    //3ème ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[1], stalagmite);
+    clone(&line->tiles[3], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+    //4ème ligne 
+        line = line->prev;
+
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[1], stalagmite);
+    clone(&line->tiles[3], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+    //5ème ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[3], stalagmite);
+    clone(&line->tiles[5], stalagmite);
+    //6ème ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[0],  stalagmite);
+    clone(&line->tiles[1],  stalagmite);
+    clone(&line->tiles[5],  stalagmite);
+    //Dernière ligne 
+    line = line->prev;
+    for(int i = 0; i<LENGTH/2; i++){
+        clone(&line->tiles[i], cave);
+    }
+
+}
+
+void generator_room_s0(Game* game){
+    //Première ligne blocante
+    Line* line = game->carte->head_map->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[LENGTH/2], cave);
+    //2nd ligne libre
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    //3ème ligne 
+        line = line->prev;
+
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[9], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    clone(&line->tiles[6], stalagmite);
+
+    //4ème ligne 
+        line = line->prev;
+
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[9], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    clone(&line->tiles[6], stalagmite);
+    //5ème ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[9], stalagmite);
+    clone(&line->tiles[6], stalagmite);
+    //6ème ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
     clone(&line->tiles[8],  cave);
     clone(&line->tiles[9],  cave);
     clone(&line->tiles[10], cave);
     //Dernière ligne 
-    add_buffer_line(game->carte);
-    line = game->carte->head_buffer;
-    for(int i = 0; i<LENGTH; i++){
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+}
+
+void generator_room_s1(Game* game){
+    //Première ligne blocante
+    Line* line = game->carte->head_map->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], stalagmite);
+    }
+    clone(&line->tiles[LENGTH-1], cave);
+    //2nd ligne libre
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6], stalagmite);
+    //3ème ligne 
+        line = line->prev;
+
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6], stalagmite);
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    //4ème ligne 
+        line = line->prev;
+
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6], stalagmite);
+    clone(&line->tiles[8], stalagmite);
+    clone(&line->tiles[10], stalagmite);
+    //5ème ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6], stalagmite);
+    clone(&line->tiles[8], stalagmite);
+    //6ème ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
+        clone(&line->tiles[i], cave);
+    }
+    clone(&line->tiles[6],  stalagmite);
+    clone(&line->tiles[10],  stalagmite);
+    clone(&line->tiles[11], stalagmite);
+    //Dernière ligne 
+    line = line->prev;
+    for(int i = LENGTH/2; i<LENGTH; i++){
         clone(&line->tiles[i], cave);
     }
 
+}
+
+
+
+
+void generator_room_cultist(Game* game, int c, int s){
+    for(int i = 0; i<7; i++){
+        add_buffer_line(game->carte);
+    }
+    switch(c){
+        case 0:
+            generator_room_c0(game);
+            break;
+
+        case 1:
+            generator_room_c1(game);
+            break;
+    }
+    switch(s){
+        case 0:
+            generator_room_s0(game);
+            break;
+
+        case 1:
+            generator_room_s1(game);
+            break;
+    }
 }
 
 void proba_change_babel(Game* game){
@@ -1452,26 +1626,91 @@ void proba_change_cultist(Game* game){
 }
 
 void generator_cultist(Game* game){
+    int c = rand()%2;
+    int s = rand()%2;
+    int tour_max;
+    int init_x;
+    int init_y;
+    int nb_tour;
+    generator_room_cultist(game, c, s);
+    Mob* cultisto;
+    switch(c){
+        case 0:
+            tour_max = 15;
+            init_x = 2;
+            init_y = HEIGTH+5;
+            break;
+
+        case 1:
+            tour_max = 22;
+            init_x = 3;
+            init_y = HEIGTH + 5;
+            break;
+    }
     int speed = rand()%3+1;
     int direction = rand()%2;
-    int nb_cultisto = 1; //rand()%4+1;
-    generator_room_c0(game);
-    Mob* cultisto;
+    int nb_cultisto = rand()%3+2;
+        int init = rand()%tour_max;
     for(int nb = 0; nb < nb_cultisto;nb++){
-         cultisto = clone_mob(cultist, 2, HEIGTH+(5), speed, 0);
+         cultisto = clone_mob(cultist, init_x, init_y, speed, c);
          cultisto->offset_y = 2 + direction;
-         for(int i = 0;i<rand()%17;i++){
-             (cultisto->path)(cultisto,game->joueur);
+         switch(nb){
+            case 0:
+                nb_tour = init;
+                break;
+
+            case 1:
+                nb_tour = (tour_max)/2 + init + rand()%3;
+                break;
+
+            default:
+                nb_tour = rand()%tour_max;
+                break;
+         }
+         for(int i = 0;i<nb_tour;i++){
+            for(int i = 0; i<16;i++){
+                cultisto->delay = 0;
+                (cultisto->path)(cultisto,game->joueur);
+            }
          }
          game->mobs = list_append(game->mobs, cultisto);
     }
+    switch(s){
+        case 0:
+            tour_max = 15;
+            init_x = 9;
+            init_y = HEIGTH+5;
+            break;
+
+        case 1:
+            tour_max = 22;
+            init_x = 8;
+            init_y = HEIGTH + 5;
+            break;
+    }
     direction = rand()%2;
-    nb_cultisto = 1; //rand()%4+1;
+    nb_cultisto = rand()%3+2;
+    init = rand()%tour_max;
     for(int nb = 0; nb < nb_cultisto;nb++){
-         cultisto = clone_mob(cultist, 9, HEIGTH+(5), speed, 0);
+         cultisto = clone_mob(cultist, init_x, init_y, speed, s);
          cultisto->offset_y = 2 + direction;
-         for(int i = 0;i<rand()%17;i++){
-             (cultisto->path)(cultisto,game->joueur);
+         cultisto->action_delay=0;
+        switch(nb){
+            case 0:
+                nb_tour = init;
+                break;
+            case 1:
+                nb_tour = (tour_max)/2 + init + rand()%3;
+                break;
+            default:
+                nb_tour = rand()%tour_max;
+                break;
+        }  
+         for(int i = 0;i<(nb_tour);i++){
+             for(int j = 0; j<16;j++){
+                cultisto->delay = 0;
+                (cultisto->path)(cultisto,game->joueur);
+            }
          }
          game->mobs = list_append(game->mobs, cultisto);
     }
@@ -1532,9 +1771,9 @@ void add_magic_road(Game *game, Mob car, Tile road_, int pos, int speed, int max
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], road_);
     }
-    int init_x = -car.length+(rand()%3+1)*pos;
+     int init_x = (rand()%3+1)*pos;
     for(int i = 0; i < nb_car; i++){
-        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(LENGTH/nb_car)*i, HEIGTH+pos,speed,max_delay));
+        game->mobs = list_append(game->mobs, clone_mob(car, ((init_x+(((LENGTH-1)/(nb_car) + car.length ))*i)%(LENGTH + car.length)) - car.length, HEIGTH+pos,speed,max_delay));
     }
 }
 
@@ -1567,7 +1806,7 @@ void generator_magic_road(Game *game){
         if(rand()%4){
             int direction = rand()%2;
             int speed = rand()%5;
-            int wait = rand()%32;
+            int wait = rand()%32+4;
             int nb_car;
             if(speed==6){
                 nb_car = rand()%4 + 1;
@@ -1620,7 +1859,7 @@ void add_fast_plank(Game *game, Mob plank,Tile tile, int pos, int speed){
     int proba_plank = 50;
     int plank_lenght = 0;
     int cons = 0;
-    for(int i = 0; i < LENGTH; i++){
+    for(int i = 0; i <= LENGTH; i++){
         int dice = rand()%100+1;
         if(dice<proba_plank){
             game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed,0));
@@ -1718,8 +1957,8 @@ void add_blocked_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,
         clone(&line->tiles[where_can], plain_block_left);
     }
     int delay = (rand()%100 * speed)/100;
-    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/32);
-    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/32);
+    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/16);
+    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/16);
     ball->memory__x = where_can*32;
     canon_->delay = delay;
     ball->delay = delay;
@@ -1966,7 +2205,7 @@ void add_bone(Game *game, Mob plank,Tile tile, int pos, int speed){
     int proba_plank = 50;
     int plank_lenght = 0;
     int cons = 0;
-    for(int i = 0; i < LENGTH; i++){
+    for(int i = 0; i <= LENGTH; i++){
         int dice = rand()%100+1;
         if(dice<proba_plank){
             game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed,0));
@@ -2333,13 +2572,13 @@ void initialise_map(Game* game){
     }
 }
 
-Game *initialise_game(int character_id, int tot_exp){
+Game *initialise_game(int character_id, int tot_exp, int short_mode){
     // explicite
     srand( time( NULL ) );
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
     game->joueur = initialise_player(character_id,tot_exp); //0 for now
-    game->score = 1;
+    game->score = 0;
     game->nb_exp = 0;
     game->exp = NULL;
     game->exp = list_append(game->exp, clone_mob(cible, -80085, 80085, 0, 0));
@@ -2348,7 +2587,13 @@ Game *initialise_game(int character_id, int tot_exp){
     game->projectile = list_append(game->projectile, clone_mob(arrow_kabi, -4242, 6969, 0, 0));
     game->proba = initialise_proba();
     game->biome = CROSSY_ROAD;
-    game->until_next = 10;
+    game->short_mode = short_mode;
+    game->step = 1;
+    if(game->short_mode){
+        game->until_next = 51;
+    } else {
+        game->until_next = 101;
+    }
     initialise_map(game);
     return game;
 }
@@ -2358,6 +2603,7 @@ void switch_game(Game* game){
     //printf("%d\n",game->score+1);
     switch_map(game->carte);
     game->score++;
+    game->step++;
     switch_mob(game->exp);
     switch_mob(game->mobs);
     switch_mob(game->projectile);
@@ -2616,12 +2862,16 @@ void update_game(Game* game){
             }
             act = act->next;
         }
+    } else if (game->joueur->character_id == OOGWAAY){
+        if(game->joueur->character_delay){
+            game->joueur->character_delay--;
+        }
     }
     game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
     game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
     //SDL_Delay(1000);
-    if(game->score%(game->until_next) == 0){
-        game->score++;
+    if(game->step%(game->until_next) == 0){
+        game->step = 1;
         if(game->biome != NB_BIOME-1){
             game->biome++;
         }
@@ -2631,27 +2881,47 @@ void update_game(Game* game){
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 50;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 11;
+            }
             break;
 
             case HARD_CROSSY_ROAD:
             proba_change_game(game, BUSHES);
-            game->until_next = 50;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 11;
+            }
             break;
 
             case FLAMING_MANOR:
             proba_change_game(game, ENTRANCE);
-            game->until_next = 50;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 11;
+            }
             break;
 
             case CULTIST_CAVE:
             proba_change_game(game, TRANSITION_CAVE);
-            game->until_next = 45;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 11;
+            }
             break;
 
             case WITHIN_THE_BEAST:
             proba_change_game(game, TRANSITION_FINAL);
-            game->until_next = 60;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 101;
+            }
             break;
 
             default:

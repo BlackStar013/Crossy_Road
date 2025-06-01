@@ -88,6 +88,7 @@ int main(void){
     SDL_Surface** surfaceExp= initSurfaceExp();
     SDL_Surface** surfaceArrayProjectile = initSurfaceArrayProjectile();
     SDL_Surface** surfaceArrayPlayer = initSurfaceArrayPlayer();
+    SDL_Surface** surfaceArrayPower = initSurfaceArrayPower();
     Mix_Chunk** soundArray = initSoundArray();
     Mix_Music** musicArray = initMusicArray();
 
@@ -113,7 +114,7 @@ int main(void){
     bool ia = false;
     int exp;
     load(&exp, &highscore, &chara, &shortmode);
-    Game* game = initialise_game(chara,exp);
+    Game* game = initialise_game(chara,exp,shortmode);
     game->nb_exp = exp;
     //save(0, 0, 0, 0);
     printf("exp: %d,highscore: %d\n", game->nb_exp, highscore);
@@ -170,7 +171,7 @@ int main(void){
         if(!main_menu){
             int exp = game->nb_exp;
             destroy_game(game);
-            game = initialise_game(chara,exp);
+            game = initialise_game(chara,exp,shortmode);
             game->nb_exp = exp;
             if(chara == LEDE){
                 ia = true;
@@ -242,7 +243,7 @@ int main(void){
             if(SDL_RenderClear(renderer)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
             }
-            display_all(game, renderer,pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayProjectile, surfaceExp,font);
+            display_all(game, renderer,pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayPower, surfaceArrayProjectile, surfaceExp,font);
 
             // une fois l'affichage fait, on regarde si le joueur se déplace
             if(ia){
@@ -269,7 +270,6 @@ int main(void){
                         move_left(game);
                     }
                     game->joueur->delai = DELAI;
-                    // SDL_Delay(1000);
                 }
             }else{
                 SDL_PollEvent(&event);
@@ -304,6 +304,7 @@ int main(void){
                     }
                 }
             }
+            // SDL_Delay(100);
             endframeTime = SDL_GetTicks();
             if (frameDelay > (endframeTime-currentTime)) {
                 SDL_Delay(frameDelay - (endframeTime-currentTime));
@@ -314,7 +315,7 @@ int main(void){
             save(0,0,0,0);
             highscore = 0;
             destroy_game(game);
-            game = initialise_game(chara,0);
+            game = initialise_game(chara,0,shortmode);
             load(&(game->nb_exp), &highscore, &chara, &shortmode);
         }
         else if((game->score > highscore) && (!ia)){
@@ -331,6 +332,7 @@ int main(void){
     freeSurfaceArrayMap(surfaceArrayMap);
     freeSurfaceArrayMob(surfaceArrayMob);
     freeSurfaceArrayPlayer(surfaceArrayPlayer);
+    freeSurfaceArrayPower(surfaceArrayPower);
     freeSurfaceArrayProjectile(surfaceArrayProjectile);
     freeSurfaceExp(surfaceExp);
     TTF_CloseFont(font);

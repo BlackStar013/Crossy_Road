@@ -21,10 +21,11 @@ typedef struct _File{
     Point *sommet;
 }File;
 
-#define PROFONDEUR (LENGTH*2+1)
+#define PROFONDEUR 15
 //vraie profondeur = 5/2 car 5 == taille du tableau pour l'evaluation, mais donc pour profondeur 2 => PROFONDEUR = 2*2+1; 3=> PROFONDEUR = 3*2+1; ...
 
 
+int to_nb_IA(int pix);
 int val_absolue(int x);
 File *create_file(Point *sommet);
 void append_file(File *file, Point *sommet);

@@ -15,3 +15,5 @@ SDL_Surface** initSurfaceArrayProjectile(void);
 void freeSurfaceArrayProjectile(SDL_Surface** surfaceArrayProjectile);
 SDL_Surface** initSurfaceArrayPlayer(void);
 void freeSurfaceArrayPlayer(SDL_Surface** surfaceArrayPlayer);
+SDL_Surface** initSurfaceArrayPower(void);
+void freeSurfaceArrayPower(SDL_Surface** surfaceArrayPower);

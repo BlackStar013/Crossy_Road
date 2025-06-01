@@ -19,6 +19,8 @@ typedef struct _Game {
     void (*generator)(struct _Game*);
     int biome;
     int until_next;
+    int short_mode;
+    int step;
 } Game;
 
 
@@ -108,7 +110,7 @@ void (*initialise_generator(void))(Game*);
 
 
 //Initialise une partie
-Game *initialise_game(int character_id, int tot_exp);
+Game *initialise_game(int character_id, int tot_exp, int shortmode);
 void update_game(Game* game);
 
 void switch_game(Game *game);

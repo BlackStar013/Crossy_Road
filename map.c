@@ -175,53 +175,115 @@ Player* initialise_player(int id, int tot_exp){
     joueur->character_delay = 0;
     joueur->nb_frame_to_change = -1;
     joueur->offset_sup = 0;
+    joueur->character_lvl = lvls[id];
+    joueur->inv_frame = 0;
     switch(id){
         case KAIRON:
-            joueur->character_lvl = 3;
-            joueur->character_value = 245;
-            joueur->inv_frame = 0;
+            joueur->character_value = joueur->character_lvl + 255;
             joueur->character_max_delay = 0;
             break;
 
         case SNITCH:
-            joueur->character_lvl = 3;
-            joueur->character_value = 64;
-            joueur->inv_frame = 0;
-            joueur->character_max_delay = 32;
+            switch(joueur->character_lvl){
+                case 1:
+                    joueur->character_value = 64;
+                    joueur->character_max_delay = 28;
+                    break;
+
+                case 2:
+                    joueur->character_value = 96;
+                    joueur->character_max_delay = 28;
+                    break;
+
+                case 3:
+                    joueur->character_value = 96;
+                    joueur->character_max_delay = 22;
+                    break;
+
+                default:
+                    joueur->character_value = 0;
+                    joueur->character_max_delay = -1;
+                    break;
+
+            }
             break;
         
         case KABI:
-            joueur->character_lvl = 3;
+        switch(joueur->character_lvl){
+                case 1:
+                    joueur->character_max_delay = 12;
+                    break;
+
+                case 2:
+                    joueur->character_max_delay = 6;
+                    break;
+
+                case 3:
+                    joueur->character_max_delay = 3;
+                    break;
+
+                default:
+                    joueur->character_max_delay = -1;
+                    break;
+
+            }
             joueur->character_value = 42;
-            joueur->inv_frame = 0;
-            joueur->character_max_delay = 1;
             break;
 
         case OOGWAAY:
-            joueur->character_lvl = 3;
+            switch(joueur->character_lvl){
+                case 1:
+                    joueur->character_max_delay = 64*5;
+                    break;
+
+                case 2:
+                    joueur->character_max_delay = 64*3;
+                    break;
+
+                case 3:
+                    joueur->character_max_delay = 64;
+                    break;
+
+                default:
+                    joueur->character_max_delay = -1;
+                    break;
+
+            }
             joueur->character_value = 0;
-            joueur->inv_frame = 0;
-            joueur->character_max_delay = 0;
             break;
 
         case RANTON:
-            joueur->character_lvl = 3;
-            joueur->character_value = 2;
-            joueur->inv_frame = 0;
-            joueur->character_max_delay = 0;
+            if(joueur->character_lvl>=3){
+                joueur->character_value = 2;
+            } else {
+                joueur->character_value = 1;
+            }
             break;
 
         case JOLINAR:
-            joueur->character_lvl = 3;
             joueur->character_value = 2;
-            joueur->inv_frame = 0;
-            joueur->character_max_delay = 0;
+             switch(joueur->character_lvl){
+                case 1:
+                    joueur->character_max_delay = 28;
+                    break;
+
+                case 2:
+                    joueur->character_max_delay = 20;
+                    break;
+
+                case 3:
+                    joueur->character_max_delay = 12;
+                    break;
+
+                default:
+                    joueur->character_max_delay = -1;
+                    break;
+            }
+            break;
 
         default:
-            joueur->character_lvl = 3;
-            joueur->character_value = 3;
+            joueur->character_value = 0;
             joueur->character_max_delay = 0;
-            joueur->inv_frame = 0;
             break;
     }
     joueur->character_lvl = lvls[id];
