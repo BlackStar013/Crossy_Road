@@ -521,7 +521,7 @@ void generator_fire(Game *game){
             }
         }
         int nb_Block = rand()%7;
-        for(int j = 0; j<nb_Block; i++){
+        for(int j = 0; j<nb_Block; j++){
             int coinflip = rand()%2;
             if(coinflip){
                 clone(&(line->next)->tiles[rand()%LENGTH], brokenplanks);
@@ -1773,7 +1773,7 @@ void add_magic_road(Game *game, Mob car, Tile road_, int pos, int speed, int max
     }
      int init_x = (rand()%3+1)*pos;
     for(int i = 0; i < nb_car; i++){
-        game->mobs = list_append(game->mobs, clone_mob(car, ((init_x+(((LENGTH-1)/(nb_car) + car.length ))*i)%(LENGTH + car.length)) - car.length, HEIGTH+pos,speed,0));
+        game->mobs = list_append(game->mobs, clone_mob(car, ((init_x+(((LENGTH-1)/(nb_car) + car.length ))*i)%(LENGTH + car.length)) - car.length, HEIGTH+pos,speed,max_delay));
     }
 }
 
@@ -1806,7 +1806,7 @@ void generator_magic_road(Game *game){
         if(rand()%4){
             int direction = rand()%2;
             int speed = rand()%5;
-            int wait = rand()%32;
+            int wait = rand()%32+4;
             int nb_car;
             if(speed==6){
                 nb_car = rand()%4 + 1;

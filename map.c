@@ -179,7 +179,7 @@ Player* initialise_player(int id, int tot_exp){
     joueur->inv_frame = 0;
     switch(id){
         case KAIRON:
-            joueur->character_value = joueur->character_lvl;
+            joueur->character_value = joueur->character_lvl + 255;
             joueur->character_max_delay = 0;
             break;
 
