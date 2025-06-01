@@ -7,7 +7,10 @@
 
 const Tile plain = {false,false,_PLAIN};
 
-const Tile plain_block = {true,false,_PLAIN_BLOCK};
+const Tile plain_block_left = {true,false,_PLAIN_BLOCK_LEFT};
+
+const Tile plain_block_right = {true,false,_PLAIN_BLOCK_RIGHT};
+
 
 const Tile road = {false,false,_ROAD};
 
@@ -60,3 +63,19 @@ const Tile stalagmite = {true,false,_STALAGMITE};
 const Tile channel = {false,false,_CHANNEL};
 
 const Tile base = {false,false,_BASE};
+
+const Tile MurManoir = {true,false,_MANOR_WALL};
+
+const Tile Porte = {false,false,_DOOR};
+
+const Tile Flesh= {false,false,_FLESH};
+const Tile Acid= {false,true,_ACID};
+const Tile Acid_up= {false,true,_ACID_UP};
+const Tile Acid_down= {false,true,_ACID_DOWN};
+const Tile Acid_middle= {false,true,_ACID_MIDDLE};
+const Tile Maw= {false,true,_MAW};
+const Tile Shooter_block_right= {true,false,_SHOOTER_BLOCK_RIGHT};
+const Tile Shooter_block_left= {true,false,_SHOOTER_BLOCK_LEFT};
+const Tile transition_finale= {false,false,_TRANSITION_HEART};
+
+const Tile _lever = {true,false,_LEVER};

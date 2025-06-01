@@ -19,6 +19,8 @@ typedef struct _Game {
     void (*generator)(struct _Game*);
     int biome;
     int until_next;
+    int short_mode;
+    int step;
 } Game;
 
 
@@ -28,6 +30,7 @@ enum Biome {
     HARD_CROSSY_ROAD,
     FLAMING_MANOR,
     CULTIST_CAVE,
+    WITHIN_THE_BEAST,
     NB_BIOME
 };
 
@@ -39,16 +42,32 @@ enum Obstacle {
     CANON,
     /////////
     BUSHES,
+    FAST_RIVER,
+    BLOCKED_CANON,
     MAGIC_ROAD,
     ////////
     ENTRANCE,
+    FIRELINE,
+    FIRE_PATROL,
     FIRE,
     ////////
     TRANSITION_CAVE,
-    CAVE,
+    //CAVE,
     CULTIST,
     MAGE,
+    BABEL,
+    TRAP,
+    //STONE,
     //CAVE_CANON,
+    //////
+    TRANSITION_FINAL,
+    ACID_RIVER,
+    FLESH_MAW,
+    FLESH_SPIKES,
+    BONESHOOTER,
+    BARRAGE,
+    SENTINEL_EYE,
+    LABYRINTH,
     NB_OBSTACLE
 };
 
@@ -61,13 +80,29 @@ void generator_road(Game*);
 void generator_river(Game*);
 void generator_canon(Game*);
 void generator_bushes(Game*);
+void generator_fast_river(Game*);
+void generator_blocked_canon(Game*);
 void generator_magic_road(Game*);
 void generator_entrance(Game*);
 void generator_fire(Game*);
+void generator_fireline(Game *game);
+void generator_fire_patrol(Game *game);
+void generator_fire_patrol_1(Game *game);
+void generator_fire_patrol_2(Game *game);
 void generator_transition_cave(Game * game);
 void generator_cave(Game*);
 void generator_cultist(Game*);
 void generator_mage(Game*);
+void generator_trap(Game*);
+void generator_babel(Game*);
+void generator_transition_heart(Game*);
+void generator_f_maw(Game*);
+void generator_f_spike(Game*);
+void generator_boneshooter(Game*);
+void generator_acid_river(Game*);
+void generator_barrage(Game*);
+void generator_sentinel_eye(Game*);
+void generator_labyrinth(Game*);
 void generator_obstacle(Game*);
 
 //Initialise les générateurs
@@ -75,7 +110,7 @@ void (*initialise_generator(void))(Game*);
 
 
 //Initialise une partie
-Game *initialise_game(int character_id);
+Game *initialise_game(int character_id, int tot_exp, int shortmode);
 void update_game(Game* game);
 
 void switch_game(Game *game);
@@ -89,6 +124,7 @@ bool move_up(Game*);
 bool move_left(Game*);
 bool move_right(Game*);
 bool move_down(Game*);
+bool use_power(Game*);
 
 //Fait déplacer la giga mab et les mobs dedans et les joueurs dedans.
 bool test_death(Game*);
