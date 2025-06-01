@@ -2472,9 +2472,9 @@ void xped(Mob* mob, Player* player){
         mob->offset_x++;
         mob->offset_x %= 4;
     }
-    if(mob->_x > LENGTH*32){
+    if(mob->_x > (LENGTH+1)*32){
         mob->_x = 0;
-    } else if(mob->_x<0){
+    } else if(mob->_x<-32){
         mob->_x = LENGTH*32;
     }
 }
