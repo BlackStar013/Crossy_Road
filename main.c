@@ -11,10 +11,7 @@
 #include <unistd.h>
 
 
-//Global variable
-#define IA_t true
-
-bool emoji = false;
+bool show_exp = true;
 int character = KAIRON;
 bool hascolor = true;
 
@@ -28,6 +25,7 @@ enum COLORS {
     ON_PLANKS_EVIL,
     ON_CAVE,
     ON_CAVE_EVIL,
+    ON_CAVE_ALMOST_EVIL,
     ON_WATER,
     ON_WATER_GOOD,
     PLAYER_KAIRON,
@@ -37,10 +35,7 @@ enum COLORS {
     PLAYER_OOGWAY,
     PLAYER_RANTONS,
     PLAYER_JOLINAR,
-    ON_FLESH,
-    ON_FLESH_EVIL,
-    ON_ACID,
-    //TRAP,
+    PLAYER_DEDE,
     NB_COLOR
 };
 
@@ -79,6 +74,7 @@ void ncursesInit(void){
         init_pair(ON_PLANKS_EVIL, COLOR_RED, COLOR_YELLOW);
         init_pair(ON_CAVE, COLOR_WHITE, COLOR_BLACK);
         init_pair(ON_CAVE_EVIL, COLOR_RED, COLOR_BLACK);
+        init_pair(ON_CAVE_ALMOST_EVIL, COLOR_YELLOW, COLOR_BLACK);
         init_pair(ON_WATER, COLOR_CYAN, COLOR_BLUE);
         init_pair(ON_WATER_GOOD, COLOR_YELLOW, COLOR_BLUE);
         init_pair(PLAYER_KAIRON, COLOR_RED, COLOR_WHITE);
@@ -88,11 +84,8 @@ void ncursesInit(void){
         init_pair(PLAYER_OOGWAY, COLOR_BLACK, COLOR_GREEN);
         init_pair(PLAYER_RANTONS, COLOR_GREEN, COLOR_WHITE);
         init_pair(PLAYER_JOLINAR, COLOR_GREEN, COLOR_BLACK);
-        init_pair(ON_FLESH, COLOR_RED, COLOR_WHITE);
-        init_pair(ON_FLESH_EVIL, COLOR_RED, COLOR_BLACK);
-        init_pair(ON_ACID, COLOR_BLACK, COLOR_WHITE);
-        init_pair(TRAP, COLOR_RED, COLOR_YELLOW);
-    }
+        init_pair(PLAYER_DEDE, COLOR_MAGENTA, COLOR_CYAN);
+        }
     curs_set(FALSE);
 }
 
@@ -149,6 +142,10 @@ void draw_background(Game *game){
                 case _WATER_DOWN :
                 case _WATER_MIDDLE :
                 case _WATER_UP :
+                case _ACID :
+                case _ACID_UP :
+                case _ACID_DOWN :
+                case _ACID_MIDDLE :
                     if(hascolor){
                         attron(COLOR_PAIR(ON_WATER));
                     }
@@ -268,6 +265,16 @@ void draw_background(Game *game){
                     }
                     break;
 
+                case _LEVER :
+                    if(hascolor){
+                        attron(COLOR_PAIR(ON_CAVE));
+                    }
+                    mvaddch(i,j,'/');
+                    if(hascolor){
+                        attroff(COLOR_PAIR(ON_CAVE));
+                    }
+                    break;
+
                 case _STALAGMITE :
                     if(hascolor){
                         attron(COLOR_PAIR(ON_CAVE));
@@ -279,20 +286,50 @@ void draw_background(Game *game){
                     break;
                 case _TRANSITION_HEART :
                     if(hascolor){
-                        attron(COLOR_PAIR(ON_FLESH));
+                        attron(COLOR_PAIR(ON_CAVE));
                     }
-                    mvaddch(i,j,' ');
+                    mvaddch(i,j,'*');
                     if(hascolor){
-                        attroff(COLOR_PAIR(ON_FLESH));
+                        attroff(COLOR_PAIR(ON_CAVE));
                     }
                     break;
                 case _MAW :
                     if(hascolor){
-                        attron(COLOR_PAIR(ON_FLESH_EVIL));
+                        attron(ON_CAVE_EVIL);
                     }
-                    mvaddch(i,j,'o');
+                    mvaddch(i,j,'0');
                     if(hascolor){
-                        attroff(COLOR_PAIR(ON_FLESH_EVIL));
+                        attroff(COLOR_PAIR(ON_CAVE_EVIL));
+                    }
+                    break;
+
+                case _FLESH :
+                    if(hascolor){
+                        attron(ON_CAVE);
+                    }
+                    mvaddch(i,j,' ');
+                    if(hascolor){
+                        attroff(COLOR_PAIR(ON_CAVE));
+                    }
+                    break;
+
+                case _SHOOTER_BLOCK_LEFT :
+                    if(hascolor){
+                        attron(COLOR_PAIR(ON_CAVE));
+                    }
+                    mvaddch(i,j,'}');
+                    if(hascolor){
+                        attroff(COLOR_PAIR(ON_CAVE));
+                    }
+                    break;
+
+                case _SHOOTER_BLOCK_RIGHT:
+                    if(hascolor){
+                        attron(COLOR_PAIR(ON_CAVE));
+                    }
+                    mvaddch(i,j,'{');
+                    if(hascolor){
+                        attroff(COLOR_PAIR(ON_CAVE));
                     }
                     break;
 
@@ -381,6 +418,16 @@ void draw_character(Game* game){
             }
             break;
 
+        case LEDE:
+            if(hascolor){
+            attron(COLOR_PAIR(PLAYER_DEDE));
+            }
+            mvaddch(HEIGTH - to_nb(game->joueur->_y_dest) - 1,to_nb(game->joueur->_x_dest),'$');
+            if(hascolor){
+                attroff(COLOR_PAIR(PLAYER_DEDE));
+            }
+            break;
+
     }
 
 }
@@ -437,22 +484,6 @@ void draw_mob(Mob* mob){
             }
             if(hascolor){
                 attroff(COLOR_PAIR(ON_GRASS_WEIRD_EVIL));
-            } 
-            break;
-
-        case PLANK :
-            if(hascolor){
-                attron(COLOR_PAIR(ON_WATER_GOOD));
-            }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'-');
-                        }
-                }
-            }
-            if(hascolor){
-                attroff(COLOR_PAIR(ON_WATER_GOOD));
             } 
             break;
 
@@ -581,9 +612,180 @@ void draw_mob(Mob* mob){
             break;
 
 
+        case SPIKE:
+            switch(mob->offset_x){
+                case 0:
+                    if(hascolor){
+                        attron(COLOR_PAIR(ON_CAVE));
+                    }
+                    for(int i = 0; i<mob->length;i++){
+                        for(int j = 0;j<mob->heigth;j++){
+                            if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                                mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'O');
+                            }
+                        }
+                    }
+                    if(hascolor){
+                        attroff(COLOR_PAIR(ON_CAVE));
+                    } 
+                    break;
+
+                case 1:
+                    if(hascolor){
+                        attron(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+                    }
+                    for(int i = 0; i<mob->length;i++){
+                        for(int j = 0;j<mob->heigth;j++){
+                            if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                                mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'O');
+                            }
+                        }
+                    }
+                    if(hascolor){
+                        attroff(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+                    } 
+                    break;
+
+                default:
+                     if(hascolor){
+                        attron(COLOR_PAIR(ON_CAVE_EVIL));
+                    }
+                    for(int i = 0; i<mob->length;i++){
+                        for(int j = 0;j<mob->heigth;j++){
+                            if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                                mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'O');
+                            }
+                        }
+                    }
+                    if(hascolor){
+                        attroff(COLOR_PAIR(ON_CAVE_EVIL));
+                    } 
+                    break;
+            }
+            break;
+
+        case SHOOT:
+            if(hascolor){
+                if(mob->offset_x==1){
+                    attron(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+                } else {
+                    attron(COLOR_PAIR(ON_CAVE));
+                }
+            }
+            if(mob->offset_y == 0){
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'[');
+                        }
+                    }
+                }
+            } else {
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,']');
+                        }
+                    }
+                }
+            }
+            if(hascolor){
+                if(mob->offset_x==1){
+                    attroff(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+                } else {
+                    attroff(COLOR_PAIR(ON_CAVE));
+                }
+            }
+            break;
+
+         case SHIFT:
+            if(hascolor){
+                attron(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+            }
+            if(mob->offset_y == 0){
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'-');
+                        }
+                    }
+                }
+            } 
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+            }
+            break;
+
+        case EYEWALL:
+            if(hascolor){
+                attron(COLOR_PAIR(ON_CAVE_EVIL));
+            }
+            if(mob->offset_y == 0){
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'Q');
+                        }
+                    }
+                }
+            } 
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_CAVE_EVIL));
+            }
+            break;
+
+        case EYE:
+            if(hascolor){
+                if(mob->offset_y == 0){
+                    attron(COLOR_PAIR(ON_CAVE));
+                } else if(mob->offset_y >= 2){
+                    attron(COLOR_PAIR(ON_CAVE_EVIL));
+                } else {
+                    attron(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+                }
+            }
+            if(mob->offset_y == 0){
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'Q');
+                        }
+                    }
+                }
+            } 
+            if(mob->offset_y == 0){
+                    attroff(COLOR_PAIR(ON_CAVE));
+                } else if(mob->offset_y >= 2){
+                    attroff(COLOR_PAIR(ON_CAVE_EVIL));
+                } else {
+                    attroff(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+                }
+            break;
+
     }
 
 
+}
+
+void draw_radeau(Mob* mob){
+    switch(mob->id_mob){
+            case PLANK :
+            case BONE:
+            if(hascolor){
+                attron(COLOR_PAIR(ON_WATER_GOOD));
+            }
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'-');
+                        }
+                }
+            }
+            if(hascolor){
+                attroff(COLOR_PAIR(ON_WATER_GOOD));
+            } 
+            break;
+    }
 }
 
 
@@ -728,9 +930,10 @@ void draw_projectile(Mob* mob){
             } 
             
             break;
-            case BLOOD :
+
+        case BLOOD :
             if(hascolor){
-                attron(COLOR_PAIR(ON_FLESH_EVIL));
+                attron(COLOR_PAIR(ON_CAVE_EVIL));
             }
             for(int i = 0; i<mob->length;i++){
                 for(int j = 0;j<mob->heigth;j++){
@@ -743,9 +946,14 @@ void draw_projectile(Mob* mob){
                 attroff(COLOR_PAIR(ON_CAVE_EVIL));
             } 
             break;
-            case EYE_BLAST :
+
+        case EYE_BLAST :
             if(hascolor){
-                attron(COLOR_PAIR(ON_FLESH_EVIL));
+                if(mob->is_death){
+                    attron(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+                } else {
+                    attron(COLOR_PAIR(ON_CAVE_EVIL));
+                }
             }
             for(int i = 0; i<mob->length;i++){
                 for(int j = 0;j<mob->heigth;j++){
@@ -755,20 +963,36 @@ void draw_projectile(Mob* mob){
                 }
             }
             if(hascolor){
-                attroff(COLOR_PAIR(ON_CAVE_EVIL));
+                if(mob->is_death){
+                    attroff(COLOR_PAIR(ON_CAVE_ALMOST_EVIL));
+                } else {
+                    attroff(COLOR_PAIR(ON_CAVE_EVIL));
+                }
             } 
             break;
-            case BONEARROW ://TODO
+
+        case BONEARROW ://TODO
             if(hascolor){
-                attron(COLOR_PAIR(ON_FLESH_EVIL));
+                attron(COLOR_PAIR(ON_CAVE_EVIL));
             }
-            for(int i = 0; i<mob->length;i++){
-                for(int j = 0;j<mob->heigth;j++){
-                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                        mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'-');
+            if(mob->offset_x == 0){
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'>');
+                        }
                     }
-                }
+                }   
+            } else {
+                for(int i = 0; i<mob->length;i++){
+                    for(int j = 0;j<mob->heigth;j++){
+                        if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                            mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'<');
+                        }
+                    }
+                }  
             }
+            
             if(hascolor){
                 attroff(COLOR_PAIR(ON_CAVE_EVIL));
             } 
@@ -780,16 +1004,28 @@ void draw_exp(Mob* mob){
     if(hascolor){
         attron(COLOR_PAIR(ON_WATER));
     }
-    for(int i = 0; i<mob->length;i++){
-        for(int j = 0;j<mob->heigth;j++){
-            if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
-                mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'+');
+    switch(mob->id_mob){
+        case EXP:
+        case CHAMPI:
+            for(int i = 0; i<mob->length;i++){
+                for(int j = 0;j<mob->heigth;j++){
+                    if(in_map(to_nb(mob->_x)+i, to_nb(mob->_y) +j)){
+                        mvaddch(HEIGTH - to_nb(mob->_y) - 1 - j,to_nb(mob->_x)+i,'+');
+                    }
+                }
             }
-        }
+            break;
     }
     if(hascolor){
         attroff(COLOR_PAIR(ON_WATER));
     } 
+}
+
+void draw_all_radeau(Liste_Mob* list){
+    while(list!=NULL){
+        draw_radeau(list->mob);
+        list = list->next;
+    }
 }
 
 void draw_all_mob(Liste_Mob* list){
@@ -814,7 +1050,10 @@ void draw_all_proj(Liste_Mob* list){
 }
 
 void draw_all_mob_game(Game* game){
-    draw_all_exp(game->exp);
+    draw_all_radeau(game->mobs);
+    if(show_exp){
+        draw_all_exp(game->exp);
+    }
     draw_all_mob(game->mobs);
     draw_all_proj(game->projectile);
 }
@@ -891,6 +1130,10 @@ void draw_menu(void){
         case RANTON:
             mvaddstr(4,0,"  |      |  <|--RANTON--|> ");
             break;
+
+        case LEDE:
+            mvaddstr(4,0,"  |      |  <|-- DEDE --|> ");
+            break;
         
     
     }
@@ -932,7 +1175,7 @@ int main(void){
             }
         }
         if(!quit_game){
-            Game *game = initialise_game(character,0);
+            Game *game = initialise_game(character,5000,0);
             while(!quit_game){
                 while(pause){
                     ch = getch();
@@ -949,7 +1192,7 @@ int main(void){
                 update_game(game);
                 draw_all(game);
                 ch = getch();
-                if(IA_t){
+                if(game->joueur->character_id==LEDE){
                     if(game->joueur->delai){
                         game->joueur->delai--;
                     }else{
@@ -990,10 +1233,12 @@ int main(void){
                         move_right(game);
                     }else if(ch == 'm' || (ch == 'M')){
                         quit_game = true;
-                    }else if(ch == '\n'){
+                    }else if(ch == '\t'){
                         pause = true;
-                    }else if(ch == ' '){
+                    }else if((ch == ' ')||(ch == '\n')){
                         use_power(game);
+                    } else if(ch == 'x'){
+                        show_exp = !show_exp;
                     }
                 }
 
