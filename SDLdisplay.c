@@ -1,5 +1,6 @@
 #include "SDLdisplay.h"
 #include "mob.h"
+#include "tuiles.h"
 
 void display_map(Map *map, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMap){
     //parcours toute la map ligne par ligne et charge le sprite correspondant
@@ -813,7 +814,272 @@ void display_score(Game *game, SDL_Renderer *renderer, TTF_Font* font){
     SDL_DestroyTexture(texture);
 }
 
-void display_all(Game *game, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp, TTF_Font* font){
+void display_power(Player* player, SDL_Renderer *renderer, SDL_Surface** surfaceArrayPower){
+        SDL_Surface *spriteSurface = surfaceArrayPower[player->character_id];
+        if (!spriteSurface) {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation du sprite : %s", IMG_GetError());
+            exit(-1);
+        }
+        SDL_Texture *spriteTexture;
+        int spriteFullWidth;
+        int spriteFullHeight;
+        int offset_x;
+        int spriteWidth;
+        int spriteHeight;
+        SDL_Rect spriteRect;
+        SDL_Rect destRect;
+        switch(player->character_id){
+            case SNITCH:
+                spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+                if(!spriteTexture){
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                    exit(-1);
+                }
+                if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                    exit(-1);
+                }
+                spriteWidth = (spriteFullWidth / 9 );
+                spriteHeight = spriteFullHeight;
+                offset_x =  ((player->character_delay*7)/player->character_max_delay) + 1;
+                if(player->character_delay==0){
+                    offset_x = 0;
+                }
+                spriteRect.x = offset_x*spriteWidth;
+                spriteRect.y = 0;
+                spriteRect.w = spriteWidth;
+                spriteRect.h = spriteHeight;
+                destRect.x = (LENGTH*32 -2*32 - 21 )*ECHELLE;
+                destRect.y = (21)*ECHELLE;
+                destRect.w = spriteWidth*ECHELLE;
+                destRect.h = spriteHeight*ECHELLE;
+                if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+                }
+                SDL_DestroyTexture(spriteTexture);
+                break;
+
+            case KABI:
+                spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+                if(!spriteTexture){
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                    exit(-1);
+                }
+                if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                    exit(-1);
+                }
+                spriteWidth = (spriteFullWidth / 8 );
+                spriteHeight = spriteFullHeight;
+                offset_x =  ((player->character_delay*6)/player->character_max_delay) +1 ;
+                if(player->character_delay==0){
+                    offset_x = 0;
+                }
+                spriteRect.x = offset_x*spriteWidth;
+                spriteRect.y = 0;
+                spriteRect.w = spriteWidth;
+                spriteRect.h = spriteHeight;
+                destRect.x = (LENGTH*32 -2*32 - 21 )*ECHELLE;
+                destRect.y = (21)*ECHELLE;
+                destRect.w = spriteWidth*ECHELLE;
+                destRect.h = spriteHeight*ECHELLE;
+                if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+                }
+                SDL_DestroyTexture(spriteTexture);
+                break;
+
+            case KAIRON:
+                switch(player->character_lvl){
+                    case 1:
+                        spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+                        if(!spriteTexture){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        spriteWidth = (spriteFullWidth / 2 );
+                        spriteHeight = spriteFullHeight;
+                        if(player->character_value >= 1){
+                            offset_x = 0;
+                        } else {
+                            offset_x = 1;
+                        }
+                        spriteRect.x = offset_x*spriteWidth;
+                        spriteRect.y = 0;
+                        spriteRect.w = spriteWidth;
+                        spriteRect.h = spriteHeight;
+                        destRect.x = (LENGTH*32 -2*32 - 21 )*ECHELLE;
+                        destRect.y = (21)*ECHELLE;
+                        destRect.w = spriteWidth*ECHELLE;
+                        destRect.h = spriteHeight*ECHELLE;
+                        if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+                        }
+                        SDL_DestroyTexture(spriteTexture);
+                        break;
+
+                    case 2:
+                        spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+                        if(!spriteTexture){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        spriteWidth = (spriteFullWidth / 2 );
+                        spriteHeight = spriteFullHeight;
+                        if(player->character_value >= 2){
+                            offset_x = 0;
+                        } else {
+                            offset_x = 1;
+                        }
+                        spriteRect.x = offset_x*spriteWidth;
+                        spriteRect.y = 0;
+                        spriteRect.w = spriteWidth;
+                        spriteRect.h = spriteHeight;
+                        destRect.x = (LENGTH*32 -2*32 - 21 + 16 )*ECHELLE;
+                        destRect.y = (21)*ECHELLE;
+                        destRect.w = spriteWidth*ECHELLE;
+                        destRect.h = spriteHeight*ECHELLE;
+                        if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+                        }
+                        SDL_DestroyTexture(spriteTexture);
+                        spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+                        if(!spriteTexture){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        spriteWidth = (spriteFullWidth / 2 );
+                        spriteHeight = spriteFullHeight;
+                        if(player->character_value >= 1){
+                            offset_x = 0;
+                        } else {
+                            offset_x = 1;
+                        }
+                        spriteRect.x = offset_x*spriteWidth;
+                        spriteRect.y = 0;
+                        spriteRect.w = spriteWidth;
+                        spriteRect.h = spriteHeight;
+                        destRect.x = (LENGTH*32 -2*32 - 21 -16 )*ECHELLE;
+                        destRect.y = (21)*ECHELLE;
+                        destRect.w = spriteWidth*ECHELLE;
+                        destRect.h = spriteHeight*ECHELLE;
+                        if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+                        }
+                        SDL_DestroyTexture(spriteTexture);
+                        break;
+
+                    default:
+                        spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+                        if(!spriteTexture){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        spriteWidth = (spriteFullWidth / 2 );
+                        spriteHeight = spriteFullHeight;
+                        if(player->character_value >= 3){
+                            offset_x = 0;
+                        } else {
+                            offset_x = 1;
+                        }
+                        spriteRect.x = offset_x*spriteWidth;
+                        spriteRect.y = 0;
+                        spriteRect.w = spriteWidth;
+                        spriteRect.h = spriteHeight;
+                        destRect.x = (LENGTH*32 -32 - 21 )*ECHELLE;
+                        destRect.y = (21)*ECHELLE;
+                        destRect.w = spriteWidth*ECHELLE;
+                        destRect.h = spriteHeight*ECHELLE;
+                        if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+                        }
+                        SDL_DestroyTexture(spriteTexture);
+                        spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+                        if(!spriteTexture){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        spriteWidth = (spriteFullWidth / 2 );
+                        spriteHeight = spriteFullHeight;
+                        if(player->character_value >= 2){
+                            offset_x = 0;
+                        } else {
+                            offset_x = 1;
+                        }
+                        spriteRect.x = offset_x*spriteWidth;
+                        spriteRect.y = 0;
+                        spriteRect.w = spriteWidth;
+                        spriteRect.h = spriteHeight;
+                        destRect.x = (LENGTH*32 -2*32 - 21 )*ECHELLE;
+                        destRect.y = (21)*ECHELLE;
+                        destRect.w = spriteWidth*ECHELLE;
+                        destRect.h = spriteHeight*ECHELLE;
+                        if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+                        }
+                        SDL_DestroyTexture(spriteTexture);
+                        spriteTexture=SDL_CreateTextureFromSurface(renderer, spriteSurface);
+                        if(!spriteTexture){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur a l'initialisation de la texture : %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWidth, &spriteFullHeight)) {
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur au chargement de la texture: %s", SDL_GetError());
+                            exit(-1);
+                        }
+                        spriteWidth = (spriteFullWidth / 2 );
+                        spriteHeight = spriteFullHeight;
+                        if(player->character_value >= 1){
+                            offset_x = 0;
+                        } else {
+                            offset_x = 1;
+                        }
+                        spriteRect.x = offset_x*spriteWidth;
+                        spriteRect.y = 0;
+                        spriteRect.w = spriteWidth;
+                        spriteRect.h = spriteHeight;
+                        destRect.x = (LENGTH*32 -3*32 - 21 )*ECHELLE;
+                        destRect.y = (21)*ECHELLE;
+                        destRect.w = spriteWidth*ECHELLE;
+                        destRect.h = spriteHeight*ECHELLE;
+                        if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans l'affichage: %s", SDL_GetError());
+                        }
+                        SDL_DestroyTexture(spriteTexture);
+                        break;    
+                }
+                break;
+            
+            default:
+                //spriteWidth = (spriteFullWidth / 4 ); //ici pour le joueur, on a 4 lignes et 4 colonnes pour les 4 orientations et 4 "gestes" d'où le /4
+                //spriteHeight = (spriteFullHeight / 4 );
+                break;
+
+
+        }
+    }
+
+void display_all(Game *game, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayPower, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp, TTF_Font* font){
     // affiche toute la carte dans l'ordre, map puis mobs puis joueur
     // if(SDL_RenderClear(renderer)){
     //     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
@@ -824,6 +1090,7 @@ void display_all(Game *game, SDL_Renderer *renderer, int pix_defil, SDL_Surface*
     display_mob(game->mobs, renderer,pix_defil, surfaceArrayMob);
     display_projectile(game->projectile, renderer,pix_defil, surfaceArrayProjectile);
     display_joueur(game->joueur, renderer,pix_defil, surfaceArrayPlayer);
+    display_power(game->joueur, renderer, surfaceArrayPower);
     display_score(game, renderer, font);
     SDL_RenderPresent(renderer);
 }

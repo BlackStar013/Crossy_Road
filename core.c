@@ -101,9 +101,9 @@ void add_road(Game *game, Mob car, Tile road_, int pos, int speed, int nb_car){
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], road_);
     }
-    int init_x = -car.length+(rand()%3+1)*pos;
+    int init_x = (rand()%3+1)*pos;
     for(int i = 0; i < nb_car; i++){
-        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(LENGTH/nb_car)*i, HEIGTH+pos,speed,0));
+        game->mobs = list_append(game->mobs, clone_mob(car, ((init_x+(((LENGTH-1)/(nb_car) + car.length ))*i)%(LENGTH + car.length)) - car.length, HEIGTH+pos,speed,0));
     }
 }
 
@@ -138,7 +138,7 @@ void generator_road(Game *game){
             int speed = rand()%5 +1;
             int nb_car;
             if(speed==6){
-                nb_car = rand()%4 + 2;
+                nb_car = rand()%3 + 2;
             } else if(speed==1){
                 nb_car = rand()%3 +1;
             } else {
@@ -182,7 +182,7 @@ void add_plank(Game *game, Mob plank,Tile tile, int pos, int speed){
     int proba_plank = 50;
     int plank_lenght = 0;
     int cons = 0;
-    for(int i = 0; i < LENGTH; i++){
+    for(int i = 0; i <= LENGTH; i++){
         int dice = rand()%100+1;
         if(dice<proba_plank){
             game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed,0));
@@ -271,8 +271,8 @@ void add_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,int wher
         }
     }
     int delay = (rand()%100 * speed)/100;
-    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/32);
-    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/32);
+    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/16);
+    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/16);
     ball->memory__x = where_can*32;
     canon_->delay = delay;
     ball->delay = delay;
@@ -490,7 +490,7 @@ void proba_change_fire(Game* game, int nb_line){
 void add_fire(Game* game, int decal, int nb_flames){
     for(int i = 0; i<nb_flames; i++){
         int direction=rand()%2;
-        int pos = rand()%(LENGTH-1);
+        int pos = rand()%(LENGTH)-1;
         int speed = rand()%3;
         Mob* fire;
         if(direction){
@@ -500,6 +500,7 @@ void add_fire(Game* game, int decal, int nb_flames){
         }
         fire ->memory__x = -18;
         for(int i =0; i < rand()%4; i++){
+             fire->delay = 0;
              (fire->path)(fire,game->joueur);
         }
         game->projectile = list_append(game->projectile, fire);
@@ -519,8 +520,8 @@ void generator_fire(Game *game){
                 clone(&line->tiles[i], planks);
             }
         }
-        int nb_Block = rand()%8;
-        for(int i = 0; i<nb_Block; i++){
+        int nb_Block = rand()%7;
+        for(int j = 0; j<nb_Block; i++){
             int coinflip = rand()%2;
             if(coinflip){
                 clone(&(line->next)->tiles[rand()%LENGTH], brokenplanks);
@@ -545,9 +546,10 @@ void add_fire_unit(Game *game, int init_x, int direction, int pos, int speed, in
     Mob* firey;
     for(int i = 0; i < nb_fire; i++){
         if(direction){
-           firey =  clone_mob(fire_right, init_x+(LENGTH/nb_fire)*i, HEIGTH+pos,speed,0);
+            firey = clone_mob(fire_right, ((init_x+(((LENGTH-1)/(nb_fire) + 1 ))*i)%(LENGTH + 1)) - 1, HEIGTH+pos,speed,0);
         } else {
-            firey =  clone_mob(fire_left, init_x+(LENGTH/nb_fire)*i, HEIGTH+pos,speed,0);        }
+            firey = clone_mob(fire_left, ((init_x+(((LENGTH-1)/(nb_fire) + 1 ))*i)%(LENGTH + 1)) - 1, HEIGTH+pos,speed,0);
+        }
         firey->memory__x = -18;
         firey->offset_x = rand()%4;
         game->projectile = list_append(game->projectile, firey);
@@ -1769,9 +1771,9 @@ void add_magic_road(Game *game, Mob car, Tile road_, int pos, int speed, int max
     for(int i = 0; i<LENGTH; i++){
         clone(&line->tiles[i], road_);
     }
-    int init_x = -car.length+(rand()%3+1)*pos;
+     int init_x = (rand()%3+1)*pos;
     for(int i = 0; i < nb_car; i++){
-        game->mobs = list_append(game->mobs, clone_mob(car, init_x+(LENGTH/nb_car)*i, HEIGTH+pos,speed,max_delay));
+        game->mobs = list_append(game->mobs, clone_mob(car, ((init_x+(((LENGTH-1)/(nb_car) + car.length ))*i)%(LENGTH + car.length)) - car.length, HEIGTH+pos,speed,0));
     }
 }
 
@@ -1857,7 +1859,7 @@ void add_fast_plank(Game *game, Mob plank,Tile tile, int pos, int speed){
     int proba_plank = 50;
     int plank_lenght = 0;
     int cons = 0;
-    for(int i = 0; i < LENGTH; i++){
+    for(int i = 0; i <= LENGTH; i++){
         int dice = rand()%100+1;
         if(dice<proba_plank){
             game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed,0));
@@ -1955,8 +1957,8 @@ void add_blocked_canon(Game *game, Mob canon,Mob canon_ball, int pos, int speed,
         clone(&line->tiles[where_can], plain_block_left);
     }
     int delay = (rand()%100 * speed)/100;
-    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/32);
-    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/32);
+    Mob* canon_ = clone_mob(canon, where_can, HEIGTH+pos,speed,(LENGTH*32)/16);
+    Mob* ball = clone_mob(canon_ball,-64,HEIGTH+pos,speed,(LENGTH*32)/16);
     ball->memory__x = where_can*32;
     canon_->delay = delay;
     ball->delay = delay;
@@ -2203,7 +2205,7 @@ void add_bone(Game *game, Mob plank,Tile tile, int pos, int speed){
     int proba_plank = 50;
     int plank_lenght = 0;
     int cons = 0;
-    for(int i = 0; i < LENGTH; i++){
+    for(int i = 0; i <= LENGTH; i++){
         int dice = rand()%100+1;
         if(dice<proba_plank){
             game->mobs = list_append(game->mobs, clone_mob(plank, -1+i, (HEIGTH+pos),speed,0));
@@ -2570,13 +2572,13 @@ void initialise_map(Game* game){
     }
 }
 
-Game *initialise_game(int character_id, int tot_exp){
+Game *initialise_game(int character_id, int tot_exp, int short_mode){
     // explicite
     srand( time( NULL ) );
     Game* game = malloc(sizeof(Game));
     game->carte = create_empty_map();
     game->joueur = initialise_player(character_id,tot_exp); //0 for now
-    game->score = 1;
+    game->score = 0;
     game->nb_exp = 0;
     game->exp = NULL;
     game->exp = list_append(game->exp, clone_mob(cible, -80085, 80085, 0, 0));
@@ -2585,7 +2587,13 @@ Game *initialise_game(int character_id, int tot_exp){
     game->projectile = list_append(game->projectile, clone_mob(arrow_kabi, -4242, 6969, 0, 0));
     game->proba = initialise_proba();
     game->biome = CROSSY_ROAD;
-    game->until_next = 10;
+    game->short_mode = short_mode;
+    game->step = 1;
+    if(game->short_mode){
+        game->until_next = 51;
+    } else {
+        game->until_next = 101;
+    }
     initialise_map(game);
     return game;
 }
@@ -2595,6 +2603,7 @@ void switch_game(Game* game){
     //printf("%d\n",game->score+1);
     switch_map(game->carte);
     game->score++;
+    game->step++;
     switch_mob(game->exp);
     switch_mob(game->mobs);
     switch_mob(game->projectile);
@@ -2853,12 +2862,16 @@ void update_game(Game* game){
             }
             act = act->next;
         }
+    } else if (game->joueur->character_id == OOGWAAY){
+        if(game->joueur->character_delay){
+            game->joueur->character_delay--;
+        }
     }
     game->joueur->_x = (game->joueur->_x + game->joueur->_x_dest)/2;
     game->joueur->_y = (game->joueur->_y + game->joueur->_y_dest)/2;
     //SDL_Delay(1000);
-    if(game->score%(game->until_next) == 0){
-        game->score++;
+    if(game->step%(game->until_next) == 0){
+        game->step = 1;
         if(game->biome != NB_BIOME-1){
             game->biome++;
         }
@@ -2868,27 +2881,47 @@ void update_game(Game* game){
         switch(game->biome){
             case CROSSY_ROAD:
             proba_change_game(game,FOREST);
-            game->until_next = 50;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 101;
+            }
             break;
 
             case HARD_CROSSY_ROAD:
             proba_change_game(game, BUSHES);
-            game->until_next = 50;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 101;
+            }
             break;
 
             case FLAMING_MANOR:
             proba_change_game(game, ENTRANCE);
-            game->until_next = 50;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 101;
+            }
             break;
 
             case CULTIST_CAVE:
             proba_change_game(game, TRANSITION_CAVE);
-            game->until_next = 45;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 101;
+            }
             break;
 
             case WITHIN_THE_BEAST:
             proba_change_game(game, TRANSITION_FINAL);
-            game->until_next = 60;
+            if(game->short_mode){
+                game->until_next = 51;
+            } else {
+                game->until_next = 101;
+            }
             break;
 
             default:

@@ -204,7 +204,7 @@ bool mob_collide_mob_on_memory(Mob* mob, Mob* mob2){
 
 void path_right(Mob *car, Player*p){
     if(!car->delay){
-        if(car->_x/32 >= LENGTH){
+        if(car->_x > LENGTH*32){
             car->_x = -car->length*32;
         } else {
             car->_x += 3; 
@@ -304,7 +304,7 @@ void canon_right_fast(Mob* mob, Player *p){
                 mob->action_value = 0;
             } else {
                 mob->action_delay--;
-                mob->_x += 32;
+                mob->_x += 16;
             }
             break;
 
@@ -330,7 +330,7 @@ void canon_left_fast(Mob* mob, Player *p){
                 mob->action_value = 0;
             } else {
                 mob->action_delay--;
-                mob->_x -= 32;
+                mob->_x -= 16;
             }
             break;
 
@@ -2435,6 +2435,11 @@ void champiped(Mob* mob, Player* player){
             }
         }
     }
+    if(mob->_x > LENGTH*32){
+        mob->_x = 0;
+    } else if(mob->_x<0){
+        mob->_x = LENGTH*32;
+    }
 }
 
 void xped(Mob* mob, Player* player){
@@ -2466,6 +2471,11 @@ void xped(Mob* mob, Player* player){
     if(!mob->action_value){
         mob->offset_x++;
         mob->offset_x %= 4;
+    }
+    if(mob->_x > LENGTH*32){
+        mob->_x = 0;
+    } else if(mob->_x<0){
+        mob->_x = LENGTH*32;
     }
 }
 

@@ -96,8 +96,9 @@ void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer
                 }
                 if(cursor == RETRY){
                     int exp = (*game)->nb_exp;
+                    int shortmode = (*game)->short_mode;
                     destroy_game(*game);;
-                    *game = initialise_game(chara,exp);
+                    *game = initialise_game(chara,exp,shortmode);
                     (*game)->nb_exp = exp;
                     *main_menu = SDL_FALSE;
                     quit2 = SDL_TRUE;

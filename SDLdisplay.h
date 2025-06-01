@@ -19,6 +19,7 @@
 void display_map(Map *map, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMap);
 void display_joueur(Player *joueur, SDL_Renderer *renderer,int pix_defil, SDL_Surface** surfaceArrayPlayer);
 void display_exp(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceExp);
+void display_power(Player* player, SDL_Renderer *renderer, SDL_Surface** surfaceArrayPower);
 void display_mob(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMob);
 void display_projectile(Liste_Mob *liste, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayProjectile);
-void display_all(Game *game, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp, TTF_Font* font);
+void display_all(Game *game, SDL_Renderer *renderer, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayPower, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp, TTF_Font* font);

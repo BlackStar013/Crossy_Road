@@ -233,3 +233,35 @@ void freeSurfaceArrayPlayer(SDL_Surface** surfaceArrayPlayer){
     }
     free(surfaceArrayPlayer);
 }
+
+SDL_Surface** initSurfaceArrayPower(void){
+    SDL_Surface** surfaceArrayPower = malloc(sizeof(SDL_Surface*)*NB_PERSO);
+    for(int i = 0; i<NB_PERSO; i++){
+        if(i==KAIRON){              
+            surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
+        }else if(i==SNITCH){   
+            surfaceArrayPower[i] = IMG_Load("sprites/ChargeSnitch.png");
+        }else if(i==AESIR){
+            surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
+        }else if(i==KABI){
+            surfaceArrayPower[i] = IMG_Load("sprites/ChargeKabi.png");
+        }else if(i==OOGWAAY){
+            surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
+        }else if(i==RANTON){
+            surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
+        }else if(i==JOLINAR){
+            surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
+        }else{
+            surfaceArrayPower[i] = IMG_Load("sprites/Shield.png");
+        }
+    }
+    return surfaceArrayPower;
+}
+
+void freeSurfaceArrayPower(SDL_Surface** surfaceArrayPower){
+    for(int i=0; i<NB_PERSO; i++){
+        SDL_FreeSurface(surfaceArrayPower[i]);
+    }
+    free(surfaceArrayPower);
+}
+
