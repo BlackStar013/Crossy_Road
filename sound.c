@@ -35,6 +35,9 @@ Mix_Chunk** initSoundArray(void){
         if(i==MUS_MONSTER){
             musicArray[i] = Mix_LoadMUS("sounds/monster.mp3");
         }
+        if(i==MUS_GAMEOVER){
+            musicArray[i] = Mix_LoadMUS("sounds/game_over.mp3");
+        }
         if (!musicArray[i]) {
             printf("Failed to load sound effect! SDL_mixer Error: %s\n", Mix_GetError());
         }

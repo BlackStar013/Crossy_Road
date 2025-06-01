@@ -112,17 +112,24 @@ int main(void){
     bool reset_save = false;
     bool sound = true;
     bool ia = false;
+    bool shall_die = false;
+    bool on_main_menu = false;
     int exp;
     load(&exp, &highscore, &chara, &shortmode);
+    int initshortmode = shortmode;
     Game* game = initialise_game(chara,exp,shortmode);
     game->nb_exp = exp;
-    //save(0, 0, 0, 0);
-    printf("exp: %d,highscore: %d\n", game->nb_exp, highscore);
     Uint32 startTime = SDL_GetTicks();
     Uint32 currentTime;
     Uint32 endframeTime;
     Uint32 elapsedTime;
     while(!quit){
+        on_main_menu = true;
+        if(!ia){
+            exp = game->nb_exp;
+        }
+        game->nb_exp = exp;
+        shall_die = false;
         Mix_HaltMusic();
         displayMainMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE));
         SDL_PollEvent(&event);
@@ -150,7 +157,7 @@ int main(void){
                     main_menu = SDL_FALSE;
                 }
                 if(cursor == CHANGECHARA){
-                    charaMenu(&quit, &chara, renderer, &event, font, soundArray, surfaceArrayPlayer, game, sound);
+                    charaMenu(&quit, &chara, renderer, &event, font, soundArray, surfaceArrayPlayer, game, sound, highscore);
                     if(chara == LEDE){
                         ia = true;
                     }
@@ -182,11 +189,13 @@ int main(void){
             //music init
             music = 0;
             if(sound){
+                Mix_VolumeMusic(96);
                 Mix_PlayMusic(musicArray[music_to_play[game->biome]], -1);
             }
             //music init
         }
         while(!quit && !main_menu){
+            on_main_menu = false;
             //music player
             if(sound && music_to_play[music] != music_to_play[game->biome]){
                 Mix_HaltMusic();
@@ -232,13 +241,24 @@ int main(void){
             }else if(!pix_defil%32){
                 destroy_last_buffer(game->carte);
             }
-            // test la mort, pour le moment juste quitte le jeu
-            if(test_death(game)){
+            // test la mort
+            if(shall_die){
+                shall_die = false;
+                int new_exp = game->nb_exp-exp;
+                //printf("exptot: %d, oldexp:%d, newexp: %d\n", game->nb_exp, exp, new_exp);
+                display_all(game, renderer,pix_defil, surfaceArrayMap, surfaceArrayMob, surfaceArrayPlayer, surfaceArrayPower, surfaceArrayProjectile, surfaceExp,font);
+                SDL_Delay(500);
                 if(SDL_RenderClear(renderer)){
                     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
                 }
-                gameOverMenu(&main_menu, &quit, &game, renderer, &event, font, soundArray, chara, sound);
+                gameOverMenu(&main_menu, &quit, &game, renderer, &event, font, soundArray, musicArray, chara, sound, new_exp, &highscore, &music, ia);
+                if(!ia){
+                    exp = game->nb_exp;
+                }
                 //quit = SDL_TRUE;
+            }
+            if(test_death(game)){
+                shall_die = true;
             }
             if(SDL_RenderClear(renderer)){
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Erreur dans le fond vide : %s", SDL_GetError());
@@ -276,7 +296,7 @@ int main(void){
                 SDL_PollEvent(&event);
                 //regarde si il y a des evenements clavier
                 if(event.type == SDL_QUIT){
-                    printf("je rentre ici\n");
+                    //printf("je rentre ici\n");
                     quit = SDL_TRUE;
                 }else if(event.type == SDL_KEYUP){
                     // bouge le joueur dans la direction selon la touche pressée, ZQSD, ou quitte avec M
@@ -310,19 +330,27 @@ int main(void){
                 SDL_Delay(frameDelay - (endframeTime-currentTime));
             }
         }
+        if(initshortmode != shortmode){
+            save(game->nb_exp, highscore, chara, shortmode);
+            initshortmode = shortmode;
+        }
         if(reset_save){
-            printf("try save reset\n");
+            //printf("try save reset\n");
             save(0,0,0,0);
             highscore = 0;
+            exp = 0;
             destroy_game(game);
             game = initialise_game(chara,0,shortmode);
             load(&(game->nb_exp), &highscore, &chara, &shortmode);
         }
-        else if((game->score > highscore) && (!ia)){
-            save(game->nb_exp, game->score, chara, 0);
+        else if((game->score > highscore) && (!ia) && (!on_main_menu)){
+            //printf("new highscore, score_act=%d, highscore=%d\n", game->score, highscore);
+            save(game->nb_exp, game->score, chara, shortmode);
+            highscore = game->score;
         }
-        else{
-            save(game->nb_exp, highscore, chara, 0);
+        else if((!ia) && (!on_main_menu)){
+            //printf("no new highscore, score_act=%d, highscore=%d\n", game->score, highscore);
+            save(game->nb_exp, highscore, chara, shortmode);
         }
         reset_save = false;
     }

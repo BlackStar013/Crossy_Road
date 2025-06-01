@@ -23,6 +23,7 @@ enum Musics {
     MUS_MANOR,
     MUS_CAVE,
     MUS_MONSTER,
+    MUS_GAMEOVER,
     NB_MUSIC
 };
 

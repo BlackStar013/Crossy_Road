@@ -67,11 +67,13 @@ void displayMainMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int wid
     SDL_DestroyTexture(cursorTexture);
 }
 
-void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, int chara, bool sound){
+void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, Mix_Music** musicArray, int chara, bool sound, int new_exp, int* highscore, int* music, bool ia){
+    Mix_HaltMusic();
+    Mix_PlayMusic(musicArray[MUS_GAMEOVER], -1);
     SDL_bool quit2 = SDL_FALSE;
     int cursor = 0;
     while(!quit2){
-        displayGameOverMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE));
+        displayGameOverMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), new_exp, *highscore, (*game)->score);
         SDL_PollEvent(pevent);
         if(pevent->type == SDL_QUIT){
             *quit = SDL_TRUE;
@@ -97,11 +99,21 @@ void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer
                 if(cursor == RETRY){
                     int exp = (*game)->nb_exp;
                     int shortmode = (*game)->short_mode;
+                    if((!ia) && (*game)->score > *highscore){
+                        *highscore = (*game)->score;
+                    }
                     destroy_game(*game);;
                     *game = initialise_game(chara,exp,shortmode);
                     (*game)->nb_exp = exp;
                     *main_menu = SDL_FALSE;
                     quit2 = SDL_TRUE;
+                    //music init
+                    *music = 0;
+                    if(sound){
+                        Mix_VolumeMusic(96);
+                        Mix_PlayMusic(musicArray[0], -1);
+                    }
+                    //music init
                 }
                 if(cursor == GOGOMAINMENU){
                     *main_menu = SDL_TRUE;
@@ -119,7 +131,7 @@ void gameOverMenu(SDL_bool* main_menu, SDL_bool* quit, Game** game, SDL_Renderer
     }
 }
 
-void displayGameOverMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int width, int heigth){
+void displayGameOverMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int width, int heigth, int new_exp, int highscore, int score){
     //printf("%d %d\n", width, heigth);
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
@@ -135,15 +147,29 @@ void displayGameOverMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int
     SDL_Rect titleRect = {width / 2 - 120*ECHELLE, heigth / 2 - 150*ECHELLE, 240*ECHELLE, 96*ECHELLE};
     SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
+    char xp_message[100];
+    char highscore_message[100];
+    sprintf(xp_message, "YOU WON %d XP", new_exp);
+    SDL_Texture* xpTexture = strToTexture(xp_message, font, renderer);
+    if(score > highscore){
+        sprintf(highscore_message, "NEW HIGHSCORE: %d", score);
+        SDL_Texture* highscoreTexture = strToTexture(highscore_message, font, renderer);
+        SDL_Rect highscoreRect = {width / 2 - ((strlen(highscore_message)*15)/2)*0.75*ECHELLE, heigth / 2 - 20*0.75*ECHELLE, strlen(highscore_message)*15*0.75*ECHELLE, 32*0.75*ECHELLE};
+        SDL_RenderCopy(renderer, highscoreTexture, NULL, &highscoreRect);
+        SDL_DestroyTexture(highscoreTexture);
+    }
+    SDL_Rect xpRect = {width / 2 - ((strlen(xp_message)*15)/2)*0.75*ECHELLE, heigth / 2 - 60*0.75*ECHELLE, strlen(xp_message)*15*0.75*ECHELLE, 32*0.75*ECHELLE};
+    SDL_RenderCopy(renderer, xpTexture, NULL, &xpRect);
+
     int decals[] = {(23*5)/2, (23*9)/2, (23*4)/2};
-    SDL_Rect curRect = {width / 2 - (decals[cursor]+50)*ECHELLE, heigth / 2+(cursor*50)*ECHELLE-20*ECHELLE, 2*32*ECHELLE, 2*32*ECHELLE};
+    SDL_Rect curRect = {width / 2 - (decals[cursor]+50)*ECHELLE, heigth / 2+(cursor*50)*ECHELLE-20*ECHELLE+30*ECHELLE, 2*32*ECHELLE, 2*32*ECHELLE};
     SDL_RenderCopy(renderer, cursorTexture, NULL, &curRect);
 
-    SDL_Rect rect1 = {width / 2 - ((23*5)/2)*ECHELLE, heigth / 2, (23*5)*ECHELLE, 32*ECHELLE};
+    SDL_Rect rect1 = {width / 2 - ((23*5)/2)*ECHELLE, heigth / 2 + 30*ECHELLE, (23*5)*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[0], NULL, &rect1);
-    SDL_Rect rect2 = {width / 2 - ((23*9)/2)*ECHELLE, heigth / 2 + 50*ECHELLE, (23*9)*ECHELLE, 32*ECHELLE};
+    SDL_Rect rect2 = {width / 2 - ((23*9)/2)*ECHELLE, heigth / 2 + 80*ECHELLE, (23*9)*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[1], NULL, &rect2);
-    SDL_Rect rect3 = {width / 2 - ((23*4)/2)*ECHELLE, heigth / 2 + 100*ECHELLE, (23*4)*ECHELLE, 32*ECHELLE};
+    SDL_Rect rect3 = {width / 2 - ((23*4)/2)*ECHELLE, heigth / 2 + 130*ECHELLE, (23*4)*ECHELLE, 32*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[2], NULL, &rect3);
     
     SDL_RenderPresent(renderer);
@@ -154,6 +180,7 @@ void displayGameOverMenu(int cursor, SDL_Renderer *renderer, TTF_Font* font, int
     SDL_DestroyTexture(titleTexture);
     SDL_FreeSurface(cursorSurface);
     SDL_DestroyTexture(cursorTexture);
+    SDL_DestroyTexture(xpTexture);
 }
 
 void pauseMenu(SDL_bool* main_menu, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Game *game, int pix_defil, SDL_Surface** surfaceArrayMap, SDL_Surface** surfaceArrayMob, SDL_Surface** surfaceArrayPlayer, SDL_Surface** surfaceArrayProjectile, SDL_Surface** surfaceExp, Mix_Chunk** soundArray, int* shortmode, bool* sound, bool* reset_save){
@@ -265,7 +292,7 @@ void displayPauseMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int wi
     SDL_DestroyTexture(cursorTexture);
 }
 
-void displayCharaMenu2(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, SDL_Surface** surfaceArrayPlayer, Game* game, int* unlocked){
+void displayCharaMenu2(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, SDL_Surface** surfaceArrayPlayer, Game* game, int* unlocked, int highscore){
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
 
@@ -300,6 +327,13 @@ void displayCharaMenu2(int cursor, SDL_Renderer* renderer, TTF_Font* font, int w
 
     SDL_Rect titleRect = {width / 2 - 120*0.75*ECHELLE, heigth / 2 - 180*0.75*ECHELLE, 240*0.75*ECHELLE, 96*0.75*ECHELLE};
     SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+
+    char xp_message[100];
+    sprintf(xp_message, "HIGHSCORE: %d        CURRENT XP: %d", highscore, game->nb_exp);
+    SDL_Texture* xpTexture = strToTexture(xp_message, font, renderer);
+    SDL_Rect xpRect = {width / 2 - 130*0.75*ECHELLE, heigth / 2 - 90*0.75*ECHELLE, 260*0.75*ECHELLE, 32*0.75*ECHELLE};
+    SDL_RenderCopy(renderer, xpTexture, NULL, &xpRect);
+
 
     SDL_Surface* spriteLockedSurface = IMG_Load("sprites/Cadenas.png");
 
@@ -363,13 +397,13 @@ void displayCharaMenu2(int cursor, SDL_Renderer* renderer, TTF_Font* font, int w
     SDL_DestroyTexture(cadrePersoTexture);
 }
 
-void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, SDL_Surface** surfaceArrayPlayer, Game* game, bool sound){
+void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, SDL_Surface** surfaceArrayPlayer, Game* game, bool sound, int highscore){
     SDL_bool quit2 = SDL_FALSE;
     int cursor = 0;
     int* unlocked = malloc(sizeof(int)*8);
     updateLocks(unlocked, game->nb_exp);
     while(!quit2){
-        displayCharaMenu2(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), surfaceArrayPlayer, game, unlocked);
+        displayCharaMenu2(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), surfaceArrayPlayer, game, unlocked, highscore);
         SDL_PollEvent(pevent);
         if(pevent->type == SDL_QUIT){
             *quit = SDL_TRUE;
@@ -421,7 +455,7 @@ void charaMenu(SDL_bool* quit, int* pchara, SDL_Renderer* renderer, SDL_Event* p
                 if(sound){
                     Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 }
-                descMenu(quit, renderer, pevent, font, soundArray, cursor, unlocked[cursor], sound);
+                descMenu(&quit2, quit, renderer, pevent, font, soundArray, cursor, unlocked[cursor], sound);
             }else if(pevent->key.keysym.sym == SDLK_TAB){
                 quit2 = SDL_TRUE;
             }else if(pevent->key.keysym.sym == SDLK_m){
@@ -439,7 +473,7 @@ void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_
     SDL_Surface* cursorSurface = IMG_Load("sprites/Selectionneur.png");
     SDL_Surface* backSurface = IMG_Load("sprites/filtrepause.png");
     while(!quit2){
-        displayOptionsMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), cursorSurface, backSurface);
+        displayOptionsMenu(cursor, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE), cursorSurface, backSurface, *shortmode, *sound);
         SDL_PollEvent(pevent);
         if(pevent->type == SDL_QUIT){
             *quit = SDL_TRUE;
@@ -462,14 +496,15 @@ void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_
                 if(*sound){
                     Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 }
+                if(cursor == TUTORIAL){
+                    Tutorial(&quit2, quit, renderer, pevent, font, soundArray, *sound);
+                }
                 if(cursor == SOUND){
                     *sound = !*sound;
+                    Mix_HaltMusic();
                 }
                 if(cursor == SHORTMODE){
                     *shortmode = (*shortmode+1)%2;
-                }
-                if(cursor == SEE_HIGHSCORE){
-
                 }
                 if(cursor == RESET_SAVE){
                     *reset_save = true;
@@ -479,6 +514,7 @@ void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_
                 }
             }else if(pevent->key.keysym.sym == SDLK_m){
                 quit2 = SDL_TRUE;
+                *quit = SDL_TRUE;
             }
         }
     }
@@ -486,7 +522,7 @@ void optionsMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_
     SDL_FreeSurface(cursorSurface);
 }
 
-void displayOptionsMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, SDL_Surface* cursorSurface, SDL_Surface* backSurface){
+void displayOptionsMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth, SDL_Surface* cursorSurface, SDL_Surface* backSurface, int shortmode, bool sound){
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
 
@@ -496,7 +532,28 @@ void displayOptionsMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int 
 
     SDL_Texture* backTexture = SDL_CreateTextureFromSurface(renderer, backSurface);
 
-    SDL_Texture* textTextures[] = {strToTexture("SOUND", font, renderer), strToTexture("SHORTMODE", font, renderer), strToTexture("HIGHSCORE", font, renderer), strToTexture("RESET SAVE", font, renderer), strToTexture("EXIT", font, renderer)};
+    int decals[] = {(23*8)/2, (23*5)/2, (23*9)/2, (23*10)/2, (23*4)/2};
+
+    char soundStr[11];
+    char shortmodeStr[15];
+    if(sound){
+        sprintf(soundStr, "SOUND: ON");
+        decals[1] = (23*9)/2;
+    }
+    else{
+        sprintf(soundStr, "SOUND: OFF");
+        decals[1] = (23*10)/2;
+    }
+    if(shortmode == 1){
+        sprintf(shortmodeStr, "SHORTMODE: ON");
+        decals[2] = (23*13)/2;
+    }
+    else if(shortmode == 0){
+        sprintf(shortmodeStr, "SHORTMODE: OFF");
+        decals[2] = (23*14)/2;
+    }
+
+    SDL_Texture* textTextures[] = {strToTexture("TUTORIAL", font, renderer), strToTexture(soundStr, font, renderer), strToTexture(shortmodeStr, font, renderer), strToTexture("RESET SAVE", font, renderer), strToTexture("EXIT", font, renderer)};
     
     //SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     
@@ -507,8 +564,6 @@ void displayOptionsMenu(int cursor, SDL_Renderer* renderer, TTF_Font* font, int 
 
     SDL_Rect titleRect = {width / 2 - 120*ECHELLE, heigth / 2 - 180*ECHELLE, 240*ECHELLE, 96*ECHELLE};
     SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
-
-    int decals[] = {(23*5)/2, (23*9)/2, (23*9)/2, (23*10)/2, (23*4)/2};
 
     SDL_Rect curRect = {width / 2 - (decals[cursor]+50)*ECHELLE, heigth / 2+(cursor*40*ECHELLE) - 55*ECHELLE, 2*32*ECHELLE, 2*32*ECHELLE};
     SDL_RenderCopy(renderer, cursorTexture, NULL, &curRect);
@@ -550,41 +605,89 @@ int count_char_occurrences(char* str, char ch){
 
 void displayTutorial(SDL_Renderer* renderer, TTF_Font* font, int width, int heigth){
 
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+    SDL_RenderClear(renderer);
+
+    SDL_Texture* titleTexture = strToTexture("TUTORIAL", font, renderer);
+    SDL_Rect titleRect = {width / 2 - 120*0.75*ECHELLE, heigth / 2 - 180*0.75*ECHELLE, 240*0.75*ECHELLE, 96*0.75*ECHELLE};
+    SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+    
+    SDL_Texture* exitTexture = strToTexture("PRESS ENTER TO EXIT", font, renderer);
+    SDL_Rect rect1 = {width / 2 - 120*0.75*ECHELLE, heigth / 2 + 180*0.75*ECHELLE, 240*0.75*ECHELLE, 50*0.75*ECHELLE};
+    SDL_RenderCopy(renderer, exitTexture, NULL, &rect1);
+    
+    char message[2000] = "PRESS Z/Q/S/D or the directional arrows to move\nPRESS SPACE or ENTER to confirm in a menu\nPRESS D on the CHARACTERS menu for a description of their power\nPRESS SPACE to use a character's power\nPRESS TAB to pause/unpause the game\nDO NOT PRESS M, EVER";
+
+    SDL_Color textColor = {255, 255, 255, 255};
+
+    char* line = strtok(message, "\n");
+    int y_offset = heigth / 2 - 35 * ECHELLE;
+
+    while (line != NULL) {
+        SDL_Surface* textSurface = TTF_RenderText_Blended(font, line, textColor);
+        SDL_Texture* messageTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+        SDL_Rect rect2 = {width / 2 - ((textSurface->w * 0.60 * ECHELLE)/2), y_offset, textSurface->w * 0.60 * ECHELLE, textSurface->h * 0.60 * ECHELLE};
+
+        SDL_RenderCopy(renderer, messageTexture, NULL, &rect2);
+
+        y_offset += textSurface->h * ECHELLE;
+
+        SDL_FreeSurface(textSurface);
+        SDL_DestroyTexture(messageTexture);
+
+        line = strtok(NULL, "\n");  // Move to next line
+    }
+    
+    SDL_RenderPresent(renderer);
+
+    SDL_DestroyTexture(exitTexture);
+    SDL_DestroyTexture(titleTexture);
 }
 
 void displayDescMenu(int chara, int lvl, SDL_Renderer* renderer, TTF_Font* font, int width, int heigth){
 
     char* texts[] = {"\nRegardez la belle I.A, elle est belle hein ? Eh bah elle vous rapportera pas d'exp, nan.\nVous etes punis. Allez, au coin. Zou. Zou j'ai dis.",
         "D'aucun dites que vous etes le protagonistes, assez classique et plat mais bien aimant...\nC'est bien pour ca que vous ne montrez pas vos pouvoirs !\nPar contre... Je me dis que contre un peu d'argent, peut-etre que je vous\ndenoncerais a notre paladin, en disant que c'est vous, le veritable antagoniste du jeu !\n( Pouvoir en DLC payant, arrivant en cas de soutiens du jeu )",
-        "Un demon ? J'aime pas les demons. \"Blabla je suis paladin\", j'ai quand meme pas confiance.\nAu moins vous pouvez utilisez votre bel armure... que vous avez vole n'est-ce pas ?",
-        "\n\nOh, tiens, l'experience vous a rendu plus fort, vous pouvez l'utilisez deux fois cette armure.\nEh bien dis donc...",
-        "\n\n3 utilisations d'armures ? Wow, on dirait presque un protagoniste classique.\nPeut-etre que vous etes vraiment gentil au final.",
-        "Oh, un druide ? Je suis fan ! Et vous adorez les champignons ? Vous dites que\nc'est au moins deux fois plus efficace que l'experience de la vie ? Eh bien, c'est une\nlecon a ne pas donner a la jeunesse, mais je connais un professeur de SIC\nqui serait bien d'accord.",
-        "\n\nC'est normal que vous attiriez les champignons ? Euh... Prenez une douche.",
-        "\n\nAttendez, maintenant ca aide aussi pour le score ? J'etais d'accord au debut,\n mais la je crois que je vais devoir appeler la police concernant votre consommation...",
-        "Non, non, arretez, vous n'etes pas une porte ! Nan, stoppez ceci ! En plus ca n'a rien\na voir avec vos pouvoir, vous immobilisez juste une ligne entiere... Alors pourquoi cette obsession ?\n",
-        "\n\n2 ligne maintenant ? Et plus souvent ? Wow, vous etes un bon. Genre vraiment bon.\n...Bon, vous pouvez me repondre ? J'ai l'impression de parler a une porte la... ",
-        "\n\nComment ca le scenario entier est lie a une porte ? Qu'est-ce que tu me fumes !? T'es potes avec le\ndruide aux champis ? Il y a meme pas de porte dans le jeu ! Ouais je brise le 4eme mur, mais ca m'a enerve !\nNon j'expliquerais pas la capacite, vous allez bien devinez en jouant. Bordel.",
-        "Wow, depuis quand vous pouvez disparaitre pour vous rendre invisible et donc invincible ?\nC'est parce que vous etes un chat ou un voleur ? En fait ne me repondez pas...",
-        "\n\nWow, vous durez plus longtemps maintenant ! ( titre ) En tout cas, ca doit etre grace\na toute les fois que vous avez du fuir in extremis les gens que vous avez enerve...",
-        "\n\nOui, oui, vous savez maintenant le faire plus souvent. (titre).\nC'est bien beau, mais, lachez cette langue de mimique, c'est degeulasse.",
-        "Une tortue qui saute ? Genre, vraiment, une vielle tortue qui saute, et qui fait des arts martiaux.\nWow. J'aurais tout vu.",
-        "\n\n...Une tortue, qui saute, et qui se bourre la gueule. La c'est meme plus un vieux moine classique,\nil s'enfile des tonnaux de bieres ? Et le pire, c'est que ca l'a ameliore ! Il est vraiment plus fort !\nEh ben, dis donc, ne faites pas lire ce jeu a vos enfants.",
-        "\n\n...Comment ca il a participe au genocide de l'entierete de la garde de toute une île ? Genre, comme ca ?\nJe le croyais mignon moi a la base. Euh... J'aimerais bien m'eloigner, mais maintenant il n'a meme plus besoin\nd'attendre pour sauter, dites a ma femme et mes enfants que je les aimes !",
-        "On dirait pas comme ca, mais elle fait a peu pres 1m20. Et pourtant, c'est pas un chaton mignon,\nles fleches qu'elle lance tuent des cohortes, c'est vraiment vrai. Petit, mais costaud.",
-        "\n\nEn plus de savoir lancer des fleches plus vite, elle peut cartographier ! Bon, ca sert a rien,\ndonc c'est pas implemente, mais, c'est pas juste une tueuse sanglante, meme si elle en a les capacites",
-        "\n\nBah la on peut la considerer comme une machine de guerre. Je vous conseil d'etre de son côte."};
+        "Un demon ? J'aime pas les demons. \"Blabla je suis paladin\", j'ai quand meme pas\nconfiance. Au moins votre armure reluisante peut vous proteger...\nVous l'avez volee n'est-ce pas ?",
+        "\n- Oh, tiens, l'experience vous a rendu plus fort, vous pouvez l'utilisez deux fois\ncette armure. Eh bien dites donc...",
+        "\n- Trois utilisations d'armures ? Wow, on dirait presque un protagoniste classique.\nPeut-etre que vous etes vraiment gentil au final.",
+        "Oh, un druide ? Je suis fan ! Et vous adorez les champignons ? Vous dites que\nc'est au moins deux fois plus efficace que l'experience de la vie ? Eh bien, c'est\nune lecon a ne pas enseigner a la jeunesse, mais je connais un professeur de SIC qui\nserait bien d'accord.",
+        "\n- C'est normal que vous attiriez les champignons ? Euh... Prenez une douche.",
+        "\n- Attendez, maintenant ca aide aussi pour le score ? J'etais d'accord au debut,\n mais la je crois que je vais devoir appeler la police concernant votre consommation...",
+        "Non, non, arretez, vous n'etes pas une porte ! Stoppez ceci ! En plus ca n'a rien a voir\navec vos pouvoir, vous immobilisez juste une ligne entiere. Pourquoi cette obsession ?!",
+        "\n- Deux lignes maintenant ? Et plus souvent ? Vous etes un bon. Genre vraiment bon.\n...Bon, vous pouvez me repondre ? J'ai l'impression de parler a une porte !",
+        "\n- Comment ca le scenario entier est lie a une porte ? Qu'est-ce que tu me fumes !?\nT'es potes avec le druide aux champis ? Il y a meme pas de porte dans le jeu !\nOuais je brise le 4eme mur, mais ca m'a enerve !\nNon j'expliquerais pas la capacite, vous allez bien devinez en jouant. Bordel.",
+        "Wow, depuis quand pouvez-vous disparaitre pour vous rendre invisible comme ca ?\nC'est parce que vous etes un chat ou car vous etes un voleur ?\nEn fait ne me repondez pas...",
+        "\n- Wow, vous durez plus longtemps maintenant ! Ca doit etre grace a toutes les\nfois que vous avez du fuir in-extremis les gens que vous avez enerve...",
+        "\n- Oui, oui, vous savez maintenant le faire plus souvent. C'est bien beau,\nmais lachez cette langue de mimique, c'est degoutant.",
+        "Une tortue qui saute ? Genre, vraiment, une vielle tortue qui saute,\net qui fait des arts martiaux. J'aurais tout vu.",
+        "\n- ...Une tortue, qui saute, et qui se bourre la gueule. A ce stade c'est meme plus\nun moine. Il s'enfile des tonnaux de bieres ! Et le pire, c'est que ca le rend\nvraiment plus fort ! Eh ben, dis donc, ne faites pas lire ce jeu a vos enfants.",
+        "\n- ...Comment ca il a participe au genocide de l'entierete de la garde de toute une ile !?\nJe le croyais mignon moi! Euh... Je m'eloignerait bien, mais maintenant il n'a plus besoin\nd'attendre pour sauter, dites a ma femme et mes enfants que je les aimes !",
+        "On dirait pas comme ca, mais elle fait a peu pres 1m20. Et pourtant, c'est pas un chaton\nmignon, les fleches qu'elle lance tuent des cohortes, c'est vraiment vrai.\nPetit, mais costaud.",
+        "\n- En plus de savoir lancer des fleches plus vite, elle peut cartographier !\nBon, ca sert a rien, donc c'est pas implemente, mais, c'est pas juste une tueuse\nsanglante, meme si elle a les capacites pour.",
+        "\n- Bah la on peut la considerer comme une machine de guerre.\nJe vous conseille d'etre de son cote."};
     
     int index[] = {0,1,2,5,8,11,14,17};
     SDL_Texture* textTextures[] = {strToTexture("DEDE", font, renderer), strToTexture("AESIR", font, renderer), strToTexture("KAIRON", font, renderer), strToTexture("RANTON", font, renderer), strToTexture("JOLINAR", font, renderer), strToTexture("SNITCH", font, renderer), strToTexture("OOGWAAY", font, renderer), strToTexture("KABI", font, renderer)};
     
     SDL_Texture* exitTexture = strToTexture("PRESS ENTER TO EXIT", font, renderer);
+    
+    int paliers[8][4] = {{0,0,0,0},{0,0,0,0},{3,7,54,0},{5,12,403,0},{20,148,1808,0},{7,33,244,0},{90,665,4030,0},{1096,2980,5000,0}};
+    int xp_to_next = paliers[chara][lvl];
+    char xp_message[30];
+    sprintf(xp_message, "XP TO NEXT LEVEL: %d XP", xp_to_next);
+    SDL_Texture* xpTexture = strToTexture(xp_message, font, renderer);
+
 
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
 
     SDL_Rect titleRect = {width / 2 - 120*0.75*ECHELLE, heigth / 2 - 180*0.75*ECHELLE, 240*0.75*ECHELLE, 96*0.75*ECHELLE};
     SDL_RenderCopy(renderer, textTextures[chara], NULL, &titleRect);
+
+    SDL_Rect xpRect = {width / 2 - 130*0.75*ECHELLE, heigth / 2 - 90*0.75*ECHELLE, 260*0.75*ECHELLE, 32*0.75*ECHELLE};
+    SDL_RenderCopy(renderer, xpTexture, NULL, &xpRect);
 
     SDL_Rect rect1 = {width / 2 - 120*0.75*ECHELLE, heigth / 2 + 180*0.75*ECHELLE, 240*0.75*ECHELLE, 50*0.75*ECHELLE};
     SDL_RenderCopy(renderer, exitTexture, NULL, &rect1);
@@ -596,14 +699,14 @@ void displayDescMenu(int chara, int lvl, SDL_Renderer* renderer, TTF_Font* font,
     
     SDL_Color textColor = {255, 255, 255, 255};
 
-    char* line = strtok(message, "\n");  // Split message by newline
+    char* line = strtok(message, "\n");
     int y_offset = heigth / 2 - 35 * ECHELLE;
 
     while (line != NULL) {
         SDL_Surface* textSurface = TTF_RenderText_Blended(font, line, textColor);
         SDL_Texture* messageTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
-        SDL_Rect rect2 = {width / 2 - 180 * ECHELLE, y_offset, textSurface->w, textSurface->h};
+        SDL_Rect rect2 = {width / 2 - ((textSurface->w * 0.5 * ECHELLE)/2), y_offset, textSurface->w*0.5*ECHELLE, textSurface->h*0.5*ECHELLE};
 
         SDL_RenderCopy(renderer, messageTexture, NULL, &rect2);
 
@@ -623,27 +726,51 @@ void displayDescMenu(int chara, int lvl, SDL_Renderer* renderer, TTF_Font* font,
     SDL_DestroyTexture(exitTexture);
 }
 
-void Tutorial(){
-
+void Tutorial(SDL_bool* quit2, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, bool sound){
+    SDL_bool quit3 = SDL_FALSE;
+    int cursor = 0;
+    while(!quit3){
+        displayTutorial(renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE));
+        SDL_PollEvent(pevent);
+        if(pevent->type == SDL_QUIT){
+            *quit = SDL_TRUE;
+            *quit2 = SDL_TRUE;
+            quit3 = SDL_TRUE;
+        }else if(pevent->type == SDL_KEYUP){
+            if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN) || (pevent->key.keysym.sym == SDLK_TAB)){
+                if(sound){
+                    Mix_PlayChannel(-1, soundArray[SELECT], 0);
+                }
+                quit3 = SDL_TRUE;
+            }else if(pevent->key.keysym.sym == SDLK_m){
+                *quit = SDL_TRUE;
+                *quit2 = SDL_TRUE;
+                quit3 = SDL_TRUE;
+            }
+        }
+    }
 }
 
-void descMenu(SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, int chara, int lvl, bool sound){
-    SDL_bool quit2 = SDL_FALSE;
+void descMenu(SDL_bool* quit2, SDL_bool* quit, SDL_Renderer* renderer, SDL_Event* pevent, TTF_Font* font, Mix_Chunk** soundArray, int chara, int lvl, bool sound){
+    SDL_bool quit3 = SDL_FALSE;
     int cursor = 0;
-    while(!quit2){
+    while(!quit3){
         displayDescMenu(chara, lvl, renderer, font, (LENGTH*32*ECHELLE), (HEIGTH*32*ECHELLE));
         SDL_PollEvent(pevent);
         if(pevent->type == SDL_QUIT){
             *quit = SDL_TRUE;
-            quit2 = SDL_TRUE;
+            *quit2 = SDL_TRUE;
+            quit3 = SDL_TRUE;
         }else if(pevent->type == SDL_KEYUP){
             if((pevent->key.keysym.sym == SDLK_SPACE) || (pevent->key.keysym.sym == SDLK_RETURN) || (pevent->key.keysym.sym == SDLK_TAB)){
                 if(sound){
-                    Mix_PlayChannel(-1, soundArray[MOVEM], 0);
+                    Mix_PlayChannel(-1, soundArray[SELECT], 0);
                 }
-                quit2 = SDL_TRUE;
+                quit3 = SDL_TRUE;
             }else if(pevent->key.keysym.sym == SDLK_m){
-                quit2 = SDL_TRUE;
+                *quit = SDL_TRUE;
+                *quit2 = SDL_TRUE;
+                quit3 = SDL_TRUE;
             }
         }
     } 
