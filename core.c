@@ -2884,7 +2884,7 @@ void update_game(Game* game){
             if(game->short_mode){
                 game->until_next = 51;
             } else {
-                game->until_next = 11;
+                game->until_next = 101;
             }
             break;
 
@@ -2893,7 +2893,7 @@ void update_game(Game* game){
             if(game->short_mode){
                 game->until_next = 51;
             } else {
-                game->until_next = 11;
+                game->until_next = 101;
             }
             break;
 
@@ -2902,7 +2902,7 @@ void update_game(Game* game){
             if(game->short_mode){
                 game->until_next = 51;
             } else {
-                game->until_next = 11;
+                game->until_next = 101;
             }
             break;
 
@@ -2911,7 +2911,7 @@ void update_game(Game* game){
             if(game->short_mode){
                 game->until_next = 51;
             } else {
-                game->until_next = 11;
+                game->until_next = 101;
             }
             break;
 
