@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-#define ECHELLE 2
+#define ECHELLE 3
 
 enum MAINMENU{
     START,
