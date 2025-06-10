@@ -48,8 +48,3 @@ et aux cultistes qui foncent sur le joueur.
 - zqsd ou fléches directionneles pour les déplacements
 - barre d'espace ou entrée pour confirmer les choix dans les menus
 - en version terminale, entrée pour acceder au menu pause
-
-## Controles:
-- zqsd ou fléches directionneles pour les déplacements
-- barre d'espace ou entrée pour confirmer les choix dans les menus
-- en version terminale, entrée pour acceder au menu pause
