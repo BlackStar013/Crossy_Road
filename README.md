@@ -1,8 +1,6 @@
 # Crossy Road, Première Année, Télécom Nancy:
-(Par BALAJ Yovhann, ROUQUETTE Arthur, WARGNYE Louan, GAIFFE Félix)
 
-## Images du jeu :
-
+![Crossy Road retravaillé][/presentation/menu]
 
 ## Contenu :
     - Nous avons réalisé un jeu inspiré du jeu Crossy Road, donc un jeu en temps réel sous forme de cases avec des obstacles que le joueur doit éviter pour faire augmenter son score.
