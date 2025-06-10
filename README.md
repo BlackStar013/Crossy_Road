@@ -1,19 +1,19 @@
-# Crossy Road, Première Année, Télécom Nancy:
+# Crossy Roads, Première Année, Télécom Nancy:
 
-![Crossy Road retravaillé, image menu](presentation/menu.png)
+![Crossy Road retravaillé, image menu](presentation/menu.png.png)
 
 ## Contenu :
 - Ce dépot contient notre travail sur le Crossy Raod, à savoir un répertoire avec le code, et une partie gestion de projet.
 - On trouve donc essentiellement des fichiers en .c assez explicites, et des fichiers pour l'affichage et la sauvegarde.
 
 ## Images :
-Nous avons donc différents biomes 
+Nous avons donc différents biomes\
 ![biome classique](presentation/biome_classique.png)
-Ou encore un manoir en feu et une cave de cultistes
+Ou encore un manoir en feu et une cave de cultistes\
 ![biome manoir en feu](presentation/manoir_feu.png)
 ![biome cave de cultistes](presentation/cave.png)
-Et enfin un biome extrême en terme de difficulté
-![biome final](presentation/biome_final/png)
+Et enfin un biome extrême en terme de difficulté\
+![biome final](presentation/biome_final.png)
 
 ## Contributeurs :
 - BALAJ Yovhann
