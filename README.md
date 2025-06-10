@@ -8,14 +8,14 @@
 
 ## Images :
 Nous avons donc différents biomes\
-![biome classique](presentation/biome_classique.png)\
+![biome classique](presentation/biome_classique.png)
 
 Ou encore un manoir en feu et une cave de cultistes\
 ![biome manoir en feu](presentation/manoir_feu.png)
-![biome cave de cultistes](presentation/cave.png)\
+![biome cave de cultistes](presentation/cave.png)
 
 Et enfin un biome extrême en terme de difficulté\
-![biome final](presentation/biome_final.png)\
+![biome final](presentation/biome_final.png)
 
 
 ## Contributeurs :
