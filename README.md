@@ -42,11 +42,11 @@ et aux cultistes qui foncent sur le joueur.
 - copier le dossier du git avant tout
 - dépendances : 
     - pour SDL :
-    `sudo apt install libsdl2-*`\
+    `sudo apt install libsdl2-*`
     - pour la version terminal :
-    `sudo apt install ncurses`\
+    `sudo apt install ncurses`
     - et pour le système de sauvegarde :
-    `sudo apt install libcjson-dev`\
+    `sudo apt install libcjson-dev`
 - compilation:\
     `make`
 - lancer la version terminale:\
