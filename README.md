@@ -1,6 +1,6 @@
 # Crossy Roads, Première Année, Télécom Nancy:
 
-![Crossy Road retravaillé, image menu](presentation/menu.png)
+![Crossy Road retravaillé, image menu](image_README/menu.png)
 
 ## Contenu :
 - Ce dépot contient notre travail sur le Crossy Raod, à savoir un répertoire avec le code, et une partie gestion de projet.
@@ -8,17 +8,17 @@
 
 ## Images :
 Nous avons divers personnages avec différents pouvoirs :\
-![liste personnages](presentation/personnages.png)
+![liste personnages](image_README/personnages.png)
 
 Et nous avons aussi différents biomes\
-![biome classique](presentation/biome_classique.png)
+![biome classique](image_README/biome_classique.png)
 
 Ou encore un manoir en feu et une cave de cultistes\
-![biome manoir en feu](presentation/manoir_feu.png)
-![biome cave de cultistes](presentation/cave.png)
+![biome manoir en feu](image_README/manoir_feu.png)
+![biome cave de cultistes](image_README/cave.png)
 
 Et enfin un biome extrême en terme de difficulté\
-![biome final](presentation/biome_final.png)
+![biome final](image_README/biome_final.png)
 
 
 ## Contributeurs :
@@ -41,9 +41,11 @@ et aux cultistes qui foncent sur le joueur.
 - appareils compatibles : Linux, Windows, Mac
 - copier le dossier du git avant tout
 - dépendances : pour SDL
-    `sudo apt install libsdl2-*`
+    `sudo apt install libsdl2-*`\
               : pour la version terminal
-    `sudo apt install ncurses`
+    `sudo apt install ncurses`\
+              : et pour le système de sauvegarde
+    `sudo apt install libcjson-dev`
 - compilation:\
     `make`
 - lancer la version terminale:\
