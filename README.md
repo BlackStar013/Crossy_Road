@@ -40,12 +40,13 @@ et aux cultistes qui foncent sur le joueur.
 ## Pour jouer au jeu:
 - appareils compatibles : Linux, Windows, Mac
 - copier le dossier du git avant tout
-- dépendances : pour SDL
+- dépendances : 
+    - pour SDL :
     `sudo apt install libsdl2-*`\
-                : pour la version terminal
+    - pour la version terminal :
     `sudo apt install ncurses`\
-                : et pour le système de sauvegarde
-    `sudo apt install libcjson-dev`
+    - et pour le système de sauvegarde :
+    `sudo apt install libcjson-dev`\
 - compilation:\
     `make`
 - lancer la version terminale:\
