@@ -2974,7 +2974,7 @@ bool test_death(Game* game){
     } else if(test_collide(game)) {
         if(game->joueur->character_id == KAIRON){
             if(game->joueur->character_value){
-                game->joueur->character_value--;
+                //game->joueur->character_value--;
                 game->joueur->inv_frame = 64;
                 return false;
             } 
